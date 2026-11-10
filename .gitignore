@@ -1,0 +1,7 @@
+toolchain/
+*.vvp
+*.vcd
+*.json
+*.config
+*.bit
+.DS_Store
