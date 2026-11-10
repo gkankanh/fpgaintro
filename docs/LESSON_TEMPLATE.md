@@ -107,6 +107,12 @@ make prog
 > 1. Change X to Y. Predict what happens, then try it.
 > 2. Deliberately introduce <the classic mistake>. Find it in the waveform.
 > 3. Extend the design to <small addition>, and extend the testbench first.
+>
+> Ship worked answers in `solutions/`, each a standalone self-checking file
+> with the reasoning in its header comment, plus a `solutions/Makefile` that
+> runs them all. Leave open any exercise whose answer is a testbench change
+> rather than a design change, and say in the README which ones you left open
+> and why.
 
 ## What you should now be able to explain
 

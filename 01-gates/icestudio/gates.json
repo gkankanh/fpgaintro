@@ -1,0 +1,26 @@
+{
+  "name": "gates",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "ULX3S Digital Design Course",
+  "description": "Lesson 01 - every two-input gate, plus NAND-only equivalents.",
+  "from": { "file": "../gates.v", "module": "gates" },
+  "inputs": [
+    { "port": "a", "pin": "btn_1", "label": "a (FIRE1)" },
+    { "port": "b", "pin": "btn_2", "label": "b (FIRE2)" }
+  ],
+  "outputs": [
+    { "port": "y_and",  "pin": "led_7", "label": "AND" },
+    { "port": "y_or",   "pin": "led_6", "label": "OR" },
+    { "port": "y_not",  "pin": "led_5", "label": "NOT a" },
+    { "port": "y_nand", "pin": "led_4", "label": "NAND" },
+    { "port": "y_nor",  "pin": "led_3", "label": "NOR" },
+    { "port": "y_xnor", "pin": "led_2", "label": "XNOR" },
+    { "port": "y_xor",  "pin": "led_1", "label": "XOR (direct)" },
+    { "port": "n_xor",  "pin": "led_0", "label": "XOR (4 NANDs)" },
+    { "port": "n_not",  "pin": "gp0",   "label": "NOT from NAND" },
+    { "port": "n_and",  "pin": "gp1",   "label": "AND from NAND" },
+    { "port": "n_or",   "pin": "gp2",   "label": "OR from NAND" }
+  ],
+  "info": "## Lesson 01 - logic gates\n\nPress **FIRE1** (`a`) and **FIRE2** (`b`) and read the LEDs.\n\n`led_1` is XOR written directly as `a ^ b`. `led_0` is the same function built from **four NANDs**. They are always identical - that is NAND universality, on hardware.\n\nThe other three NAND-built forms (NOT, AND, OR) go to GPIO pins `gp0`-`gp2` because the board only has eight LEDs; the testbench checks them.\n\n### The thing to notice\n\nThis FPGA has no gates. Every one of these becomes a **4-input lookup table** - sixteen configuration bits holding a truth table. A 2-input AND and a 4-input XOR cost exactly the same: one LUT4.\n\nSo the whole design is **7 LUT4s for 11 outputs**: the synthesiser works out what each output *is* and shares what it can. It never builds your NAND chain."
+}
