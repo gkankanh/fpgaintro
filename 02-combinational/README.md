@@ -91,7 +91,7 @@ default: seg = 7'b0000000;
 > assign its output on some path infers a **latch**: a storage element with no
 > clock. Make the default a reflex.
 
-### Addition — [`adder4.v`](./adder4.v)
+### Addition — [`adder.v`](./adder.v)
 
 One bit of addition is two gates' worth of logic:
 
@@ -100,28 +100,34 @@ assign s    = a ^ b ^ cin;                 // odd number of ones
 assign cout = (a & b) | (cin & (a ^ b));   // at least two ones
 ```
 
-Four of those chained, with `generate` stamping out the copies:
+`W` of those chained, with `generate` stamping out the copies:
 
 ```verilog
-wire [4:0] c;
+wire [W:0] c;
 assign c[0] = cin;
 genvar i;
 generate
-    for (i = 0; i < 4; i = i + 1) begin : stage
+    for (i = 0; i < W; i = i + 1) begin : stage
         full_adder fa (.a(a[i]), .b(b[i]), .cin(c[i]),
                        .s(s[i]), .cout(c[i+1]));
     end
 endgenerate
 ```
 
-`generate` is a compile-time loop. It does not run; it stamps out four
-instances. The same four lines produce a 32-bit adder by changing one number.
+`generate` is a compile-time loop. It does not run; it stamps out `W`
+instances. Nothing here changes between a 4-bit adder and a 32-bit one — which
+is the thing a block diagram fundamentally cannot do.
 
 And then the version you would actually write:
 
 ```verilog
-wire [4:0] sum = a + b + cin;      // 5 bits, so the carry survives
+wire [W:0] sum = a + b + cin;      // W+1 bits, so the carry survives
 ```
+
+**Both default to `W = 32`**, because `adder` is a real CPU building block:
+lesson 10's ALU is this module, and lesson 13's CPU is that ALU. The testbench
+instantiates them at `W = 4` so all 512 input combinations can be swept.
+*Default to the width you mean; narrow to the width you can prove.*
 
 > **Watch out** — `a + b + cin` assigned to a 4-bit destination throws the carry
 > away silently. Widening the intermediate to 5 bits is what keeps it. Same
@@ -160,8 +166,10 @@ module separately:
 | module | cost |
 |---|---|
 | `full_adder` | 2 LUT4 |
-| `adder4_ripple` — built by hand from gates | 24 LUT4 + 10 PFUMX + 7 L6MUX21 |
-| `adder4_behav` — just `a + b + cin` | **3 CCU2C** |
+| `adder_ripple` at W=4 — built by hand from gates | 24 LUT4 + 10 PFUMX + 7 L6MUX21 |
+| `adder` at W=4 — just `a + b + cin` | **3 CCU2C** |
+| `adder_ripple` at W=32 — *CPU width* | 138 LUT4 + 44 PFUMX + 30 L6MUX21 |
+| `adder` at W=32 — *CPU width* | **17 CCU2C** |
 | `seg7` — case statement | 7 LUT4 |
 | `seg7_rom` — ROM array | 7 LUT4 |
 | `mux2` at W=1 | 1 LUT4 |
@@ -176,18 +184,22 @@ tell the difference, because there is no difference — both describe the same
 function of four inputs. A `case` is not "logic" and an array is not "memory".
 Lesson 01's point, one level up.
 
-**The hand-built adder is roughly eight times more expensive than `+`.** Not
-slightly: 41 cells against 3. And the reason is specific — look at what is
-*absent* from the ripple adder's row. There are no `CCU2C` cells.
+**The hand-built adder is far more expensive than `+`, and it gets worse with
+width.** At 4 bits it is 41 cells against 3. At 32 bits — the width that
+actually matters, because that is the ALU — it is **212 cells against 17**, a
+factor of twelve. And the reason is specific: look at what is *absent* from
+both ripple rows. There are no `CCU2C` cells at all.
 
 `CCU2C` is the ECP5's dedicated carry logic, a purpose-built adder running up
-each column of the fabric, and it is nearly free (lesson 00 met it: a 26-bit
-counter cost 13 of them and one LUT). When you write `a + b`, yosys recognises
-addition and maps straight onto it. When you write the same function as
-explicit gates, yosys sees gate soup — it cannot prove that pile of XORs and
-ANDs is an adder, so it cannot use the carry chain, and ABC restructures the
-logic for shallow depth using the ECP5's wide-mux resources. More cells, and a
-longer critical path.
+each column of the fabric, and it is nearly free — one cell per two bits, which
+is why 32 bits costs 17 of them. (Lesson 00 met it already: a 26-bit counter
+cost 13 CCU2C and a single LUT.) When you write `a + b`, yosys recognises
+addition and maps straight onto it.
+
+When you write the same function as explicit gates, yosys sees gate soup. It
+cannot prove that pile of XORs and ANDs is an adder, so it cannot use the carry
+chain, and ABC restructures the logic for shallow depth out of LUT4s and the
+slice's wide-mux resources. More cells, and a longer critical path too.
 
 **So the two lessons point in opposite directions, and both are true.** In
 lesson 01 the synthesiser discarded your structure and kept only the function.
@@ -249,15 +261,17 @@ happen before you run it.
 
 1. **Break the shift.** Change the decoder to `assign y = 1'b1 << sel;` and run
    `make sim`. Predict the failure before you look.
-2. **Lose the carry.** Change `adder4_behav` to `wire [3:0] sum = a + b + cin;`
-   and assign `cout = 1'b0`. How many of the 512 cases fail, and can you say
-   which ones without running it?
+2. **Lose the carry.** Change `adder` to `wire [W-1:0] sum = a + b + cin;` and
+   assign `cout = 1'b0`. How many of the 512 cases fail at W=4, and can you say
+   which ones without running it? (Answer: 256 — exactly half — and the sum
+   bits are never wrong, only the carry.)
 3. **Infer a latch.** Delete the `default` from `seg7` *and* one of the sixteen
    cases. `make sim` still passes. `make lint` does not — read what verilator
    says, then look at `make graph` and find the latch.
-4. **Scale the ripple.** Make `adder4_ripple` 16 bits by changing the loop
-   bound and the port widths. Compare its cost to a 16-bit `a + b`. The ratio
-   gets worse — why?
+4. **Scale the ripple.** Both adders are parameterised, so this is one number:
+   compare `adder_ripple` and `adder` at W=4, 16 and 32 using
+   `yosys -p "read_verilog adder.v; chparam -set W 32 adder; synth_ecp5 -top adder; stat"`.
+   The ratio gets worse with width — why?
 5. **Build mux4 from mux2.** Instantiate three `mux2`s in a tree instead of
    using nested conditionals. Does it cost the same? (It should. Why is this
    case different from exercise 4's adder?)
@@ -267,8 +281,8 @@ happen before you run it.
 - Why a mux and a decoder are mirror images, and where each appears in a CPU.
 - Why `1'b1 << sel` is always zero, and the general rule behind it.
 - Why a `case` statement and a ROM array cost the same.
-- Why the hand-built adder costs 8× what `+` does, in terms of what yosys can
-  and cannot recognise.
+- Why the hand-built adder costs 12× what `+` does at 32 bits, in terms of
+  what yosys can and cannot recognise.
 - Why combinational `always` blocks need a `default`.
 - Why 512 test cases is exhaustive here and hopeless by lesson 10.
 

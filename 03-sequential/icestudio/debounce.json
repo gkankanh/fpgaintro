@@ -1,0 +1,17 @@
+{
+  "name": "debounce",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "ULX3S Digital Design Course",
+  "description": "Lesson 03 - a saturating-counter debouncer.",
+  "from": { "file": "../debounce.v", "module": "debounce" },
+  "params": [{ "name": "COUNT", "value": 250000 }],
+  "inputs": [
+    { "port": "clk",   "pin": "clk",   "label": "clk_25mhz" },
+    { "port": "noisy", "pin": "btn_1", "label": "btn (noisy)" }
+  ],
+  "outputs": [
+    { "port": "clean", "pin": "led_7", "label": "clean" }
+  ],
+  "info": "## Lesson 03 - the debouncer\n\nA button is two pieces of springy metal. When they meet they bounce apart and meet again, several times, over 1-10 ms. At 25 MHz that is up to **250,000 clock cycles** of perfectly clean, fully-sampled transitions - so one press genuinely *is* several presses as far as the hardware can tell.\n\nThe rule here: the input must disagree with the current output **continuously** for `COUNT` clocks before the output is allowed to follow. Any shorter disagreement resets the timer, which rejects bounce of any pattern rather than just bounce shorter than one sample period.\n\nThe price is latency: the output lags by `COUNT` clocks. So pick the smallest `COUNT` that comfortably exceeds your switch's bounce time - 250,000 is 10 ms, the usual safe answer.\n\n### Try it\n\nChange `COUNT` on the constant block to 1000 and rebuild. The window is now shorter than the bounce, and the output starts to misbehave again."
+}

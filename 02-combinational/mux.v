@@ -7,12 +7,15 @@
 // is mostly muxes with some arithmetic between them.
 //
 // Both modules are parameterised by width, because a mux does not care what it
-// is selecting between. Writing it once at `W` bits and instantiating it at 7
-// is the whole point of parameters.
+// is selecting between. Writing it once and instantiating it at 7 bits here and
+// at 32 in the CPU is the whole point of parameters.
+//
+// W defaults to 32: these are datapath muxes, and lesson 13's CPU is mostly
+// made of them. The teaching instances narrow it.
 
 // 2-to-1. The conditional operator is the clearest way to say this.
 module mux2 #(
-    parameter W = 1
+    parameter W = 32
 )(
     input  wire [W-1:0] d0,      // chosen when sel = 0
     input  wire [W-1:0] d1,      // chosen when sel = 1
@@ -27,12 +30,14 @@ endmodule
 //
 // A 4-to-1 mux is really a tree of three 2-to-1 muxes, and you could write it
 // that way by instantiating mux2 three times. Expressed as nested conditionals
-// it reads better and synthesises to the same thing — on this FPGA, for W=1,
-// to a single LUT4, because a 4-to-1 mux of 1-bit data is a function of exactly
-// 4 inputs... except it is 6 (d0..d3 plus 2 select bits), so it is not. Check
-// with `make synth` and see what the ECP5 actually does with it.
+// it reads better and synthesises to the same thing.
+//
+// At W=1 it does NOT fit in a single LUT4, which is worth noticing: a 4-to-1
+// mux of one-bit data is a function of six inputs (d0..d3 plus two select
+// bits), two more than a LUT4 holds. `make synth` shows the ECP5 building it
+// from LUT4s plus the slice's wide-mux resources instead.
 module mux4 #(
-    parameter W = 1
+    parameter W = 32
 )(
     input  wire [W-1:0] d0,
     input  wire [W-1:0] d1,

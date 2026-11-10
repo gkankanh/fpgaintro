@@ -1,0 +1,20 @@
+{ "signal": [
+    { "name": "clk_25mhz", "wave": "p................." },
+    {},
+    { "name": "btn[1] (pin)", "wave": "0.1010.1.0.1......",
+      "node": "..a........b......" },
+    { "name": "rise_raw",    "wave": "0.10.10..0.10.....",
+      "node": "..c..d.....e......" },
+    { "name": "count_raw",   "wave": "2.2..2.....2......",
+      "data": ["0","1","2","3"] },
+    {},
+    { "name": "clean",       "wave": "0.........1.......",
+      "node": "..........f......." },
+    { "name": "rise_clean",  "wave": "0.........10......" },
+    { "name": "count_clean", "wave": "2.........2.......",
+      "data": ["0","1"] }
+  ],
+  "edge": ["a~>c", "b~>f COUNT clocks later"],
+  "head": { "text": "One press: the raw path counts three times, the debounced path once" },
+  "foot": { "text": "Contact bounce lasts 1-10 ms; at 25 MHz that is tens of thousands of clocks, each transition perfectly clean" }
+}

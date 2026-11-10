@@ -128,6 +128,8 @@ stays useful at the top level, for wiring a finished core to pins.
 common/
   lesson.mk                   every build rule, documented, shared by all
   ulx3s_v20.lpf               ECP5 pin constraints for the ULX3S v2.0 board
+  rtl/                        modules promoted from lessons once the CPU needs
+                              them (empty until lesson 10 — see its README)
 docs/
   book.toml, src/             mdBook site built from the lesson READMEs
   diagrams/                   hand-authored SVG (block diagrams, datapaths)
@@ -168,7 +170,12 @@ makes the difference between a design that works and one that nearly works.
 5. **Synchronous design, one clock.** Everything is clocked by `clk_25mhz`.
    No gated clocks, no latches, no asynchronous resets unless a lesson is
    explicitly about them.
-6. **Read the resource report.** `make synth` tells you what your abstraction
+6. **Reusable blocks are parameterised and default to 32 bits.** The end goal
+   is a 32-bit CPU, so a mux, an adder or a register defaults to the width the
+   CPU needs, and a teaching testbench narrows it to 4 bits where sweeping
+   every input is worth more than realism. Default to the width you mean;
+   narrow to the width you can prove.
+7. **Read the resource report.** `make synth` tells you what your abstraction
    actually cost in LUTs and flip-flops. Look at it every time.
 
 ## Toolchain

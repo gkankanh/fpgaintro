@@ -62,6 +62,14 @@ module oled_top (
                     bitn  <= bitn + 1'b1;
                     if (bitn == 3'd7) busy <= 0;
                 end
+                // Phase 1 deliberately does nothing: it is the setup time
+                // between driving MOSI and raising SCLK. Stated explicitly
+                // because an unlisted case is how you accidentally forget one.
+                //
+                // Note this is safe in a way the same omission would not be in
+                // a combinational block: this block is clocked, so "no
+                // assignment" means the registers hold — it is not a latch.
+                default: ;
             endcase
         end
     end

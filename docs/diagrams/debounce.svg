@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 290" role="img"
+     aria-label="A bouncing button signal producing three spurious counts on the raw path, versus one count on the debounced path">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --bad:#cf222e; --good:#1a7f37; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --bad:#ff7b72; --good:#3fb950; }
+    }
+    .w    { stroke:var(--ink);  stroke-width:1.6; fill:none; }
+    .bad  { stroke:var(--bad);  stroke-width:1.8; fill:none; }
+    .good { stroke:var(--good); stroke-width:1.8; fill:none; }
+    .l    { fill:var(--ink);  font:12px ui-monospace,monospace; }
+    .t    { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .tb   { fill:var(--bad);  font:11px ui-sans-serif,system-ui,sans-serif; }
+    .tg   { fill:var(--good); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ax   { stroke:var(--mute); stroke-width:.6; stroke-dasharray:2 3; }
+  </style>
+
+  <!-- the pin: bounces, then settles -->
+  <text class="l" x="8" y="34">btn[1]</text>
+  <text class="t" x="8" y="48">at the pin</text>
+  <path class="w" d="M130 44 h30 v-22 h14 v22 h12 v-22 h10 v22 h18 v-22 h12 v22 h8 v-22 h316"/>
+  <text class="t" x="168" y="16">contact bounce</text>
+  <path class="ax" d="M160 20 H 236"/>
+
+  <!-- raw edge detector output: a pulse per bounce -->
+  <text class="l" x="8" y="104">rise_raw</text>
+  <path class="bad" d="M130 114 h30 v-20 h5 v20 h21 v-20 h5 v20 h17 v-20 h5 v20 h17 v-20 h5 v20 h305"/>
+  <text class="tb" x="250" y="100">four pulses — one per contact closure</text>
+
+  <!-- raw count climbs wrongly -->
+  <text class="l" x="8" y="152">count_raw</text>
+  <text class="tb" x="130" y="152">0 → 1 → 2 → 3 → 4   for ONE press</text>
+
+  <!-- debounced: waits COUNT clocks of stability -->
+  <text class="l" x="8" y="206">clean</text>
+  <text class="t" x="8" y="220">debounced</text>
+  <path class="good" d="M130 216 h150 v-22 h400"/>
+  <path class="ax" d="M236 216 V 232 H 280 V 216"/>
+  <text class="tg" x="238" y="246">COUNT clocks of
+    <tspan x="238" dy="13">stability required</tspan></text>
+
+  <!-- clean count -->
+  <text class="l" x="8" y="274">count_clean</text>
+  <text class="tg" x="430" y="274">0 → 1   exactly one, as intended</text>
+</svg>

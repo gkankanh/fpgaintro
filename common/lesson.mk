@@ -57,11 +57,22 @@ $(VCD): sim
 # -------------------------------------------------------------------- lint --
 # Verilator is stricter than iverilog: it catches implicit widths, unintended
 # latches and combinational loops that simulate fine but synthesise wrong.
-# DECLFILENAME is waived course-wide. It enforces one-module-per-file, which
-# is right for a large project and wrong for a lesson: three related ten-line
-# modules (mux2, mux4, dec) read better grouped in mux.v than scattered across
-# three files. Every other -Wall warning is treated as an error.
-LINT_WAIVE ?= -Wno-DECLFILENAME
+# Two course-wide waivers, both deliberate. Every OTHER -Wall warning is
+# treated as an error, which is the point — a linter you have trained to cry
+# wolf is a linter you stop reading.
+#
+# DECLFILENAME enforces one module per file. Right for a large project, wrong
+# for a lesson: three related ten-line modules (mux2, mux4, dec) read better
+# grouped in mux.v than scattered across three files.
+#
+# PROCASSINIT objects to `reg q = 0;` on a signal that is also assigned
+# procedurally. The course does this everywhere on purpose: the ECP5 loads
+# flip-flop initial values straight from the bitstream, so a register really
+# does start at a known value with no reset logic at all. Verilator warns
+# because not every target honours that — which is true, and is exactly why
+# the lessons say so in prose (see 00-blinky/README.md) rather than pretending
+# it is portable.
+LINT_WAIVE ?= -Wno-DECLFILENAME -Wno-PROCASSINIT
 
 lint:
 	$(TOOLS)/verilator --lint-only -Wall $(LINT_WAIVE) --top-module $(TOP) $(SRCS)

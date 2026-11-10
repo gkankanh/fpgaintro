@@ -31,9 +31,11 @@ module comb_top (
     seg7 u_seg (.hex(a), .seg(seg));
 
     // --- the adder ---------------------------------------------------------
+    // `adder` defaults to 32 bits because it is a CPU part; here it is
+    // narrowed to the 4 bits this demo has switches for.
     wire [3:0] sum;
     wire       cout;
-    adder4_behav u_add (.a(a), .b(b), .cin(cin), .s(sum), .cout(cout));
+    adder #(.W(4)) u_add (.a(a), .b(b), .cin(cin), .s(sum), .cout(cout));
 
     // --- the mux -----------------------------------------------------------
     // One instance, 7 bits wide, from a module written for 1. The sum is only

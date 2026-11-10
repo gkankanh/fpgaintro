@@ -5,7 +5,7 @@
 // Four exhaustive sweeps:
 //   dec       all 4 selector values, checking exactly one output is high
 //   seg7      all 16 digits, both implementations, against expected patterns
-//   adder4    all 512 (a, b, cin) combinations, ripple vs behavioural vs a
+//   adder     all 512 (a, b, cin) combinations at W=4, ripple vs behavioural
 //             computed reference
 //   mux2      all 512 (sel, d0, d1) combinations at 4 bits
 //
@@ -42,8 +42,11 @@ module tb_comb;
     reg        cin;
     wire [3:0] s_rip, s_beh;
     wire       c_rip, c_beh;
-    adder4_ripple u_rip (.a(a), .b(b), .cin(cin), .s(s_rip), .cout(c_rip));
-    adder4_behav  u_beh (.a(a), .b(b), .cin(cin), .s(s_beh), .cout(c_beh));
+    // Both default to W=32 — the CPU width. Narrowed to 4 here so that all
+    // 512 (a, b, cin) combinations can be swept. A 32-bit adder would be
+    // 2**65 cases; see lesson 10 for what you do instead.
+    adder_ripple #(.W(4)) u_rip (.a(a), .b(b), .cin(cin), .s(s_rip), .cout(c_rip));
+    adder        #(.W(4)) u_beh (.a(a), .b(b), .cin(cin), .s(s_beh), .cout(c_beh));
 
     // ---------------------------------------------------------------- mux ---
     reg  [3:0] d0, d1;

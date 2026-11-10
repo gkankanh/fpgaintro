@@ -59,6 +59,7 @@ module text_top (
                     bitn  <= bitn + 1'b1;
                     if (bitn == 3'd7) busy <= 0;
                 end
+                default: ;      // phase 1 idles: MOSI setup time. See lesson 06.
             endcase
         end
     end
@@ -90,6 +91,13 @@ module text_top (
     // "HELLO": 5 chars, 16px each = 80px wide at x 8..87, 16px tall at y 24..39
     wire in_text = (x >= 7'd8) && (x < 7'd88) && (y >= 6'd24) && (y < 6'd40);
     wire [6:0] tx = x - 7'd8;                    // 0..79 inside the text band
+    // tx[0] is intentionally never read: the 2x scale means each font column
+    // covers two screen pixels, so the column select is tx[3:1] and the low
+    // bit is discarded. Told to verilator explicitly rather than waived
+    // globally, because an unused bit is usually a mistake.
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire _tx_lsb_unused = tx[0];
+    /* verilator lint_on UNUSEDSIGNAL */
     wire [2:0] ci = tx[6:4];                     // character cell 0..4
     wire [1:0] glyph = (ci == 3'd0) ? 2'd0 :     // H
                        (ci == 3'd1) ? 2'd1 :     // E
