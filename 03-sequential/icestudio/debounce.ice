@@ -31,6 +31,25 @@
           }
         },
         {
+          "id": "3cf3ea62-3eca-4210-80da-cc4dd4cdc0b6",
+          "type": "basic.output",
+          "data": {
+            "name": "clean",
+            "pins": [
+              {
+                "index": "0",
+                "name": "led_7",
+                "value": "H3"
+              }
+            ],
+            "virtual": false
+          },
+          "position": {
+            "x": 888,
+            "y": 48
+          }
+        },
+        {
           "id": "f023ec90-5b5d-4c75-8285-d9cf7a14dc5c",
           "type": "basic.input",
           "data": {
@@ -50,29 +69,23 @@
           }
         },
         {
-          "id": "3cf3ea62-3eca-4210-80da-cc4dd4cdc0b6",
-          "type": "basic.output",
+          "id": "570e9e8e-6b5d-4187-a6a9-6b85637e12cd",
+          "type": "basic.constant",
           "data": {
-            "name": "clean",
-            "pins": [
-              {
-                "index": "0",
-                "name": "led_7",
-                "value": "H3"
-              }
-            ],
-            "virtual": false
+            "name": "COUNT",
+            "value": "250000",
+            "local": false
           },
           "position": {
-            "x": 816,
-            "y": 48
+            "x": 432,
+            "y": -240
           }
         },
         {
           "id": "8b5da012-ceee-472b-9b14-0ad40e2266c3",
           "type": "basic.code",
           "data": {
-            "code": "// $clog2 sizes the counter to exactly fit COUNT \u2014 one of the few places a\n// system function is allowed in synthesisable code.\nlocalparam CW = $clog2(COUNT + 1);\nreg [CW-1:0] cnt = 0;\n\nalways @(posedge clk) begin\n    if (noisy == clean) begin\n        // They agree: nothing is happening. Hold the timer at zero so a\n        // later disagreement has to wait the full COUNT.\n        cnt <= 0;\n    end else if (cnt == COUNT[CW-1:0]) begin\n        // Disagreed for long enough: accept the new level.\n        clean <= noisy;\n        cnt   <= 0;\n    end else begin\n        cnt <= cnt + 1'b1;\n    end\nend\n",
+            "code": "// $clog2 sizes the counter to exactly fit COUNT — one of the few places a\n// system function is allowed in synthesisable code.\nlocalparam CW = $clog2(COUNT + 1);\nreg [CW-1:0] cnt = 0;\n\nalways @(posedge clk) begin\n    if (noisy == clean) begin\n        // They agree: nothing is happening. Hold the timer at zero so a\n        // later disagreement has to wait the full COUNT.\n        cnt <= 0;\n    end else if (cnt == COUNT[CW-1:0]) begin\n        // Disagreed for long enough: accept the new level.\n        clean <= noisy;\n        cnt   <= 0;\n    end else begin\n        cnt <= cnt + 1'b1;\n    end\nend\n",
             "params": [
               {
                 "name": "COUNT"
@@ -95,21 +108,12 @@
             }
           },
           "position": {
-            "x": 384,
-            "y": 48
-          }
-        },
-        {
-          "id": "570e9e8e-6b5d-4187-a6a9-6b85637e12cd",
-          "type": "basic.constant",
-          "data": {
-            "name": "COUNT",
-            "value": "250000",
-            "local": false
+            "x": 256,
+            "y": -88
           },
-          "position": {
-            "x": 416,
-            "y": -112
+          "size": {
+            "width": 600,
+            "height": 424
           }
         },
         {
@@ -120,30 +124,24 @@
             "readonly": true
           },
           "position": {
-            "x": 48,
-            "y": 352
+            "x": -304,
+            "y": -368
+          },
+          "size": {
+            "width": 400,
+            "height": 256
           }
         }
       ],
       "wires": [
         {
           "source": {
-            "block": "570e9e8e-6b5d-4187-a6a9-6b85637e12cd",
-            "port": "constant-out"
+            "block": "8b5da012-ceee-472b-9b14-0ad40e2266c3",
+            "port": "clean"
           },
           "target": {
-            "block": "8b5da012-ceee-472b-9b14-0ad40e2266c3",
-            "port": "COUNT"
-          }
-        },
-        {
-          "source": {
-            "block": "e9687f0f-c126-4386-b305-83abacb04aad",
-            "port": "out"
-          },
-          "target": {
-            "block": "8b5da012-ceee-472b-9b14-0ad40e2266c3",
-            "port": "clk"
+            "block": "3cf3ea62-3eca-4210-80da-cc4dd4cdc0b6",
+            "port": "in"
           }
         },
         {
@@ -158,16 +156,46 @@
         },
         {
           "source": {
-            "block": "8b5da012-ceee-472b-9b14-0ad40e2266c3",
-            "port": "clean"
+            "block": "e9687f0f-c126-4386-b305-83abacb04aad",
+            "port": "out"
           },
           "target": {
-            "block": "3cf3ea62-3eca-4210-80da-cc4dd4cdc0b6",
-            "port": "in"
+            "block": "8b5da012-ceee-472b-9b14-0ad40e2266c3",
+            "port": "clk"
+          }
+        },
+        {
+          "source": {
+            "block": "570e9e8e-6b5d-4187-a6a9-6b85637e12cd",
+            "port": "constant-out"
+          },
+          "target": {
+            "block": "8b5da012-ceee-472b-9b14-0ad40e2266c3",
+            "port": "COUNT"
           }
         }
       ]
     }
   },
-  "dependencies": {}
+  "dependencies": {},
+  "settings": {
+    "version": 1,
+    "tools": {
+      "verify": {
+        "override": false,
+        "relaxRealToInt": false,
+        "relaxIoPrimitives": false,
+        "allowLogicLoops": false,
+        "verilatorFlags": ""
+      },
+      "build": {
+        "override": false,
+        "yosysFlags": "",
+        "nextpnrFlags": ""
+      },
+      "upload": {
+        "override": false
+      }
+    }
+  }
 }

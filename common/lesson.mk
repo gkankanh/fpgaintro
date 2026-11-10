@@ -29,6 +29,16 @@ SRCS    ?= $(TOP).v
 TB_SRCS ?= $(TB).v
 VCD     ?= $(TOP).vcd
 
+# Most lessons simulate and lint exactly what they synthesise. A lesson that
+# instantiates a HARD BLOCK — the ECP5's PLL, a block RAM primitive, an I/O
+# buffer — cannot: those have no behavioural model in iverilog and no
+# definition for verilator, so including them breaks elaboration. Such a
+# lesson overrides these to name only the simulatable part, and verifies the
+# rest structurally with `make bit`. Lesson 04 is the first to need it.
+SIM_SRCS  ?= $(SRCS)
+LINT_SRCS ?= $(SIM_SRCS)
+LINT_TOP  ?= $(TOP)
+
 # ULX3S 85F: Lattice ECP5 LFE5U-85F in a 381-ball caBGA.
 DEVICE  ?= --85k
 PACKAGE ?= CABGA381
@@ -46,8 +56,8 @@ sim: $(TB).vvp
 	$(TOOLS)/vvp $(TB).vvp
 	@echo "---- waveform: make wave  (gtkwave $(VCD)) ----"
 
-$(TB).vvp: $(SRCS) $(TB_SRCS)
-	$(TOOLS)/iverilog -g2005 -Wall -o $@ $(SRCS) $(TB_SRCS)
+$(TB).vvp: $(SIM_SRCS) $(TB_SRCS)
+	$(TOOLS)/iverilog -g2005 -Wall -o $@ $(SIM_SRCS) $(TB_SRCS)
 
 wave: $(VCD)
 	$(TOOLS)/gtkwave $(VCD) $(wildcard $(TOP).gtkw) &
@@ -75,7 +85,7 @@ $(VCD): sim
 LINT_WAIVE ?= -Wno-DECLFILENAME -Wno-PROCASSINIT
 
 lint:
-	$(TOOLS)/verilator --lint-only -Wall $(LINT_WAIVE) --top-module $(TOP) $(SRCS)
+	$(TOOLS)/verilator --lint-only -Wall $(LINT_WAIVE) --top-module $(LINT_TOP) $(LINT_SRCS)
 
 # --------------------------------------------------------------- schematic --
 # The other half of the dual path: Icestudio users draw a diagram and get
