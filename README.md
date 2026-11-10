@@ -61,10 +61,10 @@ Lessons marked **board** want hardware to be satisfying; everything is still
 verified in simulation first. Lessons 00–14 can be completed with no board at
 all. Lesson 17 is optional — the course's goal is met at lesson 16.
 
-Four lessons are written and working today — 00, 01, 06 and 07 — each with a
-self-checking testbench, real synthesis numbers and worked exercise solutions.
-The rest have settled scope and a planned outline in their README, and are
-being built in order.
+Five lessons are written and working today — 00, 01, 02, 06 and 07 — each with
+a self-checking testbench and real, measured synthesis numbers. The rest have
+settled scope and a planned outline in their README, and are being built in
+order.
 
 ## Choosing your path
 
@@ -121,7 +121,7 @@ stays useful at the top level, for wiring a finished core to pins.
   *.v                         synthesisable source
   tb_*.v                      testbench — always prints PASS or FAIL
   Makefile                    4 lines; the rules live in common/lesson.mk
-  solutions/                  worked answers to the exercises
+  solutions/                  worked answers, where an exercise needs one
   icestudio/                  .json spec + generated .ice (dual-path lessons)
   diagrams/                   *.wave.json timing diagram sources
 

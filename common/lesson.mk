@@ -57,8 +57,14 @@ $(VCD): sim
 # -------------------------------------------------------------------- lint --
 # Verilator is stricter than iverilog: it catches implicit widths, unintended
 # latches and combinational loops that simulate fine but synthesise wrong.
+# DECLFILENAME is waived course-wide. It enforces one-module-per-file, which
+# is right for a large project and wrong for a lesson: three related ten-line
+# modules (mux2, mux4, dec) read better grouped in mux.v than scattered across
+# three files. Every other -Wall warning is treated as an error.
+LINT_WAIVE ?= -Wno-DECLFILENAME
+
 lint:
-	$(TOOLS)/verilator --lint-only -Wall --top-module $(TOP) $(SRCS)
+	$(TOOLS)/verilator --lint-only -Wall $(LINT_WAIVE) --top-module $(TOP) $(SRCS)
 
 # --------------------------------------------------------------- schematic --
 # The other half of the dual path: Icestudio users draw a diagram and get

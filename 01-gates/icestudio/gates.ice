@@ -12,7 +12,7 @@
     "graph": {
       "blocks": [
         {
-          "id": "3ccba515-1a94-4da9-85d2-75ed2c773949",
+          "id": "c3d144bc-d28f-4522-afae-b8c7d65fbc67",
           "type": "basic.input",
           "data": {
             "name": "a (FIRE1)",
@@ -31,7 +31,7 @@
           }
         },
         {
-          "id": "190225e1-a97e-44c9-b84c-bf98fd325600",
+          "id": "b7b447eb-c3b3-41aa-a5ab-e00af6371278",
           "type": "basic.input",
           "data": {
             "name": "b (FIRE2)",
@@ -50,7 +50,7 @@
           }
         },
         {
-          "id": "3b7eec46-4f00-437e-b437-414712933b24",
+          "id": "fc2afdb2-272c-4818-9326-4778bd75663d",
           "type": "basic.output",
           "data": {
             "name": "AND",
@@ -69,7 +69,7 @@
           }
         },
         {
-          "id": "701eb365-2a57-4441-ab68-810ba2095f9c",
+          "id": "fcfee5a9-58f8-4126-840b-8e7093d7d2ed",
           "type": "basic.output",
           "data": {
             "name": "OR",
@@ -88,7 +88,7 @@
           }
         },
         {
-          "id": "d8d5639f-f124-4be8-a5e4-e68d7700b9ef",
+          "id": "9e8a31db-3769-423e-8ac5-071834d0ef0d",
           "type": "basic.output",
           "data": {
             "name": "NOT a",
@@ -107,7 +107,7 @@
           }
         },
         {
-          "id": "7c16be9b-e504-4301-b658-6d480d5e19bd",
+          "id": "64d327ce-929b-4353-aa8f-0f7c78897bbf",
           "type": "basic.output",
           "data": {
             "name": "NAND",
@@ -126,7 +126,7 @@
           }
         },
         {
-          "id": "c8c060cd-ac8d-444a-a881-f9af7c76ed8e",
+          "id": "471f3665-3bfa-4944-93ca-1c4a772f14b3",
           "type": "basic.output",
           "data": {
             "name": "NOR",
@@ -145,7 +145,7 @@
           }
         },
         {
-          "id": "b8b7723d-384b-4aa5-a4c7-234f3d78d946",
+          "id": "a1597fe8-8ac1-4cf4-877d-15b7d4ca4eb9",
           "type": "basic.output",
           "data": {
             "name": "XNOR",
@@ -164,7 +164,7 @@
           }
         },
         {
-          "id": "9f526d91-8751-413e-a676-9ba849dc9e8f",
+          "id": "7e845d13-7d63-4db3-b6e4-f8e567278e2a",
           "type": "basic.output",
           "data": {
             "name": "XOR (direct)",
@@ -183,7 +183,7 @@
           }
         },
         {
-          "id": "40957a22-cc77-4c59-aed7-46e056e3c3e9",
+          "id": "2ded98fa-422a-4b27-8a14-9144a95b6674",
           "type": "basic.output",
           "data": {
             "name": "XOR (4 NANDs)",
@@ -202,7 +202,7 @@
           }
         },
         {
-          "id": "8aff9e15-43bd-422c-975b-ed09aeff496f",
+          "id": "2a1bd9fa-e9ad-4d72-b63a-efa29c2a8770",
           "type": "basic.output",
           "data": {
             "name": "NOT from NAND",
@@ -221,7 +221,7 @@
           }
         },
         {
-          "id": "79396576-c844-4c05-a702-9d85561970b0",
+          "id": "40602b9e-2baa-4aaf-8e38-623de7960bfe",
           "type": "basic.output",
           "data": {
             "name": "AND from NAND",
@@ -240,7 +240,7 @@
           }
         },
         {
-          "id": "3d6c6105-9c23-4bb4-8bbd-1f4e4e5d7ee0",
+          "id": "cc9711db-d081-4705-b181-4f8f8727dea4",
           "type": "basic.output",
           "data": {
             "name": "OR from NAND",
@@ -259,7 +259,7 @@
           }
         },
         {
-          "id": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+          "id": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
           "type": "basic.code",
           "data": {
             "code": "// ---------------------------------------------------------------- direct\n// `assign` is not a statement that runs. It is a permanent connection:\n// whenever `a` or `b` changes, the output follows. There is no \"when\".\nassign y_and  =   a & b;\nassign y_or   =   a | b;\nassign y_not  =  ~a;\nassign y_nand = ~(a & b);\nassign y_nor  = ~(a | b);\nassign y_xor  =   a ^ b;\nassign y_xnor = ~(a ^ b);\n\n// ------------------------------------------------------- NAND-only forms\n// NAND is a universal gate: every Boolean function can be built from it\n// alone. Four constructions, each one line, each verified by the\n// testbench against the direct version above.\n\nwire nab = ~(a & b);                 // the shared NAND(a, b)\n\n// NOT a = NAND(a, a): both inputs the same, so the AND is just `a`.\nassign n_not = ~(a & a);\n\n// AND = NOT(NAND) = NAND(NAND(a,b), NAND(a,b)).\nassign n_and = ~(nab & nab);\n\n// OR = NAND(NOT a, NOT b). This is De Morgan:  a | b  ==  ~(~a & ~b).\nwire na = ~(a & a);\nwire nb = ~(b & b);\nassign n_or = ~(na & nb);\n\n// XOR from four NANDs \u2014 the classic construction.\n//   w1 = NAND(a, NAND(a,b))   is 1 unless a=1 and b=0\n//   w2 = NAND(b, NAND(a,b))   is 1 unless b=1 and a=0\n//   XOR = NAND(w1, w2)\nwire w1 = ~(a & nab);\nwire w2 = ~(b & nab);\nassign n_xor = ~(w1 & w2);\n",
@@ -316,7 +316,7 @@
           }
         },
         {
-          "id": "c3c21cd1-eeb9-48c8-8548-2df5d98f880b",
+          "id": "74c99165-feb4-4689-bee8-3becfd156e2f",
           "type": "basic.info",
           "data": {
             "info": "## Lesson 01 - logic gates\n\nPress **FIRE1** (`a`) and **FIRE2** (`b`) and read the LEDs.\n\n`led_1` is XOR written directly as `a ^ b`. `led_0` is the same function built from **four NANDs**. They are always identical - that is NAND universality, on hardware.\n\nThe other three NAND-built forms (NOT, AND, OR) go to GPIO pins `gp0`-`gp2` because the board only has eight LEDs; the testbench checks them.\n\n### The thing to notice\n\nThis FPGA has no gates. Every one of these becomes a **4-input lookup table** - sixteen configuration bits holding a truth table. A 2-input AND and a 4-input XOR cost exactly the same: one LUT4.\n\nSo the whole design is **7 LUT4s for 11 outputs**: the synthesiser works out what each output *is* and shares what it can. It never builds your NAND chain.",
@@ -331,131 +331,131 @@
       "wires": [
         {
           "source": {
-            "block": "3ccba515-1a94-4da9-85d2-75ed2c773949",
+            "block": "c3d144bc-d28f-4522-afae-b8c7d65fbc67",
             "port": "out"
           },
           "target": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "a"
           }
         },
         {
           "source": {
-            "block": "190225e1-a97e-44c9-b84c-bf98fd325600",
+            "block": "b7b447eb-c3b3-41aa-a5ab-e00af6371278",
             "port": "out"
           },
           "target": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "b"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "y_and"
           },
           "target": {
-            "block": "3b7eec46-4f00-437e-b437-414712933b24",
+            "block": "fc2afdb2-272c-4818-9326-4778bd75663d",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "y_or"
           },
           "target": {
-            "block": "701eb365-2a57-4441-ab68-810ba2095f9c",
+            "block": "fcfee5a9-58f8-4126-840b-8e7093d7d2ed",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "y_not"
           },
           "target": {
-            "block": "d8d5639f-f124-4be8-a5e4-e68d7700b9ef",
+            "block": "9e8a31db-3769-423e-8ac5-071834d0ef0d",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "y_nand"
           },
           "target": {
-            "block": "7c16be9b-e504-4301-b658-6d480d5e19bd",
+            "block": "64d327ce-929b-4353-aa8f-0f7c78897bbf",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "y_nor"
           },
           "target": {
-            "block": "c8c060cd-ac8d-444a-a881-f9af7c76ed8e",
+            "block": "471f3665-3bfa-4944-93ca-1c4a772f14b3",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "y_xnor"
           },
           "target": {
-            "block": "b8b7723d-384b-4aa5-a4c7-234f3d78d946",
+            "block": "a1597fe8-8ac1-4cf4-877d-15b7d4ca4eb9",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "y_xor"
           },
           "target": {
-            "block": "9f526d91-8751-413e-a676-9ba849dc9e8f",
+            "block": "7e845d13-7d63-4db3-b6e4-f8e567278e2a",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "n_xor"
           },
           "target": {
-            "block": "40957a22-cc77-4c59-aed7-46e056e3c3e9",
+            "block": "2ded98fa-422a-4b27-8a14-9144a95b6674",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "n_not"
           },
           "target": {
-            "block": "8aff9e15-43bd-422c-975b-ed09aeff496f",
+            "block": "2a1bd9fa-e9ad-4d72-b63a-efa29c2a8770",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "n_and"
           },
           "target": {
-            "block": "79396576-c844-4c05-a702-9d85561970b0",
+            "block": "40602b9e-2baa-4aaf-8e38-623de7960bfe",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "fa5c996c-7b78-4204-8647-6a9d7e350440",
+            "block": "04bfbbfd-3df2-4f68-b2fe-b60fae53cf04",
             "port": "n_or"
           },
           "target": {
-            "block": "3d6c6105-9c23-4bb4-8bbd-1f4e4e5d7ee0",
+            "block": "cc9711db-d081-4705-b181-4f8f8727dea4",
             "port": "in"
           }
         }

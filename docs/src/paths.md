@@ -48,6 +48,18 @@ make ice      # regenerate every Icestudio project from its spec
 The consequence is that the diagram and the Verilog cannot drift: the diagram
 *is* the Verilog, laid out. Fix a bug in the `.v` and `make ice` propagates it.
 
+**One real limitation.** A code block holds a bare module body, so it cannot
+instantiate other modules — Icestudio resolves blocks on its canvas, not
+through a Verilog namespace. Generation therefore works from **leaf** modules.
+A lesson whose top level wires several modules together (lesson 02's
+`comb_top`, for instance) ships an `.ice` of one interesting leaf instead, and
+`tools/mkice.py` refuses the hierarchical case with an explanation rather than
+emitting a project that fails to build.
+
+Composing blocks is what the canvas itself is for, and it is the better way
+round: a module you have simulated and verified becomes a reusable block in
+`icestudio/collections/`, and you wire it up visually.
+
 And the reverse direction exists too. `make graph` runs your Verilog through
 yosys and graphviz and hands you a schematic:
 

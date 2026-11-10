@@ -1,0 +1,17 @@
+{
+  "name": "seg7",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "ULX3S Digital Design Course",
+  "description": "Lesson 02 - a 7-segment hex decoder: 4 bits in, 7 segments out.",
+  "from": { "file": "../seg7.v", "module": "seg7" },
+  "inputs": [
+    { "port": "hex", "label": "hex (slide switches)",
+      "pins": ["sw_3", "sw_2", "sw_1", "sw_0"] }
+  ],
+  "outputs": [
+    { "port": "seg", "label": "seg (abcdefg)",
+      "pins": ["led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 02 - the hex decoder\n\nSet the four slide switches to a hex digit and read the segment pattern on `led[6:0]`, in the order `abcdefg`:\n\n```\n     aaaa        led_6 = a   top\n    f    b       led_5 = b   top right\n    f    b       led_4 = c   bottom right\n     gggg        led_3 = d   bottom\n    e    c       led_2 = e   bottom left\n    e    c       led_1 = f   top left\n     dddd        led_0 = g   middle\n```\n\nSwitches at `1010` (hex A) should give `1110111`.\n\n### The thing to notice\n\nThe code block holds a 16-way `case`. The lesson's `seg7_rom` module expresses the identical truth table as an array of constants instead - and both cost exactly **7 LUT4**. A `case` is not 'logic' and an array is not 'memory'; both describe a function of four inputs, and only the function survives.\n\n### Why this block and not the whole lesson\n\nAn Icestudio code block cannot instantiate other modules, so the lesson's `comb_top` (which wires seg7, an adder and a mux together) cannot be generated as one block. Composing modules is what the Icestudio canvas itself is for - that is the next step, and lesson 03 starts putting reusable blocks in `icestudio/collections/`."
+}

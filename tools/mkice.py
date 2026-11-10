@@ -119,7 +119,40 @@ def extract_body(path: str, module: str) -> str:
     if end < 0:
         raise SystemExit(f"mkice: no 'endmodule' for module '{module}'")
 
-    lines = [ln.rstrip() for ln in after[semi + 1:end].strip("\n").split("\n")]
+    body_text = after[semi + 1:end]
+
+    # An Icestudio basic.code block is a bare module body — it cannot
+    # instantiate other modules, because Icestudio resolves blocks on the
+    # canvas, not through a Verilog namespace. Catch that here rather than
+    # letting the user discover it as a build failure in the GUI.
+    #
+    # Heuristic: `<module> <instance> (` or `<module> #(params) <instance> (`
+    # at statement level. Two separate patterns rather than one with an
+    # optional group, because an optional group lets the regex engine
+    # backtrack and split a single word in two — `case (hex)` was being read
+    # as module `cas`, instance `e`. Requiring real whitespace between the
+    # two identifiers is what prevents that.
+    KEYWORDS = {"if", "case", "casez", "casex", "for", "while", "repeat",
+                "always", "initial", "assign", "begin", "end", "function",
+                "task", "generate", "endgenerate", "wire", "reg", "localparam",
+                "parameter", "integer", "genvar", "else", "posedge", "negedge"}
+    INST_PATTERNS = (
+        r"^[ \t]*([A-Za-z_]\w*)[ \t]+([A-Za-z_]\w*)[ \t]*\(",
+        r"^[ \t]*([A-Za-z_]\w*)[ \t]*#[ \t]*\([^;]*?\)[ \t]*([A-Za-z_]\w*)[ \t]*\(",
+    )
+    hits = [mm for pat in INST_PATTERNS
+            for mm in re.finditer(pat, body_text, re.MULTILINE)
+            if mm.group(1) not in KEYWORDS and mm.group(2) not in KEYWORDS]
+    for mm in hits:
+        raise SystemExit(
+            f"mkice: module '{module}' instantiates '{mm.group(1)}' "
+            f"(as '{mm.group(2)}').\n"
+            f"  An Icestudio code block cannot instantiate other modules, so a\n"
+            f"  hierarchical top cannot be generated this way. Point the spec at\n"
+            f"  a leaf module instead, or build the hierarchy on the Icestudio\n"
+            f"  canvas from blocks in icestudio/collections/.")
+
+    lines = [ln.rstrip() for ln in body_text.strip("\n").split("\n")]
     indents = [len(ln) - len(ln.lstrip()) for ln in lines if ln.strip()]
     cut = min(indents) if indents else 0
     return "\n".join(ln[cut:] if ln.strip() else "" for ln in lines).strip("\n") + "\n"
@@ -154,8 +187,25 @@ def port_pins(spec: dict, pinout: dict[str, str]) -> tuple[list[dict], int]:
     return pins, len(names)
 
 
-def ranged(name: str, width: int) -> dict:
-    """A code-block port record: bare name if 1 bit, else name + range."""
+def ranged(name: str, width: int, rng: str | None = None) -> dict:
+    """A code-block port record: bare name if 1 bit, else name + range.
+
+    `rng` lets a spec state the port's declared range verbatim, for the case
+    where the Verilog is not zero-based — `input [6:1] btn` must stay [6:1],
+    or the extracted body's `btn[6]` is out of range. Width is checked against
+    the number of pins bound so the two cannot disagree silently.
+    """
+    if rng:
+        m = re.fullmatch(r"\s*\[\s*(\d+)\s*:\s*(\d+)\s*\]\s*", rng)
+        if not m:
+            raise SystemExit(f"mkice: port '{name}': range {rng!r} is not [hi:lo]")
+        hi, lo = int(m.group(1)), int(m.group(2))
+        declared = abs(hi - lo) + 1
+        if declared != width:
+            raise SystemExit(
+                f"mkice: port '{name}': range {rng} is {declared} bits but "
+                f"{width} pin(s) were bound — one of them is wrong.")
+        return {"name": name, "range": f"[{hi}:{lo}]", "size": width}
     if width == 1:
         return {"name": name}
     return {"name": name, "range": f"[{width - 1}:0]", "size": width}
@@ -191,7 +241,7 @@ def build(spec_path: str) -> str:
             data["range"] = f"[{w - 1}:0]"
         b = block("basic.input", data, X_IN, Y_TOP + i * Y_STEP)
         blocks.append(b)
-        code_in.append(ranged(s["port"], w))
+        code_in.append(ranged(s["port"], w, s.get("range")))
         pending.append((b, s["port"], w, True))
 
     for i, s in enumerate(spec.get("outputs", [])):
@@ -201,7 +251,7 @@ def build(spec_path: str) -> str:
             data["range"] = f"[{w - 1}:0]"
         b = block("basic.output", data, X_OUT, Y_TOP + i * Y_STEP)
         blocks.append(b)
-        code_out.append(ranged(s["port"], w))
+        code_out.append(ranged(s["port"], w, s.get("range")))
         pending.append((b, s["port"], w, False))
 
     code = block(
