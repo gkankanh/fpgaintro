@@ -1,0 +1,14 @@
+{ "signal": [
+    { "name": "clk_25mhz", "wave": "p........", "period": 1 },
+    {},
+    { "name": "count[0]",  "wave": "lhlhlhlhl" },
+    { "name": "count[1]",  "wave": "l.h.l.h.l" },
+    { "name": "count[2]",  "wave": "l...h...l" },
+    {},
+    { "name": "count[2:0]", "wave": "========x",
+      "data": ["0","1","2","3","4","5","6","7"] }
+  ],
+  "head": { "text": "Each counter bit halves the frequency of the one below it",
+            "tick": 0 },
+  "foot": { "text": "bit n toggles every 2^n clocks, so bit 25 at 25 MHz toggles every 1.34 s" }
+}

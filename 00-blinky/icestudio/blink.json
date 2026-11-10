@@ -1,0 +1,19 @@
+{
+  "name": "blink",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "ULX3S Digital Design Course",
+  "description": "Lesson 00 - a counter divides 25 MHz down to human speed.",
+  "from": { "file": "../blink.v", "module": "blink" },
+  "params": [{ "name": "WIDTH", "value": 26 }],
+  "inputs": [
+    { "port": "clk_25mhz", "pin": "clk", "label": "clk_25mhz" }
+  ],
+  "outputs": [
+    { "port": "led",
+      "label": "led",
+      "pins": ["led_7", "led_6", "led_5", "led_4",
+               "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 00 - blinky\n\nThe 25 MHz board clock is far too fast to see. A **counter** is a frequency divider: bit *n* of a counter toggles every 2^n clocks. Tapping the top 8 bits gives a binary odometer slow enough to watch.\n\n- `WIDTH` = 26, so bit 25 toggles about every 1.3 s.\n- Change `WIDTH` on the constant block and rebuild to speed it up or slow it down.\n\nThis is the same logic as `blink.v` in the lesson folder - the code block body is generated from it, so both paths describe one design."
+}

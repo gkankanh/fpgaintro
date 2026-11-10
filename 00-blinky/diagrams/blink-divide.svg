@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 230" role="img"
+     aria-label="Timing diagram: counter bit 0 toggles every clock, bit 1 every two clocks, bit 2 every four clocks">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; }
+    }
+    .w  { stroke:var(--ink); stroke-width:1.6; fill:none; }
+    .c  { stroke:var(--accent); stroke-width:1.6; fill:none; }
+    .g  { stroke:var(--mute); stroke-width:.5; stroke-dasharray:2 3; }
+    .l  { fill:var(--ink); font:12px ui-monospace,monospace; }
+    .n  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <!-- 16 half-cycles of 35px = 8 clock periods, starting at x=110 -->
+  <g class="g">
+    <path d="M110 24V170"/><path d="M180 24V170"/><path d="M250 24V170"/>
+    <path d="M320 24V170"/><path d="M390 24V170"/><path d="M460 24V170"/>
+    <path d="M530 24V170"/><path d="M600 24V170"/>
+  </g>
+  <g class="n">
+    <text x="106" y="20">0</text><text x="176" y="20">1</text><text x="246" y="20">2</text>
+    <text x="316" y="20">3</text><text x="386" y="20">4</text><text x="456" y="20">5</text>
+    <text x="526" y="20">6</text><text x="596" y="20">7</text>
+  </g>
+
+  <!-- clk: period 70px, high first half -->
+  <text class="l" x="8" y="44">clk_25mhz</text>
+  <path class="c" d="M110 48 v-16 h35 v16 h35 v-16 h35 v16 h35 v-16 h35 v16 h35 v-16 h35
+                     v16 h35 v-16 h35 v16 h35 v-16 h35 v16 h35 v-16 h35 v16 h35 v-16 h35 v16"/>
+
+  <!-- count[0]: toggles every clock (period 70) -->
+  <text class="l" x="8" y="84">count[0]</text>
+  <path class="w" d="M110 88 h35 v-16 h35 v16 h35 v-16 h35 v16 h35 v-16 h35 v16 h35
+                     v-16 h35 v16 h35 v-16 h35 v16 h35 v-16 h35 v16 h35 v-16 h35 v16 h35"/>
+
+  <!-- count[1]: period 140 -->
+  <text class="l" x="8" y="124">count[1]</text>
+  <path class="w" d="M110 128 h70 v-16 h70 v16 h70 v-16 h70 v16 h70 v-16 h70 v16 h70 v-16 h70"/>
+
+  <!-- count[2]: period 280 -->
+  <text class="l" x="8" y="164">count[2]</text>
+  <path class="w" d="M110 168 h140 v-16 h140 v16 h140 v-16 h140"/>
+
+  <text class="t" x="110" y="198">Each bit halves the frequency of the one below it:</text>
+  <text class="t" x="110" y="216">bit n toggles every 2^n clocks, so bit 25 at 25 MHz toggles every 1.34 s.</text>
+</svg>

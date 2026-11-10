@@ -1,0 +1,113 @@
+{
+  "version": "2.0.0",
+  // Every task runs `make` in the directory of the file you currently have
+  // open, so "whichever lesson I'm looking at" is always the target.
+  // Cmd+Shift+B runs `make sim` — the one you want 90% of the time.
+  "tasks": [
+    {
+      "label": "sim (this lesson)",
+      "type": "shell",
+      "command": "make sim",
+      "options": { "cwd": "${fileDirname}" },
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": ["$iverilog"]
+    },
+    {
+      "label": "wave (this lesson)",
+      "type": "shell",
+      "command": "make wave",
+      "options": { "cwd": "${fileDirname}" },
+      "presentation": { "reveal": "silent", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "lint (this lesson)",
+      "type": "shell",
+      "command": "make lint",
+      "options": { "cwd": "${fileDirname}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": ["$verilator"]
+    },
+    {
+      "label": "synth — resource report (this lesson)",
+      "type": "shell",
+      "command": "make synth",
+      "options": { "cwd": "${fileDirname}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "bit — place & route (this lesson)",
+      "type": "shell",
+      "command": "make bit",
+      "options": { "cwd": "${fileDirname}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "prog — load to board SRAM (this lesson)",
+      "type": "shell",
+      "command": "make prog",
+      "options": { "cwd": "${fileDirname}" },
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "flash — write to board SPI flash (this lesson)",
+      "type": "shell",
+      "command": "make flash",
+      "options": { "cwd": "${fileDirname}" },
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "clean (this lesson)",
+      "type": "shell",
+      "command": "make clean",
+      "options": { "cwd": "${fileDirname}" },
+      "presentation": { "reveal": "silent", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "sim ALL lessons (regression)",
+      "type": "shell",
+      "command": "make sim-all",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": ["$iverilog"]
+    },
+    {
+      "label": "docs — serve the book locally",
+      "type": "shell",
+      "command": "make docs-serve",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    }
+  ],
+  // Clickable errors: iverilog and verilator report positions differently.
+  "inputs": [],
+  "problemMatchers": [
+    {
+      "name": "iverilog",
+      "owner": "verilog",
+      "fileLocation": ["relative", "${fileDirname}"],
+      "pattern": {
+        "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+        "file": 1, "line": 2, "severity": 3, "message": 4
+      }
+    },
+    {
+      "name": "verilator",
+      "owner": "verilog",
+      "fileLocation": ["relative", "${fileDirname}"],
+      "pattern": {
+        "regexp": "^%(Error|Warning)[^:]*:\\s*(.+?):(\\d+):(\\d+):\\s*(.*)$",
+        "severity": 1, "file": 2, "line": 3, "column": 4, "message": 5
+      }
+    }
+  ]
+}

@@ -1,7 +1,44 @@
+# Toolchain is downloaded by tools/install.sh, never committed (~1 GB).
 toolchain/
+
+# Simulation and synthesis products.
 *.vvp
 *.vcd
-*.json
+*.fst
 *.config
 *.bit
+*.dot
+*.svg
+*.out
+
+# yosys netlists are .json; the "!" rules below keep real source .json files.
+# NB: gitignore only treats '#' as a comment at the START of a line, so never
+# put an explanatory comment after a pattern — it silently becomes part of it.
+*.json
+!**/icestudio/*.json
+!**/diagrams/*.wave.json
+!icestudio/collections/**/*.json
+!.vscode/*.json
+!docs/*.json
+
+# Diagrams are committed even when generated: a reader on GitHub, or anyone
+# who has not run tools/mkwave.sh, still needs to see the pictures.
+!docs/diagrams/*.svg
+!**/diagrams/*.svg
+
+# Generated docs.
+docs/book/
+docs/src/lessons/
+
+# Icestudio / apio build output.
+**/_build/
+.icestudio/
+
+# RISC-V software build output (lesson 13+).
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+
 .DS_Store

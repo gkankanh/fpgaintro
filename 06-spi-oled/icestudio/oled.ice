@@ -1,0 +1,313 @@
+{
+  "version": "1.2",
+  "package": {
+    "name": "oled",
+    "version": "1.0",
+    "description": "Lesson 06 - SPI engine, SSD1331 init ROM, computed gradient.",
+    "author": "ULX3S Digital Design Course",
+    "image": ""
+  },
+  "design": {
+    "board": "ulx3s-85f",
+    "graph": {
+      "blocks": [
+        {
+          "id": "335751eb-f87c-42c6-8868-d7ca11fb907a",
+          "type": "basic.input",
+          "data": {
+            "name": "clk_25mhz",
+            "pins": [
+              {
+                "index": "0",
+                "name": "clk",
+                "value": "G2"
+              }
+            ],
+            "virtual": false
+          },
+          "position": {
+            "x": 48,
+            "y": 48
+          }
+        },
+        {
+          "id": "aea574e9-e53d-4989-9808-0727f499d0d5",
+          "type": "basic.output",
+          "data": {
+            "name": "oled_csn",
+            "pins": [
+              {
+                "index": "0",
+                "name": "oled_csn",
+                "value": "N2"
+              }
+            ],
+            "virtual": false
+          },
+          "position": {
+            "x": 816,
+            "y": 48
+          }
+        },
+        {
+          "id": "a5117507-6a10-4845-86fc-c5c122fe18ad",
+          "type": "basic.output",
+          "data": {
+            "name": "oled_resn",
+            "pins": [
+              {
+                "index": "0",
+                "name": "oled_resn",
+                "value": "P2"
+              }
+            ],
+            "virtual": false
+          },
+          "position": {
+            "x": 816,
+            "y": 168
+          }
+        },
+        {
+          "id": "205c7e98-9c12-4035-81cf-576fc15cc4b1",
+          "type": "basic.output",
+          "data": {
+            "name": "oled_dc",
+            "pins": [
+              {
+                "index": "0",
+                "name": "oled_dc",
+                "value": "P1"
+              }
+            ],
+            "virtual": false
+          },
+          "position": {
+            "x": 816,
+            "y": 288
+          }
+        },
+        {
+          "id": "663e2f4c-69fe-421a-9818-ca7181b026b8",
+          "type": "basic.output",
+          "data": {
+            "name": "oled_clk",
+            "pins": [
+              {
+                "index": "0",
+                "name": "oled_clk",
+                "value": "P4"
+              }
+            ],
+            "virtual": false
+          },
+          "position": {
+            "x": 816,
+            "y": 408
+          }
+        },
+        {
+          "id": "a6c411f5-3c77-4530-bbd7-4d55299d27fc",
+          "type": "basic.output",
+          "data": {
+            "name": "oled_mosi",
+            "pins": [
+              {
+                "index": "0",
+                "name": "oled_mosi",
+                "value": "P3"
+              }
+            ],
+            "virtual": false
+          },
+          "position": {
+            "x": 816,
+            "y": 528
+          }
+        },
+        {
+          "id": "0d0d852f-5566-440c-aceb-59a1d4f67970",
+          "type": "basic.output",
+          "data": {
+            "name": "led",
+            "pins": [
+              {
+                "index": "7",
+                "name": "led_7",
+                "value": "H3"
+              },
+              {
+                "index": "6",
+                "name": "led_6",
+                "value": "E1"
+              },
+              {
+                "index": "5",
+                "name": "led_5",
+                "value": "E2"
+              },
+              {
+                "index": "4",
+                "name": "led_4",
+                "value": "D1"
+              },
+              {
+                "index": "3",
+                "name": "led_3",
+                "value": "D2"
+              },
+              {
+                "index": "2",
+                "name": "led_2",
+                "value": "C1"
+              },
+              {
+                "index": "1",
+                "name": "led_1",
+                "value": "C2"
+              },
+              {
+                "index": "0",
+                "name": "led_0",
+                "value": "B2"
+              }
+            ],
+            "virtual": false,
+            "range": "[7:0]"
+          },
+          "position": {
+            "x": 816,
+            "y": 648
+          }
+        },
+        {
+          "id": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+          "type": "basic.code",
+          "data": {
+            "code": "assign oled_csn = 1'b0;          // sole device on the bus: keep selected\n\n// ---------------- init ROM: SSD1331 datasheet power-up sequence ----------\nlocalparam ROM_LEN = 31;\nreg [7:0] rom [0:ROM_LEN-1];\ninitial begin\n    rom[ 0]=8'hAE;                            // display off\n    rom[ 1]=8'hA0; rom[ 2]=8'h72;             // remap: RGB order, 65k color\n    rom[ 3]=8'hA1; rom[ 4]=8'h00;             // start line 0\n    rom[ 5]=8'hA2; rom[ 6]=8'h00;             // display offset 0\n    rom[ 7]=8'hA4;                            // normal display\n    rom[ 8]=8'hA8; rom[ 9]=8'h3F;             // multiplex 1/64\n    rom[10]=8'hAD; rom[11]=8'h8E;             // master configuration\n    rom[12]=8'hB0; rom[13]=8'h0B;             // power save off\n    rom[14]=8'hB1; rom[15]=8'h31;             // phase 1/2 period\n    rom[16]=8'hB3; rom[17]=8'hF0;             // display clock divide\n    rom[18]=8'hBB; rom[19]=8'h3A;             // precharge level\n    rom[20]=8'hBE; rom[21]=8'h3E;             // VCOMH\n    rom[22]=8'h87; rom[23]=8'h06;             // master current\n    rom[24]=8'hAF;                            // display ON\n    rom[25]=8'h15; rom[26]=8'h00; rom[27]=8'h5F; // column window 0..95\n    rom[28]=8'h75; rom[29]=8'h00; rom[30]=8'h3F; // row window 0..63\nend\n\n// ---------------- byte-level SPI engine (mode 3-ish, MSB first) ----------\n// Each bit takes 4 system clocks -> SCLK = 6.25 MHz (SSD1331 max ~6.6 MHz).\nreg  [7:0] shift;\nreg  [1:0] phase = 0;\nreg  [2:0] bitn  = 0;\nreg        busy  = 0;\nreg        start = 0;\nreg  [7:0] data;\n\nalways @(posedge clk_25mhz) begin\n    if (!busy) begin\n        if (start) begin\n            shift <= data; busy <= 1; phase <= 0; bitn <= 0;\n        end\n    end else begin\n        phase <= phase + 1'b1;\n        case (phase)\n            2'd0: begin oled_clk <= 0; oled_mosi <= shift[7]; end\n            2'd2: oled_clk <= 1;\n            2'd3: begin\n                shift <= {shift[6:0], 1'b0};\n                bitn  <= bitn + 1'b1;\n                if (bitn == 3'd7) busy <= 0;\n            end\n        endcase\n    end\nend\n\n// ---------------- top-level sequencer ------------------------------------\nlocalparam S_RESET = 0, S_WAIT = 1, S_INIT = 2, S_PIXEL = 3;\nreg [1:0]  state = S_RESET;\nreg [15:0] wait_cnt = 0;\nreg [4:0]  rom_i = 0;\n\nreg [6:0] x = 0;                 // 0..95\nreg [5:0] y = 0;                 // 0..63\nreg [7:0] frame = 0;\nreg       lohi = 0;              // which half of the 16-bit pixel\n\n// RGB565 gradient: red follows x, green follows y, blue breathes per frame\nwire [15:0] pixel = { x[6:2], y[5:0], frame[7:3] };\n\nalways @(posedge clk_25mhz) begin\n    start <= 0;\n    case (state)\n        S_RESET: begin\n            oled_resn <= 0;\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt[11:0]) begin oled_resn <= 1; state <= S_WAIT; wait_cnt <= 0; end\n        end\n        S_WAIT: begin                        // let the chip wake after reset\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt) state <= S_INIT;  // ~2.6 ms\n        end\n        S_INIT: if (!busy && !start) begin\n            oled_dc <= 0;\n            data    <= rom[rom_i];\n            start   <= 1;\n            if (rom_i == ROM_LEN-1) state <= S_PIXEL;\n            rom_i   <= rom_i + 1'b1;\n        end\n        S_PIXEL: if (!busy && !start) begin\n            oled_dc <= 1;\n            data    <= lohi ? pixel[7:0] : pixel[15:8];\n            start   <= 1;\n            lohi    <= ~lohi;\n            if (lohi) begin                  // finished low byte -> next pixel\n                if (x == 7'd95) begin\n                    x <= 0;\n                    if (y == 6'd63) begin y <= 0; frame <= frame + 1'b1; end\n                    else            y <= y + 1'b1;\n                end else x <= x + 1'b1;\n            end\n        end\n    endcase\nend\n\nassign led = {state, frame[7:2]};   // debug: state + frame counter\n",
+            "params": [],
+            "ports": {
+              "in": [
+                {
+                  "name": "clk_25mhz"
+                }
+              ],
+              "out": [
+                {
+                  "name": "oled_csn"
+                },
+                {
+                  "name": "oled_resn"
+                },
+                {
+                  "name": "oled_dc"
+                },
+                {
+                  "name": "oled_clk"
+                },
+                {
+                  "name": "oled_mosi"
+                },
+                {
+                  "name": "led",
+                  "range": "[7:0]",
+                  "size": 8
+                }
+              ]
+            }
+          },
+          "position": {
+            "x": 384,
+            "y": 48
+          }
+        },
+        {
+          "id": "4042e686-f340-4f62-8cac-a9d8c547f064",
+          "type": "basic.info",
+          "data": {
+            "info": "## Lesson 06 - SPI and the OLED\n\nThree pieces stacked:\n\n1. a **bit-level SPI engine** - 4 system clocks per bit, so SCLK = 6.25 MHz\n2. a **31-byte init ROM** from the SSD1331 datasheet\n3. a **pixel source** that computes each pixel from its coordinate\n\nThe only interface between (1) and (3) is the `busy`/`start` handshake, which is why the sequencer needs to know nothing about SPI timing.\n\nThere is no framebuffer: the SSD1331 auto-increments its own address pointer, so the design only has to emit bytes in raster order.",
+            "readonly": true
+          },
+          "position": {
+            "x": 48,
+            "y": 832
+          }
+        }
+      ],
+      "wires": [
+        {
+          "source": {
+            "block": "335751eb-f87c-42c6-8868-d7ca11fb907a",
+            "port": "out"
+          },
+          "target": {
+            "block": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+            "port": "clk_25mhz"
+          }
+        },
+        {
+          "source": {
+            "block": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+            "port": "oled_csn"
+          },
+          "target": {
+            "block": "aea574e9-e53d-4989-9808-0727f499d0d5",
+            "port": "in"
+          }
+        },
+        {
+          "source": {
+            "block": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+            "port": "oled_resn"
+          },
+          "target": {
+            "block": "a5117507-6a10-4845-86fc-c5c122fe18ad",
+            "port": "in"
+          }
+        },
+        {
+          "source": {
+            "block": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+            "port": "oled_dc"
+          },
+          "target": {
+            "block": "205c7e98-9c12-4035-81cf-576fc15cc4b1",
+            "port": "in"
+          }
+        },
+        {
+          "source": {
+            "block": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+            "port": "oled_clk"
+          },
+          "target": {
+            "block": "663e2f4c-69fe-421a-9818-ca7181b026b8",
+            "port": "in"
+          }
+        },
+        {
+          "source": {
+            "block": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+            "port": "oled_mosi"
+          },
+          "target": {
+            "block": "a6c411f5-3c77-4530-bbd7-4d55299d27fc",
+            "port": "in"
+          }
+        },
+        {
+          "source": {
+            "block": "f5fc15c1-63d2-4005-948b-9ba8414b8d36",
+            "port": "led"
+          },
+          "target": {
+            "block": "0d0d852f-5566-440c-aceb-59a1d4f67970",
+            "port": "in"
+          },
+          "size": 8
+        }
+      ]
+    }
+  },
+  "dependencies": {}
+}

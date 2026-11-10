@@ -1,0 +1,79 @@
+{
+  // ---------------------------------------------------------------------
+  //  Toolchain on PATH
+  //
+  //  The Verilog extension does NOT expand ${workspaceFolder}, so instead
+  //  of hardcoding a path that is only right on one machine, we put the
+  //  bundled toolchain on PATH for integrated terminals and tasks, and
+  //  leave "verilog.linting.path" empty so the linter is found there.
+  //
+  //  Caveat: extensions inherit the PATH that VS Code itself was launched
+  //  with, not the terminal's. If linting shows nothing, launch the editor
+  //  with  ./tools/code.sh  (sources the toolchain, then opens this folder),
+  //  or set verilog.linting.path to an absolute path in your USER settings.
+  // ---------------------------------------------------------------------
+  "terminal.integrated.env.osx": {
+    "PATH": "${workspaceFolder}/toolchain/oss-cad-suite/bin:${env:PATH}"
+  },
+  "terminal.integrated.env.linux": {
+    "PATH": "${workspaceFolder}/toolchain/oss-cad-suite/bin:${env:PATH}"
+  },
+
+  // ------------------------------- Verilog ------------------------------
+  // Verilator is the stricter of the two linters: it flags implicit widths,
+  // unintended latches and combinational loops. iverilog is kinder but only
+  // catches outright syntax errors.
+  "verilog.linting.linter": "verilator",
+  "verilog.linting.path": "",
+  "verilog.linting.verilator.arguments": "-Wall --timing",
+  "verilog.linting.iverilog.verilogHDL.standard": "Verilog-2005",
+  "verilog.ctags.enabled": false,
+
+  "[verilog]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.rulers": [80],
+    "editor.detectIndentation": false
+  },
+  "[systemverilog]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.rulers": [80]
+  },
+  "files.associations": {
+    "*.v": "verilog",
+    "*.vh": "verilog",
+    "*.sv": "systemverilog",
+    "*.svh": "systemverilog",
+    "*.lpf": "properties",
+    "*.gtkw": "ini",
+    "*.S": "riscv",
+    "lesson.mk": "makefile"
+  },
+
+  // Build products are noise in the explorer and in search.
+  "files.exclude": {
+    "**/*.vvp": true,
+    "**/*.config": true,
+    "toolchain": true
+  },
+  "search.exclude": {
+    "toolchain": true,
+    "docs/book": true,
+    "**/*.vcd": true
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // --------------------------------- Docs -------------------------------
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.rulers": [80],
+    "files.trimTrailingWhitespace": false
+  },
+  "markdownlint.config": {
+    "MD013": false,   // long lines are fine in tables
+    "MD033": false,   // inline HTML for diagrams
+    "MD041": false
+  }
+}

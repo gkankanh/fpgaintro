@@ -1,0 +1,26 @@
+/* Course-specific tweaks on top of the default mdBook theme.
+   Kept small on purpose: the content is the point. */
+
+/* Verilog listings are wide; give them room and a readable size. */
+pre code { font-size: 0.92em; line-height: 1.45; }
+
+/* Diagrams: never let a schematic overflow, and make sure hand-authored
+   SVGs that rely on currentColor inherit the theme's text colour. */
+.content img, .content svg { max-width: 100%; height: auto; }
+.content svg { color: var(--fg); }
+
+/* The lessons use these three callouts consistently.
+   > **Why this matters** ... / > **Watch out** ... / > **Try it** ...  */
+blockquote {
+  border-left: 4px solid var(--searchbar-border-color);
+  background: var(--quote-bg);
+  padding: 0.6em 1em;
+}
+
+/* PASS/FAIL lines in captured terminal output should stand out. */
+code.pass { color: #1a7f37; font-weight: 600; }
+code.fail { color: #cf222e; font-weight: 600; }
+
+/* Tables of signals/pins are common; keep them compact. */
+.content table { display: table; width: 100%; font-size: 0.94em; }
+.content table td, .content table th { padding: 0.3em 0.6em; }

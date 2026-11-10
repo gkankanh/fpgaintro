@@ -1,0 +1,16 @@
+{ "signal": [
+    { "name": "clk_25mhz", "wave": "p................" },
+    {},
+    { "name": "phase[1:0]", "wave": "2222222222222222.",
+      "data": ["0","1","2","3","0","1","2","3","0","1","2","3","0","1","2","3"] },
+    { "name": "oled_clk",  "wave": "l..h..l..h..l..h.",
+      "node": ".....a" },
+    { "name": "oled_mosi", "wave": "x2...2...2...2...",
+      "data": ["b7","b6","b5","b4"] },
+    {},
+    { "name": "oled_dc",   "wave": "2................", "data": ["0 = command"] },
+    { "name": "busy",      "wave": "01..............." }
+  ],
+  "head": { "text": "One SPI byte: 4 system clocks per bit, SCLK = 6.25 MHz, MSB first" },
+  "foot": { "text": "MOSI is driven on phase 0; the SSD1331 samples on the rising edge at phase 2" }
+}

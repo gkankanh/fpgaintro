@@ -1,0 +1,21 @@
+{
+  "name": "oled",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "ULX3S Digital Design Course",
+  "description": "Lesson 06 - SPI engine, SSD1331 init ROM, computed gradient.",
+  "from": { "file": "../oled_top.v", "module": "oled_top" },
+  "inputs": [
+    { "port": "clk_25mhz", "pin": "clk", "label": "clk_25mhz" }
+  ],
+  "outputs": [
+    { "port": "oled_csn",  "pin": "oled_csn",  "label": "oled_csn" },
+    { "port": "oled_resn", "pin": "oled_resn", "label": "oled_resn" },
+    { "port": "oled_dc",   "pin": "oled_dc",   "label": "oled_dc" },
+    { "port": "oled_clk",  "pin": "oled_clk",  "label": "oled_clk" },
+    { "port": "oled_mosi", "pin": "oled_mosi", "label": "oled_mosi" },
+    { "port": "led", "label": "led",
+      "pins": ["led_7","led_6","led_5","led_4","led_3","led_2","led_1","led_0"] }
+  ],
+  "info": "## Lesson 06 - SPI and the OLED\n\nThree pieces stacked:\n\n1. a **bit-level SPI engine** - 4 system clocks per bit, so SCLK = 6.25 MHz\n2. a **31-byte init ROM** from the SSD1331 datasheet\n3. a **pixel source** that computes each pixel from its coordinate\n\nThe only interface between (1) and (3) is the `busy`/`start` handshake, which is why the sequencer needs to know nothing about SPI timing.\n\nThere is no framebuffer: the SSD1331 auto-increments its own address pointer, so the design only has to emit bytes in raster order."
+}

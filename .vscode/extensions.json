@@ -1,0 +1,13 @@
+{
+  // VS Code offers to install these the first time you open the folder.
+  "recommendations": [
+    "mshr-h.veriloghdl",            // Verilog/SystemVerilog: syntax, linting, hover
+    "ms-vscode.makefile-tools",     // run lesson Makefile targets from the UI
+    "wavetrace.wavetrace",          // view .vcd waveforms inside the editor
+    "surfer-project.surfer",        // alternative waveform viewer (handles big VCDs)
+    "zhwu95.riscv",                 // RISC-V assembly highlighting (lessons 11+)
+    "yzhang.markdown-all-in-one",   // writing the lesson docs
+    "davidanson.vscode-markdownlint"
+  ],
+  "unwantedRecommendations": []
+}
