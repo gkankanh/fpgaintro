@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 436" role="img"
+     aria-label="The six RISC-V instruction formats, R I S B U and J, drawn as 32-bit fields. The opcode is always bits 6 to 0, rs1 always bits 19 to 15, rs2 always 24 to 20, rd always 11 to 7. Only the immediate fields move between formats.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .f  { fill:var(--panel); stroke:var(--ink); stroke-width:1; }
+    .fi { fill:#fff3d6;      stroke:var(--warm); stroke-width:1; }
+    .fl { fill:var(--ink); font:10px ui-monospace,monospace; }
+    .rn { fill:var(--accent); font:bold 13px ui-sans-serif,system-ui,sans-serif; }
+    .bn { fill:var(--mute); font:9px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .tw { fill:var(--warm); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <text class="bn" x="54" y="44">31</text>
+  <text class="bn" x="192" y="44">25</text>
+  <text class="bn" x="307" y="44">20</text>
+  <text class="bn" x="422" y="44">15</text>
+  <text class="bn" x="491" y="44">12</text>
+  <text class="bn" x="606" y="44">7</text>
+  <text class="bn" x="780" y="44">0</text>
+  <text class="rn" x="14" y="96">R</text>
+  <rect class="f" x="54.0" y="74" width="161.0" height="34"/>
+  <text class="fl" x="134.5" y="96" text-anchor="middle">funct7</text>
+  <rect class="f" x="215.0" y="74" width="115.0" height="34"/>
+  <text class="fl" x="272.5" y="96" text-anchor="middle">rs2</text>
+  <rect class="f" x="330.0" y="74" width="115.0" height="34"/>
+  <text class="fl" x="387.5" y="96" text-anchor="middle">rs1</text>
+  <rect class="f" x="445.0" y="74" width="69.0" height="34"/>
+  <text class="fl" x="479.5" y="96" text-anchor="middle">funct3</text>
+  <rect class="f" x="514.0" y="74" width="115.0" height="34"/>
+  <text class="fl" x="571.5" y="96" text-anchor="middle">rd</text>
+  <rect class="f" x="629.0" y="74" width="161.0" height="34"/>
+  <text class="fl" x="709.5" y="96" text-anchor="middle">opcode</text>
+  <text class="rn" x="14" y="142">I</text>
+  <rect class="fi" x="54.0" y="120" width="276.0" height="34"/>
+  <text class="fl" x="192.0" y="142" text-anchor="middle">imm[11:0]</text>
+  <rect class="f" x="330.0" y="120" width="115.0" height="34"/>
+  <text class="fl" x="387.5" y="142" text-anchor="middle">rs1</text>
+  <rect class="f" x="445.0" y="120" width="69.0" height="34"/>
+  <text class="fl" x="479.5" y="142" text-anchor="middle">funct3</text>
+  <rect class="f" x="514.0" y="120" width="115.0" height="34"/>
+  <text class="fl" x="571.5" y="142" text-anchor="middle">rd</text>
+  <rect class="f" x="629.0" y="120" width="161.0" height="34"/>
+  <text class="fl" x="709.5" y="142" text-anchor="middle">opcode</text>
+  <text class="rn" x="14" y="188">S</text>
+  <rect class="fi" x="54.0" y="166" width="161.0" height="34"/>
+  <text class="fl" x="134.5" y="188" text-anchor="middle">imm[11:5]</text>
+  <rect class="f" x="215.0" y="166" width="115.0" height="34"/>
+  <text class="fl" x="272.5" y="188" text-anchor="middle">rs2</text>
+  <rect class="f" x="330.0" y="166" width="115.0" height="34"/>
+  <text class="fl" x="387.5" y="188" text-anchor="middle">rs1</text>
+  <rect class="f" x="445.0" y="166" width="69.0" height="34"/>
+  <text class="fl" x="479.5" y="188" text-anchor="middle">funct3</text>
+  <rect class="fi" x="514.0" y="166" width="115.0" height="34"/>
+  <text class="fl" x="571.5" y="188" text-anchor="middle">imm[4:0]</text>
+  <rect class="f" x="629.0" y="166" width="161.0" height="34"/>
+  <text class="fl" x="709.5" y="188" text-anchor="middle">opcode</text>
+  <text class="rn" x="14" y="234">B</text>
+  <rect class="fi" x="54.0" y="212" width="23.0" height="34"/>
+  <text class="fl" x="65.5" y="234" text-anchor="middle">[12]</text>
+  <rect class="fi" x="77.0" y="212" width="138.0" height="34"/>
+  <text class="fl" x="146.0" y="234" text-anchor="middle">imm[10:5]</text>
+  <rect class="f" x="215.0" y="212" width="115.0" height="34"/>
+  <text class="fl" x="272.5" y="234" text-anchor="middle">rs2</text>
+  <rect class="f" x="330.0" y="212" width="115.0" height="34"/>
+  <text class="fl" x="387.5" y="234" text-anchor="middle">rs1</text>
+  <rect class="f" x="445.0" y="212" width="69.0" height="34"/>
+  <text class="fl" x="479.5" y="234" text-anchor="middle">funct3</text>
+  <rect class="fi" x="514.0" y="212" width="92.0" height="34"/>
+  <text class="fl" x="560.0" y="234" text-anchor="middle">imm[4:1]</text>
+  <rect class="fi" x="606.0" y="212" width="23.0" height="34"/>
+  <text class="fl" x="617.5" y="234" text-anchor="middle">[11]</text>
+  <rect class="f" x="629.0" y="212" width="161.0" height="34"/>
+  <text class="fl" x="709.5" y="234" text-anchor="middle">opcode</text>
+  <text class="rn" x="14" y="280">U</text>
+  <rect class="fi" x="54.0" y="258" width="460.0" height="34"/>
+  <text class="fl" x="284.0" y="280" text-anchor="middle">imm[31:12]</text>
+  <rect class="f" x="514.0" y="258" width="115.0" height="34"/>
+  <text class="fl" x="571.5" y="280" text-anchor="middle">rd</text>
+  <rect class="f" x="629.0" y="258" width="161.0" height="34"/>
+  <text class="fl" x="709.5" y="280" text-anchor="middle">opcode</text>
+  <text class="rn" x="14" y="326">J</text>
+  <rect class="fi" x="54.0" y="304" width="23.0" height="34"/>
+  <text class="fl" x="65.5" y="326" text-anchor="middle">[20]</text>
+  <rect class="fi" x="77.0" y="304" width="230.0" height="34"/>
+  <text class="fl" x="192.0" y="326" text-anchor="middle">imm[10:1]</text>
+  <rect class="fi" x="307.0" y="304" width="23.0" height="34"/>
+  <text class="fl" x="318.5" y="326" text-anchor="middle">[11]</text>
+  <rect class="fi" x="330.0" y="304" width="184.0" height="34"/>
+  <text class="fl" x="422.0" y="326" text-anchor="middle">imm[19:12]</text>
+  <rect class="f" x="514.0" y="304" width="115.0" height="34"/>
+  <text class="fl" x="571.5" y="326" text-anchor="middle">rd</text>
+  <rect class="f" x="629.0" y="304" width="161.0" height="34"/>
+  <text class="fl" x="709.5" y="326" text-anchor="middle">opcode</text>
+  <text class="t"  x="14" y="372">The opcode never moves, and neither do rs1, rs2 or rd. Only the shaded immediate fields are rearranged.</text>
+  <text class="tw" x="14" y="390">Every format puts its SIGN BIT in bit 31 — so sign extension needs no multiplexer at all.</text>
+  <text class="t"  x="14" y="408">B and J look shuffled because bit positions were chosen to stay aligned ACROSS formats, not in order within one.</text>
+</svg>

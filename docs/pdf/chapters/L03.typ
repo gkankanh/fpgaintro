@@ -1,0 +1,143 @@
+#import "../style.typ": *
+
+= Lesson 03 — Sequential logic
+
+#goals(
+  concept: [The flip-flop — the only component that makes time exist.],
+  build: [A debounced button that increments a counter exactly once per press.],
+  needs: [Lesson 02. A board makes the point far better.],
+)[
+  - Explain `<=` versus `=` as two different circuits, not as a style rule.
+  - Design a debouncer, and choose its time constant from first principles.
+  - Turn a level into a one-clock pulse, and know when you need to.
+  - Distinguish the missing `else` that is a latch from the one that is not.
+]
+
+== The idea
+
+Everything so far had no memory. A D flip-flop changes that: on each rising
+clock edge it samples its input and holds that value until the next edge.
+
+#strong[Nothing else in this course stores a bit.] A register, a shift
+register, a counter, a state machine and a 32-bit CPU are all arrangements of
+flip-flops with combinational logic deciding what goes into them.
+
+== Theory
+
+=== `<=` versus `=`, as two circuits
+
+The same three-stage shift register, written twice:
+
+#grid(columns: (1fr, 1fr), gutter: 10pt,
+  ```verilog
+  always @(posedge clk) begin
+      a <= d;
+      b <= a;   // the OLD a
+      c <= b;   // the OLD b
+  end
+  ```,
+  ```verilog
+  always @(posedge clk) begin
+      a = d;
+      b = a;    // the NEW a
+      c = b;    // the NEW b
+  end
+  ```
+)
+
+#strong[Non-blocking] evaluates every right-hand side before updating any
+left-hand side, so each stage samples what its neighbour held at the start of
+the edge. A pulse walks along: stage `a` after one clock, `b` after two, `c`
+after three.
+
+#strong[Blocking] takes effect immediately, so each line sees the result of the
+line above. All three registers load the same value on the same edge. The delay
+line is gone.
+
+#measured("the bug, as a number")[
+  #ttable(
+    columns: (auto, auto),
+    [`shift_nonblocking`], [#strong[3] flip-flops],
+    [`shift_blocking`],    [#strong[1] flip-flop],
+  )
+  One flip-flop. The synthesiser worked out that `b` and `c` always equal `a`,
+  built one register and wired its output three ways.
+]
+
+#watch[
+  Nothing warns. It compiles, it simulates, it synthesises, and `make lint` is
+  quiet. The three-stage delay you asked for became a one-stage delay, and the
+  only ways to notice are to know the rule or to count the flip-flops. This is
+  the most common serious mistake in Verilog.
+]
+
+=== A switch is not a digital input
+
+A button is two pieces of springy metal. When they meet they bounce apart and
+meet again — several times, over roughly 1–10 ms.
+
+At 25 MHz, 10 ms is #strong[250,000 clock cycles]. The bounce is not a blur or
+a glitch to the FPGA: it is tens of thousands of clocks of perfectly clean,
+fully sampled, entirely real transitions. #strong[One press genuinely is
+several presses], as far as the hardware can tell.
+
+#fig("/figures/debounce.svg",
+     [One press. The raw path counts three times; the debounced path counts
+      once.])
+
+Lesson 02 did not care — combinational gates just flicker, and a flickering LED
+is not a wrong answer. The moment an edge is used to #emph[count], every bounce
+counts.
+
+The defence is a saturating counter: the input must disagree with the current
+output #emph[continuously] for `COUNT` clocks before the output follows. Any
+shorter disagreement resets the timer, which rejects bounce of any pattern
+rather than only bounce shorter than one sample period. The price is latency,
+so you pick the smallest `COUNT` that comfortably exceeds the switch's bounce
+time.
+
+=== The apparent contradiction
+
+```verilog
+module reg_w #(parameter W = 32)(input clk, en, ...);
+    always @(posedge clk)
+        if (en) q <= d;      // no else
+endmodule
+```
+
+In lesson 02 an `always @(*)` block without an assignment on every path
+inferred a latch, and that was a bug. Here the identical-looking omission is
+#strong[correct].
+
+The difference is the clock. A flip-flop already holds its value between edges,
+so "assign nothing" is a real, cheap, well-defined behaviour — it is just the
+flop's enable input. In a combinational block there is no storage to fall back
+on, so the tool has to invent some.
+
+#why[
+  Same syntax, opposite meaning, decided entirely by whether the block is
+  sensitive to a clock edge or to its inputs. This is the one place the two
+  rules appear to conflict, and getting it straight here saves confusion in
+  every later lesson.
+]
+
+== What it cost
+
+#measured("every flip-flop accounted for")[
+  #ttable(
+    columns: (auto, auto),
+    [debounce: an 18-bit counter plus `clean`], [19],
+    [two edge detectors, one `prev` each],      [2],
+    [two 4-bit counters],                        [8],
+    [*total*],                                   [*29*],
+  )
+  And the nine carry cells are the debounce counter's 18-bit increment — one
+  per two bits, exactly as lesson 02 predicted.
+]
+
+== Learning outcomes
+
+Why `<=` gives three flip-flops and `=` gives one; why 10 ms of bounce is a
+quarter of a million real clock cycles; why a saturating counter beats a simple
+delay; and why `if (en) q <= d;` with no `else` is correct in a clocked block
+and a bug in a combinational one.

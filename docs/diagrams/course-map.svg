@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 624" role="img"
+     aria-label="A map of the eighteen lessons. The left column runs from blinky through logic gates, combinational and sequential logic, clocks, state machines, the OLED, memory and the UART. The right column builds the processor: ALU, register file, decode, a single-cycle core, formal verification, a system on chip, pipelining and extensions.">
+  <defs>
+    <marker id="h" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0 L7 3.5 L0 7 z" fill="#656d76"/>
+    </marker>
+  </defs>
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --panel:#161b22; }
+    }
+    .b   { fill:var(--panel); stroke:var(--ink); stroke-width:1.2; }
+    .bp  { fill:none; stroke:var(--mute); stroke-width:1.2; stroke-dasharray:4 3; }
+    .a   { stroke:var(--mute); stroke-width:1.3; fill:none; }
+    .ad  { stroke:var(--accent); stroke-width:1.5; fill:none; stroke-dasharray:5 3; }
+    .num { fill:var(--accent); font:bold 14px ui-monospace,monospace; }
+    .nm  { fill:var(--ink);  font:bold 12px ui-sans-serif,system-ui,sans-serif; }
+    .sub { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .hd  { fill:var(--ink);  font:bold 13px ui-sans-serif,system-ui,sans-serif; }
+    .ft  { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <text class="hd" x="36" y="52">Foundations</text>
+  <text class="hd" x="430" y="52">The processor</text>
+  <rect class="b" x="36" y="78" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="104">00</text>
+  <text class="nm"  x="80" y="97">blinky</text>
+  <text class="sub" x="80" y="111">clock division, the toolchain</text>
+  <rect class="b" x="36" y="128" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="154">01</text>
+  <text class="nm"  x="80" y="147">gates</text>
+  <text class="sub" x="80" y="161">AND/OR/NAND — and no gates at all</text>
+  <path class="a" d="M161 118 L161 125" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="178" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="204">02</text>
+  <text class="nm"  x="80" y="197">combinational</text>
+  <text class="sub" x="80" y="211">muxes, decoders, adders</text>
+  <path class="a" d="M161 168 L161 175" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="228" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="254">03</text>
+  <text class="nm"  x="80" y="247">sequential</text>
+  <text class="sub" x="80" y="261">the flip-flop; &lt;= versus =</text>
+  <path class="a" d="M161 218 L161 225" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="278" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="304">04</text>
+  <text class="nm"  x="80" y="297">clocks</text>
+  <text class="sub" x="80" y="311">setup/hold, PLL, metastability</text>
+  <path class="a" d="M161 268 L161 275" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="328" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="354">05</text>
+  <text class="nm"  x="80" y="347">fsm</text>
+  <text class="sub" x="80" y="361">Moore vs Mealy, state encoding</text>
+  <path class="a" d="M161 318 L161 325" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="378" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="404">06</text>
+  <text class="nm"  x="80" y="397">spi-oled</text>
+  <text class="sub" x="80" y="411">an FSM against a real datasheet</text>
+  <path class="a" d="M161 368 L161 375" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="428" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="454">07</text>
+  <text class="nm"  x="80" y="447">font-rom</text>
+  <text class="sub" x="80" y="461">ROM lookup, coordinate maths</text>
+  <path class="a" d="M161 418 L161 425" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="478" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="504">08</text>
+  <text class="nm"  x="80" y="497">memory</text>
+  <text class="sub" x="80" y="511">block RAM, and the shape that gets one</text>
+  <path class="a" d="M161 468 L161 475" marker-end="url(#h)"/>
+  <rect class="b" x="36" y="528" width="250" height="40" rx="4"/>
+  <text class="num" x="47" y="554">09</text>
+  <text class="nm"  x="80" y="547">uart</text>
+  <text class="sub" x="80" y="561">agreeing on time with no shared clock</text>
+  <path class="a" d="M161 518 L161 525" marker-end="url(#h)"/>
+  <rect class="b" x="430" y="138" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="164">10</text>
+  <text class="nm"  x="474" y="157">alu</text>
+  <text class="sub" x="474" y="171">32-bit arithmetic; exhaustive testing dies</text>
+  <rect class="b" x="430" y="188" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="214">11</text>
+  <text class="nm"  x="474" y="207">regfile</text>
+  <text class="sub" x="474" y="221">two reads, one write, and x0</text>
+  <path class="a" d="M555 178 L555 185" marker-end="url(#h)"/>
+  <rect class="b" x="430" y="238" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="264">12</text>
+  <text class="nm"  x="474" y="257">datapath</text>
+  <text class="sub" x="474" y="271">decode; why immediates look deranged</text>
+  <path class="a" d="M555 228 L555 235" marker-end="url(#h)"/>
+  <rect class="b" x="430" y="288" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="314">13</text>
+  <text class="nm"  x="474" y="307">rv32i-single</text>
+  <text class="sub" x="474" y="321">a CPU that runs real programs</text>
+  <path class="a" d="M555 278 L555 285" marker-end="url(#h)"/>
+  <rect class="bp" x="430" y="338" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="364">14</text>
+  <text class="nm"  x="474" y="357">formal</text>
+  <text class="sub" x="474" y="371">proof, not 24 passing checks</text>
+  <path class="a" d="M555 328 L555 335" marker-end="url(#h)"/>
+  <rect class="bp" x="430" y="388" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="414">15</text>
+  <text class="nm"  x="474" y="407">soc</text>
+  <text class="sub" x="474" y="421">memory map; your CPU runs C</text>
+  <path class="a" d="M555 378 L555 385" marker-end="url(#h)"/>
+  <rect class="bp" x="430" y="438" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="464">16</text>
+  <text class="nm"  x="474" y="457">pipeline</text>
+  <text class="sub" x="474" y="471">5 stages, hazards, forwarding</text>
+  <path class="a" d="M555 428 L555 435" marker-end="url(#h)"/>
+  <rect class="bp" x="430" y="488" width="250" height="40" rx="4"/>
+  <text class="num" x="441" y="514">17</text>
+  <text class="nm"  x="474" y="507">extensions</text>
+  <text class="sub" x="474" y="521">CSRs, traps, interrupts, M</text>
+  <path class="a" d="M555 478 L555 485" marker-end="url(#h)"/>
+  <path class="a" d="M286 498 L426 158" marker-end="url(#h)"/>
+  <path class="ad" d="M286 548 L426 408" marker-end="url(#h)"/>
+  <text class="ft" x="36" y="596">Solid boxes are written and verified. Dashed boxes have settled scope and are being built in order.</text>
+  <text class="ft" x="36" y="612">The blue arrow is lesson 09’s UART becoming the processor’s console in lesson 15.</text>
+</svg>

@@ -10,6 +10,7 @@
 #      tools/install.sh                 # the FPGA toolchain (required)
 #      tools/install.sh --with-riscv    # + a RISC-V C compiler (lesson 13+)
 #      tools/install.sh --with-docs     # + mdbook, to build the lesson site
+#      tools/install.sh --with-pdf      # + typst, to build the course book
 #      tools/install.sh --all           # everything
 #
 #  The lessons themselves need only the base install. The extras are called
@@ -21,6 +22,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TC="$ROOT/toolchain"
 WITH_RISCV=0
 WITH_DOCS=0
+WITH_PDF=0
 
 for a in "$@"; do
   case "$a" in
@@ -114,6 +116,18 @@ if [ "$WITH_DOCS" = 1 ]; then
   else note "install Rust (rustup.rs) then: cargo install mdbook"; fi
 fi
 
-# ------------------------------------------------------------- 4. verify ----
+# -------------------------------------------------------------- 4. typst ----
+if [ "$WITH_PDF" = 1 ]; then
+  say "Installing typst (typesets the course book)"
+  if command -v typst >/dev/null; then note "already installed: $(typst --version)"
+  elif command -v brew  >/dev/null; then brew install typst
+  elif command -v cargo >/dev/null; then cargo install --locked typst-cli
+  else
+    note "no package manager found. typst is a single binary:"
+    note "  https://github.com/typst/typst/releases"
+  fi
+fi
+
+# ------------------------------------------------------------- 5. verify ----
 say "Verifying"
 exec "$ROOT/tools/check.sh"

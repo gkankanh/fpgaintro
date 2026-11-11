@@ -40,6 +40,20 @@ works this way: `make sim L=5`, `make wave L=3`, `make synth L=2`.
 Nothing is installed system-wide and nothing needs `sudo`. Deleting
 `toolchain/` undoes the entire install.
 
+## The book
+
+A single PDF covering the theory and learning goals of every lesson, the ULX3S
+and what is inside it, credits to the projects this stands on, installation,
+and how to run the exercises:
+
+    docs/pdf/book.pdf          63 pages
+
+Rebuild it with `make pdf` (needs [Typst](https://typst.app), one binary:
+`tools/install.sh --with-pdf`). Every diagram in it is vector, not rasterised.
+
+The book is the theory companion; the per-lesson `README.md` files are the
+hands-on instructions. Neither repeats the other.
+
 ## Curriculum
 
 | # | Lesson | Concept | Deliverable | Paths |
@@ -139,13 +153,17 @@ common/
 docs/
   book.toml, src/             mdBook site built from the lesson READMEs
   diagrams/                   hand-authored SVG (block diagrams, datapaths)
+  pdf/                        the course book: book.typ, chapters/, style.typ
 tools/
   install.sh                  one-command setup on a fresh machine
   check.sh                    verify the toolchain, smoke-test lesson 00
   code.sh                     launch VS Code with the toolchain on PATH
   mkice.py                    generate Icestudio projects from Verilog
   mkwave.sh                   render WaveDrom timing diagrams to SVG
-  mkdocs.sh                   build the lesson book
+  mkdocs.sh                   build the HTML lessons
+  mkpdf.sh                    build the course book (PDF)
+  svg-flatten.py              resolve CSS variables so diagrams print
+  rvasm.py                    an RV32I assembler, for lessons 13+
 toolchain/                    oss-cad-suite (downloaded, gitignored, ~1 GB)
 ```
 
@@ -157,8 +175,9 @@ make sim-all     # every lesson's testbench — the regression suite
 make lint-all    # verilator across every lesson
 make graph-all   # render every lesson as a schematic
 make ice         # regenerate Icestudio projects from their specs
-make docs        # build the book into docs/book/
-make docs-serve  # read it at http://localhost:3000
+make pdf         # build the course book -> docs/pdf/book.pdf
+make docs        # build the HTML lessons into docs/book/
+make docs-serve  # read them at http://localhost:3000
 ```
 
 ## Rules of the road

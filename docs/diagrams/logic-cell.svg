@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 330" role="img"
+     aria-label="Inside an ECP5 logic cell: four inputs address a sixteen-entry lookup table whose contents are loaded from the bitstream; its output feeds either directly out or through a flip-flop, and a dedicated carry chain runs vertically between cells.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .b  { fill:var(--panel); stroke:var(--ink); stroke-width:1.4; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .cc { stroke:var(--warm); stroke-width:2.2; fill:none; }
+    .cfg{ stroke:var(--accent); stroke-width:1.3; fill:none; stroke-dasharray:4 3; }
+    .l  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .tw { fill:var(--warm); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+
+  <text class="s" x="22" y="86">a</text><text class="s" x="22" y="110">b</text>
+  <text class="s" x="22" y="134">c</text><text class="s" x="22" y="158">d</text>
+  <path class="w" d="M34 82 H 104"/><path class="w" d="M34 106 H 104"/>
+  <path class="w" d="M34 130 H 104"/><path class="w" d="M34 154 H 104"/>
+
+  <rect class="b" x="104" y="62" width="128" height="110" rx="4"/>
+  <text class="l" x="122" y="104">LUT4</text>
+  <text class="s" x="118" y="126">16 config bits</text>
+  <text class="s" x="118" y="142">= a truth table</text>
+
+  <path class="cfg" d="M168 62 V 28"/>
+  <text class="ta" x="178" y="26">loaded from the bitstream</text>
+
+  <path class="w" d="M232 117 H 300"/>
+  <text class="s" x="246" y="110">Z</text>
+
+  <rect class="b" x="300" y="92" width="92" height="52" rx="4"/>
+  <text class="l" x="318" y="124">D   Q</text>
+  <text class="s" x="304" y="160">flip-flop</text>
+  <path class="w" d="M322 144 l7 -9 l7 9"/>
+  <text class="s" x="300" y="86">clk</text>
+  <path class="w" d="M330 92 V 76"/>
+
+  <path class="w" d="M392 118 H 452"/>
+  <path class="w" d="M266 117 V 196 H 452 V 128"/>
+  <text class="t" x="276" y="212">or straight out, unregistered</text>
+  <text class="s" x="458" y="122">out</text>
+
+  <path class="cc" d="M168 172 V 232"/>
+  <path class="cc" d="M168 62 V 10"/>
+  <text class="tw" x="180" y="236">dedicated carry chain, to the cell above and below</text>
+  <text class="tw" x="180" y="252">— this is why `a + b` is nearly free and a hand-built adder is not</text>
+
+  <text class="t" x="22" y="292">Every logic cell has a flip-flop whether the design uses it or not, which is why flip-flops are not the scarce resource.</text>
+  <text class="t" x="22" y="310">Any function of up to four inputs costs exactly one LUT4, however complicated: a 2-input AND and a 4-input XOR are the same price.</text>
+</svg>

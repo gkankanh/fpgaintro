@@ -11,7 +11,7 @@ BUILT   := $(foreach d,$(LESSONS),$(if $(wildcard $(d)/Makefile),$(d),))
 
 TOOLS   := toolchain/oss-cad-suite/bin
 
-.PHONY: help sim-all lint-all graph-all clean-all ice docs docs-serve toolchain check
+.PHONY: help sim-all lint-all graph-all clean-all ice docs docs-serve toolchain check pdf pdf-watch
 .PHONY: sim bit prog flash lint synth graph wave clean deploy list tasks
 
 help:
@@ -23,6 +23,7 @@ help:
 	@echo "  make ice         regenerate all Icestudio .ice projects from specs"
 	@echo "  make tasks       regenerate VS Code's per-lesson task list"
 	@echo "  make docs        build the lesson book into docs/book/"
+	@echo "  make pdf         build the course book (docs/pdf/book.pdf)"
 	@echo "  make docs-serve  serve the book at http://localhost:3000"
 	@echo "  make check       verify the toolchain is present and working"
 	@echo "  make clean-all   remove build products everywhere"
@@ -67,6 +68,15 @@ tasks:
 
 docs:
 	@tools/mkdocs.sh build
+
+# Build the course book: a single PDF with the theory and learning goals of
+# every lesson, the ULX3S background, credits, installation and reference.
+pdf:
+	@tools/mkpdf.sh
+
+# Rebuild the book on every save, for writing it.
+pdf-watch:
+	@tools/mkpdf.sh --watch
 
 docs-serve:
 	@tools/mkdocs.sh serve
