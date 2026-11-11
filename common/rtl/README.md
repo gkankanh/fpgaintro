@@ -37,6 +37,9 @@ only then does it become library code that other things depend on.
 |---|---|---|---|
 | `debounce` | `debounce.v` | 03-sequential | 05-fsm |
 | `edge_detect` | `debounce.v` | 03-sequential | 05-fsm |
+| `adder` | `adder.v` | 02-combinational | 10-alu |
+| `adder_ripple` | `adder.v` | 02-combinational | *(kept for comparison)* |
+| `full_adder` | `adder.v` | 02-combinational | *(builds adder_ripple)* |
 
 All of them are parameterised by width and **default to 32** — the CPU's width —
 so the CPU lessons instantiate them with no parameter at all, and the teaching

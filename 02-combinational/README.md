@@ -91,7 +91,7 @@ default: seg = 7'b0000000;
 > assign its output on some path infers a **latch**: a storage element with no
 > clock. Make the default a reflex.
 
-### Addition — [`adder.v`](./adder.v)
+### Addition — [`adder.v`](../common/rtl/adder.v)
 
 One bit of addition is two gates' worth of logic:
 
@@ -128,6 +128,12 @@ wire [W:0] sum = a + b + cin;      // W+1 bits, so the carry survives
 lesson 10's ALU is this module, and lesson 13's CPU is that ALU. The testbench
 instantiates them at `W = 4` so all 512 input combinations can be swept.
 *Default to the width you mean; narrow to the width you can prove.*
+
+> **Where this file lives** — `adder.v` started in this folder and moved to
+> [`common/rtl/`](../common/rtl/) once lesson 10's ALU needed it. A module
+> stays with its lesson while the lesson is about it, and becomes library code
+> once it is verified and used twice. There is exactly one copy, and this
+> lesson still builds unchanged.
 
 > **Watch out** — `a + b + cin` assigned to a 4-bit destination throws the carry
 > away silently. Widening the intermediate to 5 bits is what keeps it. Same
