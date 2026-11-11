@@ -30,8 +30,11 @@ toolchain/
 docs/book/
 docs/src/lessons/
 
-# Icestudio / apio build output.
+# Icestudio / apio build output. Icestudio writes ice-build/ next to the .ice
+# file when you press Build; it contains a generated main.v, main.lpf and
+# apio.ini, none of which are source.
 **/_build/
+**/ice-build/
 .icestudio/
 
 # RISC-V software build output (lesson 13+).
