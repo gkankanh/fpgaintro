@@ -1,6 +1,7 @@
 # `common/rtl/` — the promoted module library
 
-Empty until lesson 10. That is deliberate, and the rule is worth stating.
+The rule is worth stating, because it decides where every reusable module
+lives.
 
 ## The rule
 
@@ -10,8 +11,12 @@ include path — that is what makes a lesson readable on its own, on GitHub,
 offline.
 
 A module is **promoted here** once it is (a) verified by its lesson's testbench
-and (b) actually needed by more than one lesson. In practice that happens at
-lesson 10, where the CPU starts being assembled out of parts built earlier.
+and (b) actually needed by more than one lesson.
+
+This was expected to happen first at lesson 10, where the CPU gets assembled
+out of parts built earlier. It actually happened at **lesson 05**, which needed
+lesson 03's debouncer and edge detector to make its combination lock usable on
+hardware. The criterion is "used twice", not a particular lesson number.
 
 This mirrors how real projects work: you build something, you verify it, and
 only then does it become library code that other things depend on.
@@ -24,8 +29,14 @@ only then does it become library code that other things depend on.
 | `adder` | 02-combinational | 10-alu, and so the whole CPU |
 | `dec` | 02-combinational | instruction decode, address decode |
 | `reg_w` | 03-sequential | PC, instruction register, pipeline registers |
-| `edge_detect` | 03-sequential | 09-uart, peripheral handshakes |
-| `debounce` | 03-sequential | anything with a button |
+| `sync2`, `cdc_bus` | 04-clocks | any second clock domain |
+
+## What is here now
+
+| module | file | built in | first reused by |
+|---|---|---|---|
+| `debounce` | `debounce.v` | 03-sequential | 05-fsm |
+| `edge_detect` | `debounce.v` | 03-sequential | 05-fsm |
 
 All of them are parameterised by width and **default to 32** — the CPU's width —
 so the CPU lessons instantiate them with no parameter at all, and the teaching

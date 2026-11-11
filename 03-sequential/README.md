@@ -99,7 +99,7 @@ counts.
 
 ### The debouncer
 
-[`debounce.v`](./debounce.v) uses a saturating counter. The rule: the input must
+[`debounce.v`](../common/rtl/debounce.v) uses a saturating counter. The rule: the input must
 disagree with the current output **continuously** for `COUNT` clocks before the
 output follows. Any shorter disagreement resets the timer.
 
@@ -117,6 +117,12 @@ is the usual safe answer for a tactile button.
 `localparam CW = $clog2(COUNT + 1);` sizes the counter to exactly fit: 18 bits
 for 250,000. One of the few places a system function belongs in synthesisable
 code.
+
+> **Where this file lives** — `debounce.v` started in this folder and moved to
+> [`common/rtl/`](../common/rtl/) once lesson 05 needed it too. That is the
+> promotion rule: a module stays with its lesson while the lesson is about it,
+> and becomes library code once it is verified and used twice. There is exactly
+> one copy, and this lesson still builds unchanged.
 
 ### The edge detector
 

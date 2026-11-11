@@ -1,0 +1,23 @@
+{
+  "name": "traffic",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "ULX3S Digital Design Course",
+  "description": "Lesson 05 - a Moore state machine: the traffic light.",
+  "from": { "file": "../traffic.v", "module": "traffic" },
+  "params": [
+    { "name": "TICKS_RED",   "value": 4 },
+    { "name": "TICKS_GREEN", "value": 4 }
+  ],
+  "inputs": [
+    { "port": "clk",  "pin": "clk",   "label": "clk_25mhz" },
+    { "port": "rst",  "pin": "btn_5", "label": "rst" },
+    { "port": "tick", "pin": "btn_1", "label": "tick (press to advance)" }
+  ],
+  "outputs": [
+    { "port": "red",   "pin": "led_0", "label": "red" },
+    { "port": "amber", "pin": "led_1", "label": "amber" },
+    { "port": "green", "pin": "led_2", "label": "green" }
+  ],
+  "info": "## Lesson 05 - the traffic light\n\nA **Moore** state machine: the lamps depend only on which state it is in, never on the inputs.\n\nHere `tick` is wired to a button rather than a one-second timer, so you advance the machine by hand and can watch it step through RED -> RED+AMBER -> GREEN -> AMBER -> RED. The button is **not** debounced in this build, so expect one press to advance it several states - which is lesson 03's point, arriving uninvited.\n\n### The canonical shape\n\nEvery FSM in this course is written as three parts:\n\n1. a **state register** - one clocked block, nothing else in it\n2. **next-state logic** - one combinational block, a pure function\n3. **output logic** - from state alone (Moore)\n\n### The thing to notice\n\nEncoding is a choice, and it is measured rather than assumed. Forcing this machine to one-hot costs **41 LUT4** against **12** for binary - nearly four times worse, because four states is too few for one-hot's decode saving to appear. One-hot earns its keep on wide state machines, not narrow ones."
+}
