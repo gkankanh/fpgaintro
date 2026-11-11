@@ -12,7 +12,7 @@ BUILT   := $(foreach d,$(LESSONS),$(if $(wildcard $(d)/Makefile),$(d),))
 TOOLS   := toolchain/oss-cad-suite/bin
 
 .PHONY: help sim-all lint-all graph-all clean-all ice docs docs-serve toolchain check
-.PHONY: sim bit prog flash lint synth wave clean
+.PHONY: sim bit prog flash lint synth graph wave clean deploy list
 
 help:
 	@echo "ULX3S Digital Design Course"
@@ -26,8 +26,14 @@ help:
 	@echo "  make check       verify the toolchain is present and working"
 	@echo "  make clean-all   remove build products everywhere"
 	@echo ""
-	@echo "Lessons with code: $(BUILT)"
-	@echo "Then:  cd <lesson> && make sim   (see that lesson's README.md)"
+	@echo "Work on one lesson, without changing directory:"
+	@echo ""
+	@echo "  make deploy L=0  build lesson 00 and load it onto the board"
+	@echo "  make sim    L=5  simulate lesson 05"
+	@echo "  make wave   L=3  open lesson 03's waveform"
+	@echo "  make list        show the lesson numbers"
+	@echo ""
+	@echo "Verbs: sim bit prog flash lint synth graph wave clean deploy"
 
 # Rule of the road: the whole course must stay green. Run this before commits.
 sim-all:
@@ -67,29 +73,60 @@ clean-all:
 	@rm -rf docs/book docs/src/lessons
 	@echo "cleaned"
 
-# ---------------------------------------------------------------------------
-#  Per-lesson verbs do not exist at the top level, and the default make error
-#  ("No rule to make target `bit'") does not explain why. These catch the
-#  mistake and say what to do instead.
+# ===========================================================================
+#  Per-lesson verbs, from here, with no navigating.
 #
-#  It is an easy mistake to make from an editor: the VS Code tasks run make in
-#  the directory of the file you have open, so with a root-level README focused
-#  they run here rather than in a lesson.
-# ---------------------------------------------------------------------------
-sim bit prog flash lint synth wave clean:
+#      make deploy L=0      build 00-blinky and load it onto the board
+#      make sim    L=5      simulate 05-fsm
+#      make wave   L=3      open 03-sequential's waveform
+#
+#  L takes a lesson number (0, 3, 05) or a full name (05-fsm). Run `make list`
+#  to see them. This exists because remembering which editor tab is focused,
+#  or which directory a terminal is in, is friction nobody needs: from the
+#  course root, one line does the whole job.
+# ===========================================================================
+
+# Resolve L into a directory: "5" and "05" and "05-fsm" all find 05-fsm.
+LESSON_DIR = $(firstword $(wildcard $(patsubst %,%*,$(shell printf '%02d' $(L) 2>/dev/null || echo $(L)))) $(wildcard $(L)*))
+
+sim bit prog flash lint synth graph wave clean:
+ifeq ($(strip $(L)),)
 	@echo ""
-	@echo "  '$@' is a per-LESSON target and there is no lesson selected."
+	@echo "  '$@' needs a lesson. Which one?"
 	@echo ""
-	@echo "  You are in the course root. Change into a lesson first:"
+	@echo "      make $@ L=0        # 00-blinky"
+	@echo "      make $@ L=5        # 05-fsm"
 	@echo ""
-	@echo "      cd 00-blinky && make $@"
-	@echo ""
-	@echo "  In VS Code, these tasks run make in the directory of the file you"
-	@echo "  currently have open. Open a .v file inside a lesson, or use the"
-	@echo "  'lesson: ...' tasks, which ask which lesson to use."
-	@echo ""
-	@echo "  Lessons with code: $(BUILT)"
-	@echo ""
-	@echo "  Course-wide targets: make help"
-	@echo ""
+	@$(MAKE) -s list
 	@exit 1
+else ifeq ($(strip $(LESSON_DIR)),)
+	@echo ""
+	@echo "  No lesson matches L=$(L)."
+	@echo ""
+	@$(MAKE) -s list
+	@exit 1
+else
+	@echo "==> $(LESSON_DIR): make $@"
+	@$(MAKE) -C $(LESSON_DIR) $@
+endif
+
+# Build and load in one step — the command you will use most.
+deploy:
+ifeq ($(strip $(LESSON_DIR)),)
+	@$(MAKE) -s sim
+else
+	@echo "==> $(LESSON_DIR): building"
+	@$(MAKE) -s -C $(LESSON_DIR) bit
+	@echo "==> $(LESSON_DIR): loading onto the board"
+	@$(MAKE) -s -C $(LESSON_DIR) prog
+endif
+
+list:
+	@echo "  Lessons (use the number as L=):"
+	@echo ""
+	@for d in $(LESSONS); do \
+	  n=$${d%%-*}; \
+	  if [ -n "$$(ls $$d/*.v 2>/dev/null)" ]; then st="built  "; else st="planned"; fi; \
+	  printf '      L=%-3s %-22s %s\n' "$$(echo $$n | sed 's/^0//')" "$$d" "$$st"; \
+	done
+	@echo ""

@@ -27,11 +27,15 @@ cd 00-blinky && make sim  # must print PASS
 
 Then open `00-blinky/README.md` and start reading, and keep
 [`CHEATSHEET.md`](CHEATSHEET.md) to hand for the commands. With the board
-plugged in:
+plugged in, from the project root:
 
 ```bash
-cd 00-blinky && make prog   # LEDs count up as a binary odometer
+make deploy L=0   # build lesson 00, load it, LEDs count up as a binary odometer
+make list         # which lesson is which number
 ```
+
+`L` is the lesson number, so there is no need to change directory. Every verb
+works this way: `make sim L=5`, `make wave L=3`, `make synth L=2`.
 
 Nothing is installed system-wide and nothing needs `sudo`. Deleting
 `toolchain/` undoes the entire install.

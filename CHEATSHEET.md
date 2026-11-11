@@ -2,14 +2,36 @@
 
 ## If you remember one thing
 
-**`⌘⌥R`** — opens the task picker and lists every task by name. You do not
-need to recall anything else; read the list and pick.
-
-Or use the terminal, which is always available and never ambiguous:
+Open a terminal — **`Ctrl` + `` ` ``**, or **Terminal → New Terminal** — and
+from the project root:
 
 ```bash
-cd 00-blinky && make sim
+make deploy L=0        # build lesson 00 and load it onto the board
+make sim    L=5        # simulate lesson 05
+make list              # which lesson is which number?
 ```
+
+`L` is the lesson number. **No navigating, no selecting a folder, no caring
+which editor tab is focused.** The terminal opens at the project root, which is
+exactly where these work.
+
+| | |
+|---|---|
+| `make list` | the lesson numbers |
+| `make deploy L=n` | build **and** load onto the board |
+| `make sim L=n` | run the testbench — must print `PASS` |
+| `make wave L=n` | open the waveform |
+| `make lint L=n` | strict checks |
+| `make synth L=n` | what it cost in LUTs and flip-flops |
+
+Every verb in the table further down also takes `L=n` from the project root.
+
+## The editor way, if you prefer it
+
+**`⌘⌥R`** opens the task picker and lists every task by name, so nothing has to
+be recalled. `⌘⌥U` builds and deploys, asking which lesson from a dropdown.
+
+Both are optional. The `L=` commands above do everything.
 
 ## The daily loop
 
@@ -70,9 +92,12 @@ From the **course root** instead:
 
 ## The usual confusions
 
-**"No rule to make target `bit'"** — make ran in the course root, because the
-focused editor tab was a root-level file. Use `⌘⌥U` / `⌘⌥B`, which ask which
-lesson, or click into a `.v` file inside a lesson first.
+**"No rule to make target `bit'"** — you ran a per-lesson verb in the course
+root with no lesson named. Add `L=n`: `make bit L=0`.
+
+**"Open in Integrated Terminal" does nothing** — skip it. Open a plain terminal
+with `Ctrl` + `` ` `` and use `make deploy L=0` from the project root instead.
+Nothing needs to be selected.
 
 **"No extension found for verilog"** — you pressed the Run/Debug ▶ button.
 Verilog is not executed; it is simulated or synthesised. Use `⌘⇧B`. (The ▶
