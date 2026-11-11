@@ -25,7 +25,9 @@ make check                # verifies every tool, then simulates lesson 00
 cd 00-blinky && make sim  # must print PASS
 ```
 
-Then open `00-blinky/README.md` and start reading. With the board plugged in:
+Then open `00-blinky/README.md` and start reading, and keep
+[`CHEATSHEET.md`](CHEATSHEET.md) to hand for the commands. With the board
+plugged in:
 
 ```bash
 cd 00-blinky && make prog   # LEDs count up as a binary odometer

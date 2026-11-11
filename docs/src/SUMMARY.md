@@ -3,6 +3,7 @@
 [Introduction](./introduction.md)
 [Getting started](./getting-started.md)
 [Choosing your path: editor or Icestudio](./paths.md)
+[Cheat sheet](./cheatsheet.md)
 
 # Lessons
 

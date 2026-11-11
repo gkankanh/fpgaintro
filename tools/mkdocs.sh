@@ -14,6 +14,8 @@ ACTION="${1:-build}"
 OUT="docs/src/lessons"
 rm -rf "$OUT"; mkdir -p "$OUT"
 
+cp CHEATSHEET.md docs/src/cheatsheet.md
+
 SUMMARY="docs/src/SUMMARY.md"
 {
   echo "# Summary"
@@ -21,6 +23,7 @@ SUMMARY="docs/src/SUMMARY.md"
   echo "[Introduction](./introduction.md)"
   echo "[Getting started](./getting-started.md)"
   echo "[Choosing your path: editor or Icestudio](./paths.md)"
+  echo "[Cheat sheet](./cheatsheet.md)"
   echo ""
   echo "# Lessons"
   echo ""
