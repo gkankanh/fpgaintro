@@ -1,0 +1,31 @@
+# A demonstration, not a check. The `prove` task passes; the `cover` task
+# fails, and the cover failure is the point.
+#
+# expect is set per task: a passing prove and a failing cover are both the
+# INTENDED outcome here.
+
+[tasks]
+prove
+cover
+
+[options]
+prove: mode bmc
+prove: depth 1
+prove: expect pass
+cover: mode cover
+cover: depth 1
+cover: expect fail
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal adder.v
+read -formal alu.v
+read -formal vacuous.v
+prep -top vacuous
+
+[files]
+../common/rtl/adder.v
+../10-alu/alu.v
+vacuous.v

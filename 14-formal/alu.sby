@@ -1,0 +1,36 @@
+# Prove the RV32I ALU correct for every input.
+#
+# mode bmc, depth 1: the ALU is combinational, so one step covers the entire
+# input space. For combinational logic a bounded check is a COMPLETE proof --
+# "bounded" costs nothing here.
+#
+# Two engines, because they are good at different things and disagreeing is
+# informative. z3 and boolector are both SMT solvers shipped with the suite.
+
+[tasks]
+prove
+cover
+
+[options]
+prove: mode bmc
+prove: depth 1
+cover: mode cover
+cover: depth 1
+expect pass
+
+[engines]
+smtbmc z3
+
+[script]
+# Files are referenced by BASENAME here: sby copies everything in [files]
+# into its own src/ directory and runs yosys from there, so the paths below
+# are not the paths in [files].
+read -formal adder.v
+read -formal alu.v
+read -formal alu_props.v
+prep -top alu_props
+
+[files]
+../common/rtl/adder.v
+../10-alu/alu.v
+alu_props.v

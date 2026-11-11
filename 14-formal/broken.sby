@@ -1,0 +1,23 @@
+# The SAME properties, against a deliberately broken ALU.
+#
+# expect fail: this proof is MEANT to fail. A clean run here would mean the
+# properties are too weak to catch a known bug, which is itself worth knowing.
+
+[options]
+mode bmc
+depth 1
+expect fail
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal adder.v
+read -formal broken_alu.v
+read -formal broken_props.v
+prep -top broken_props
+
+[files]
+../common/rtl/adder.v
+broken_alu.v
+broken_props.v

@@ -585,6 +585,33 @@
       }
     },
     {
+      "label": "✓ sim     14 formal",
+      "type": "shell",
+      "command": "make sim",
+      "options": {
+        "cwd": "${workspaceFolder}/14-formal"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      }
+    },
+    {
       "label": "sim (file's lesson)",
       "type": "shell",
       "command": "make sim",

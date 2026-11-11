@@ -36,6 +36,16 @@ docs/src/lessons/
 # not need a typesetter installed to read it.
 docs/pdf/figures/
 
+# SymbiYosys working directories. sby creates one per .sby file and task,
+# holding the solver model, logs and any counterexample traces.
+14-formal/alu_prove/
+14-formal/alu_cover/
+14-formal/regfile_prove/
+14-formal/regfile_cover/
+14-formal/broken/
+14-formal/vacuous_prove/
+14-formal/vacuous_cover/
+
 # Icestudio / apio build output. Icestudio writes ice-build/ next to the .ice
 # file when you press Build; it contains a generated main.v, main.lpf and
 # apio.ini, none of which are source.

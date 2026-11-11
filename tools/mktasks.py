@@ -50,14 +50,24 @@ LINT_MATCHER = {
 }
 
 
-def lessons() -> list[tuple[str, str, bool]]:
-    """(dirname, pretty title, has_code) for every NN-name directory."""
+def lessons() -> list[tuple[str, str, bool, bool]]:
+    """(dirname, pretty title, has_code, can_deploy) per NN-name directory.
+
+    `can_deploy` requires the lesson's Makefile to define a TOP module, which
+    is what the shared rules turn into a bitstream. Lesson 14 has plenty of
+    Verilog but proves lessons 10 and 11 rather than building anything, so it
+    gets a `sim` task and no `deploy` task -- offering to program a board with
+    a formal proof would be a lie the task list told.
+    """
     out = []
     for d in sorted(glob.glob(os.path.join(ROOT, "[0-9][0-9]-*"))):
         name = os.path.basename(d)
         num, slug = name.split("-", 1)
         built = bool(glob.glob(os.path.join(d, "*.v")))
-        out.append((name, f"{num} {slug.replace('-', ' ')}", built))
+        mk = os.path.join(d, "Makefile")
+        deploy = built and os.path.isfile(mk) and \
+            any(re.match(r"\s*TOP\s*=", ln) for ln in open(mk))
+        out.append((name, f"{num} {slug.replace('-', ' ')}", built, deploy))
     return out
 
 
@@ -86,8 +96,8 @@ def main() -> int:
     # --- one DEPLOY and one SIM per built lesson -------------------------
     # Deploy first: it is the thing people hunt for, and VS Code preserves
     # this order in the Run Task list.
-    for name, title, built in lessons():
-        if not built:
+    for name, title, built, deploy in lessons():
+        if not deploy:
             continue
         tasks.append(task(
             f"▶ deploy  {title}",
@@ -95,7 +105,7 @@ def main() -> int:
             f"{ws}/{name}",
         ))
 
-    for name, title, built in lessons():
+    for name, title, built, deploy in lessons():
         if not built:
             continue
         tasks.append(task(
