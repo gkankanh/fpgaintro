@@ -179,6 +179,20 @@
       "problemMatcher": []
     },
     {
+      "label": "▶ deploy  12 datapath",
+      "type": "shell",
+      "command": "make bit && make prog",
+      "options": {
+        "cwd": "${workspaceFolder}/12-datapath"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "✓ sim     00 blinky",
       "type": "shell",
       "command": "make sim",
@@ -481,6 +495,33 @@
       "command": "make sim",
       "options": {
         "cwd": "${workspaceFolder}/11-regfile"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "label": "✓ sim     12 datapath",
+      "type": "shell",
+      "command": "make sim",
+      "options": {
+        "cwd": "${workspaceFolder}/12-datapath"
       },
       "presentation": {
         "reveal": "always",
