@@ -12,6 +12,7 @@ BUILT   := $(foreach d,$(LESSONS),$(if $(wildcard $(d)/Makefile),$(d),))
 TOOLS   := toolchain/oss-cad-suite/bin
 
 .PHONY: help sim-all lint-all graph-all clean-all ice docs docs-serve toolchain check
+.PHONY: sim bit prog flash lint synth wave clean
 
 help:
 	@echo "ULX3S Digital Design Course"
@@ -65,3 +66,30 @@ clean-all:
 	@for d in $(BUILT); do $(MAKE) -s -C $$d clean; done
 	@rm -rf docs/book docs/src/lessons
 	@echo "cleaned"
+
+# ---------------------------------------------------------------------------
+#  Per-lesson verbs do not exist at the top level, and the default make error
+#  ("No rule to make target `bit'") does not explain why. These catch the
+#  mistake and say what to do instead.
+#
+#  It is an easy mistake to make from an editor: the VS Code tasks run make in
+#  the directory of the file you have open, so with a root-level README focused
+#  they run here rather than in a lesson.
+# ---------------------------------------------------------------------------
+sim bit prog flash lint synth wave clean:
+	@echo ""
+	@echo "  '$@' is a per-LESSON target and there is no lesson selected."
+	@echo ""
+	@echo "  You are in the course root. Change into a lesson first:"
+	@echo ""
+	@echo "      cd 00-blinky && make $@"
+	@echo ""
+	@echo "  In VS Code, these tasks run make in the directory of the file you"
+	@echo "  currently have open. Open a .v file inside a lesson, or use the"
+	@echo "  'lesson: ...' tasks, which ask which lesson to use."
+	@echo ""
+	@echo "  Lessons with code: $(BUILT)"
+	@echo ""
+	@echo "  Course-wide targets: make help"
+	@echo ""
+	@exit 1

@@ -10,7 +10,59 @@
   // An earlier version of this file declared a top-level "problemMatchers"
   // array and referenced "$iverilog"/"$verilator"; VS Code ignored the
   // declarations and reported "Problem matcher cannot be resolved".
+  //
+  // THE "lesson: ..." TASKS ask which lesson to act on instead of inferring it
+  // from the open file. Prefer them. The "(this lesson)" variants are quicker
+  // once you have a .v file open, but with a root-level README focused they
+  // run make in the course root, where per-lesson targets do not exist.
   "tasks": [
+    {
+      "label": "lesson: sim",
+      "type": "shell",
+      "command": "make sim",
+      "options": { "cwd": "${workspaceFolder}/${input:lesson}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": ["relative", "${workspaceFolder}/${input:lesson}"],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+          "file": 1, "line": 2, "severity": 3, "message": 4
+        }
+      }
+    },
+    {
+      "label": "lesson: bit — place & route",
+      "type": "shell",
+      "command": "make bit",
+      "options": { "cwd": "${workspaceFolder}/${input:lesson}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "lesson: prog — load to board SRAM",
+      "type": "shell",
+      "command": "make prog",
+      "options": { "cwd": "${workspaceFolder}/${input:lesson}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "lesson: build AND deploy",
+      "type": "shell",
+      "command": "make bit && make prog",
+      "options": { "cwd": "${workspaceFolder}/${input:lesson}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "lesson: clean",
+      "type": "shell",
+      "command": "make clean",
+      "options": { "cwd": "${workspaceFolder}/${input:lesson}" },
+      "presentation": { "reveal": "silent", "panel": "dedicated" },
+      "problemMatcher": []
+    },
     {
       "label": "sim (this lesson)",
       "type": "shell",
@@ -122,6 +174,24 @@
       "isBackground": true,
       "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "lesson",
+      "type": "pickString",
+      "description": "Which lesson?",
+      "default": "00-blinky",
+      "options": [
+        "00-blinky",
+        "01-gates",
+        "02-combinational",
+        "03-sequential",
+        "04-clocks",
+        "05-fsm",
+        "06-spi-oled",
+        "07-font-rom"
+      ]
     }
   ]
 }
