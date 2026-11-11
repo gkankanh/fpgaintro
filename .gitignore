@@ -40,8 +40,14 @@ docs/src/lessons/
 # RISC-V software build output (lesson 13+).
 *.elf
 *.bin
-*.hex
 *.map
 *.o
+
+# .hex files are usually objcopy output, but a hand-written or generated one
+# that a design reads with $readmemh is SOURCE -- lesson 08's font, lesson 13's
+# test program. Ignore built ones, keep the ones that live beside a lesson.
+*.hex
+!0[0-9]-*/*.hex
+!1[0-7]-*/*.hex
 
 .DS_Store

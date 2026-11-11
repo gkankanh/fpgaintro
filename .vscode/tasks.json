@@ -123,6 +123,20 @@
       "problemMatcher": []
     },
     {
+      "label": "▶ deploy  08 memory",
+      "type": "shell",
+      "command": "make bit && make prog",
+      "options": {
+        "cwd": "${workspaceFolder}/08-memory"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "✓ sim     00 blinky",
       "type": "shell",
       "command": "make sim",
@@ -317,6 +331,33 @@
       "command": "make sim",
       "options": {
         "cwd": "${workspaceFolder}/07-font-rom"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "label": "✓ sim     08 memory",
+      "type": "shell",
+      "command": "make sim",
+      "options": {
+        "cwd": "${workspaceFolder}/08-memory"
       },
       "presentation": {
         "reveal": "always",
