@@ -67,7 +67,7 @@ Lessons marked **board** want hardware to be satisfying; everything is still
 verified in simulation first. Lessons 00–14 can be completed with no board at
 all. Lesson 17 is optional — the course's goal is met at lesson 16.
 
-Nine lessons are written and working today — 00 through 08 — each with a
+Ten lessons are written and working today — 00 through 09 — each with a
 self-checking testbench and real, measured synthesis numbers. The rest have
 settled scope and a planned outline in their README, and are being built in
 order.

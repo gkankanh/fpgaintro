@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 290" role="img"
+     aria-label="A UART 8N1 frame: a start bit, eight data bits least significant first, and a stop bit, with the receiver sampling at the midpoint of each bit.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; }
+    }
+    .w   { stroke:var(--ink);    stroke-width:1.8; fill:none; }
+    .b   { stroke:var(--mute);   stroke-width:.5;  stroke-dasharray:2 3; }
+    .s   { stroke:var(--good);   stroke-width:1.4; }
+    .l   { fill:var(--ink);  font:12px ui-monospace,monospace; }
+    .n   { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t   { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .tg  { fill:var(--good); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta  { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .dot { fill:var(--good); }
+  </style>
+
+  <!-- 10 bits of 56px from x=96 -->
+  <g class="b">
+    <path d="M96 40V150"/>  <path d="M152 40V150"/> <path d="M208 40V150"/>
+    <path d="M264 40V150"/> <path d="M320 40V150"/> <path d="M376 40V150"/>
+    <path d="M432 40V150"/> <path d="M488 40V150"/> <path d="M544 40V150"/>
+    <path d="M600 40V150"/> <path d="M656 40V150"/>
+  </g>
+
+  <!-- bit labels -->
+  <g class="n">
+    <text x="104" y="36">start</text>
+    <text x="172" y="36">d0</text><text x="228" y="36">d1</text>
+    <text x="284" y="36">d2</text><text x="340" y="36">d3</text>
+    <text x="396" y="36">d4</text><text x="452" y="36">d5</text>
+    <text x="508" y="36">d6</text><text x="564" y="36">d7</text>
+    <text x="618" y="36">stop</text>
+  </g>
+
+  <!-- the line, carrying 0x41 = 0100_0001 -> LSB first: 1,0,0,0,0,0,1,0 -->
+  <!-- idle high, start low, d0 high, d1..d5 low, d6 high, d7 low, stop high -->
+  <text class="l" x="8" y="72">line</text>
+  <path class="w" d="M40 56 h56 v34 h56 v-34 h56 v34 h224 v-34 h56 v34 h56 v-34 h44"/>
+  <text class="n" x="48" y="50">idle</text>
+  <text class="n" x="664" y="50">idle</text>
+
+  <!-- values -->
+  <g class="n">
+    <text x="118" y="106">0</text>
+    <text x="176" y="106">1</text><text x="232" y="106">0</text>
+    <text x="288" y="106">0</text><text x="344" y="106">0</text>
+    <text x="400" y="106">0</text><text x="456" y="106">0</text>
+    <text x="512" y="106">1</text><text x="568" y="106">0</text>
+    <text x="624" y="106">1</text>
+  </g>
+
+  <!-- sample points: midpoint of each bit -->
+  <g class="s">
+    <path d="M124 56 V 150"/><path d="M180 56 V 150"/><path d="M236 56 V 150"/>
+    <path d="M292 56 V 150"/><path d="M348 56 V 150"/><path d="M404 56 V 150"/>
+    <path d="M460 56 V 150"/><path d="M516 56 V 150"/><path d="M572 56 V 150"/>
+    <path d="M628 56 V 150"/>
+  </g>
+  <g class="dot">
+    <circle cx="124" cy="150" r="3"/><circle cx="180" cy="150" r="3"/>
+    <circle cx="236" cy="150" r="3"/><circle cx="292" cy="150" r="3"/>
+    <circle cx="348" cy="150" r="3"/><circle cx="404" cy="150" r="3"/>
+    <circle cx="460" cy="150" r="3"/><circle cx="516" cy="150" r="3"/>
+    <circle cx="572" cy="150" r="3"/><circle cx="628" cy="150" r="3"/>
+  </g>
+  <text class="tg" x="8" y="154">sample</text>
+
+  <!-- half-bit annotation on the start bit -->
+  <path class="s" stroke-dasharray="3 3" d="M96 172 H 124"/>
+  <text class="tg" x="96" y="190">DIV/2 = 108 clocks</text>
+  <text class="t"  x="96" y="206">from the falling edge to the first sample</text>
+
+  <!-- full-bit annotation -->
+  <path class="s" stroke-dasharray="3 3" d="M124 230 H 180"/>
+  <text class="tg" x="124" y="248">DIV = 217 clocks</text>
+  <text class="t"  x="124" y="264">between every sample after that</text>
+
+  <text class="ta" x="380" y="248">Sampling at the midpoint puts the most distance</text>
+  <text class="ta" x="380" y="264">between the sample and both bit edges.</text>
+</svg>

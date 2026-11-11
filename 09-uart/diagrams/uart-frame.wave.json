@@ -1,0 +1,12 @@
+{ "signal": [
+    { "name": "tx / rx",  "wave": "1.0.1.0.0.0.1.0.1...",
+      "data": [] },
+    { "name": "bit",      "wave": "x.2.2.2.2.2.2.2.2.2.x",
+      "data": ["start","d0","d1","d2","d3","d4","d5","d6","d7","stop"] },
+    {},
+    { "name": "rx sample", "wave": "0.10101010101010101..",
+      "node": "..a.b" }
+  ],
+  "head": { "text": "8N1 frame for 0x41 ('A'), least significant bit first" },
+  "foot": { "text": "Each bit is DIV = 217 clocks at 25 MHz. The receiver samples at the midpoint of every bit, half a bit after the start edge." }
+}
