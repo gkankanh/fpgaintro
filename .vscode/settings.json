@@ -65,6 +65,26 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
 
+  // ------------------------- the Run (play) button ----------------------
+  //
+  //  Verilog is not executed. The editor's Run/Debug play button asks VS Code
+  //  to run or debug the current file, which needs a runtime and a debug
+  //  adapter — Verilog has neither, and should not. A .v file gets SIMULATED
+  //  (iverilog) or SYNTHESISED (yosys), both through the Makefile, which is
+  //  what the tasks in tasks.json do. Pressing play on a .v file and being
+  //  told "no extension found for verilog" is correct behaviour, not a gap.
+  //
+  //  Since Code Runner is installed and also provides a play button, these
+  //  map it onto something useful: running a lesson's testbench. `make sim`
+  //  must print PASS. Rule of the road #1.
+  "code-runner.executorMap": {
+    "verilog": "cd $dir && make sim",
+    "systemverilog": "cd $dir && make sim"
+  },
+  "code-runner.runInTerminal": true,
+  "code-runner.saveFileBeforeRun": true,
+  "code-runner.clearPreviousOutput": true,
+
   // --------------------------------- Docs -------------------------------
   "[markdown]": {
     "editor.wordWrap": "on",
