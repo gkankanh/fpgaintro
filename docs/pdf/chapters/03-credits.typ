@@ -133,3 +133,26 @@ If this course is useful to you, the projects above are where the gratitude
 should go — and several of them take contributions, bug reports and
 documentation from people whose first FPGA design was a blinking LED not long
 before.
+
+== This course's own licence
+
+In the same spirit, and chosen so that reuse is easy rather than merely
+permitted:
+
+#ttable(
+  columns: (auto, 1fr),
+  [*Code*], [
+    MIT. The Verilog, the tools, the Makefiles and the assembly programs. Use
+    them in anything, commercial or not; keep the copyright notice.
+  ],
+  [*Prose*], [
+    Creative Commons Attribution 4.0. The lessons, this book and its diagrams.
+    Share them, adapt them, translate them, teach from them — commercially if
+    you like — giving credit and indicating changes.
+  ],
+)
+
+One file is not this project's to license: `common/ulx3s_v20.lpf`, the board's
+pin constraints, which come from the ULX3S project and are included because
+the course cannot work without them. Everything else — every diagram, every
+line of Verilog, and the whole of this book — is original to the course.

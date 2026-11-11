@@ -66,6 +66,11 @@
     Yosys · nextpnr · Project Trellis · Icarus Verilog · Verilator\
     #v(3mm)
     Version #VERSION · #BUILT
+    #v(3mm)
+    This book is licensed under Creative Commons Attribution 4.0
+    International.\
+    The accompanying code is licensed under the MIT License.\
+    Copyright © 2026 ULX3S Digital Design Course.
   ]
 ]
 
