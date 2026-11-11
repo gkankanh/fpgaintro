@@ -4,7 +4,7 @@
     "name": "oled",
     "version": "1.0",
     "description": "Lesson 06 - SPI engine, SSD1331 init ROM, computed gradient.",
-    "author": "ULX3S Digital Design Course",
+    "author": "The Open FPGA Course",
     "image": ""
   },
   "design": {
@@ -12,7 +12,7 @@
     "graph": {
       "blocks": [
         {
-          "id": "d494f4af-842b-40fe-be81-faf9402f12b6",
+          "id": "0992c734-d7a0-466e-a61d-f704b0ea8463",
           "type": "basic.input",
           "data": {
             "name": "clk_25mhz",
@@ -31,7 +31,7 @@
           }
         },
         {
-          "id": "5648c2af-e28c-42a7-944f-48fba165a552",
+          "id": "07739cf3-aefd-4847-8036-1926c32b5dc7",
           "type": "basic.output",
           "data": {
             "name": "oled_csn",
@@ -50,7 +50,7 @@
           }
         },
         {
-          "id": "06fa15a1-f062-4d78-ae05-37ca9ad13491",
+          "id": "7c99b9ab-2e41-431e-a453-ff166f8f83f3",
           "type": "basic.output",
           "data": {
             "name": "oled_resn",
@@ -69,7 +69,7 @@
           }
         },
         {
-          "id": "2a67e13a-dc4f-46a2-8ca7-47c0e9a17d03",
+          "id": "2700dac2-1196-4f39-8cd7-c8f0e4f52d07",
           "type": "basic.output",
           "data": {
             "name": "oled_dc",
@@ -88,7 +88,7 @@
           }
         },
         {
-          "id": "bd63388f-6a3b-4d53-9379-65ca38947e58",
+          "id": "baa1caa8-6ebb-42f4-a9bd-999e02555d19",
           "type": "basic.output",
           "data": {
             "name": "oled_clk",
@@ -107,7 +107,7 @@
           }
         },
         {
-          "id": "5b8ceceb-8830-4577-84d7-8e2c34822391",
+          "id": "d1b052f9-ecd3-4242-b6fa-f039ac79595e",
           "type": "basic.output",
           "data": {
             "name": "oled_mosi",
@@ -126,7 +126,7 @@
           }
         },
         {
-          "id": "1d688685-985d-4eef-804d-d4de84c72b48",
+          "id": "28f3a48e-2602-4833-8c4b-b9383e1cdab2",
           "type": "basic.output",
           "data": {
             "name": "led",
@@ -181,10 +181,10 @@
           }
         },
         {
-          "id": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+          "id": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
           "type": "basic.code",
           "data": {
-            "code": "assign oled_csn = 1'b0;          // sole device on the bus: keep selected\n\n// ---------------- init ROM: SSD1331 datasheet power-up sequence ----------\nlocalparam ROM_LEN = 31;\nreg [7:0] rom [0:ROM_LEN-1];\ninitial begin\n    rom[ 0]=8'hAE;                            // display off\n    rom[ 1]=8'hA0; rom[ 2]=8'h72;             // remap: RGB order, 65k color\n    rom[ 3]=8'hA1; rom[ 4]=8'h00;             // start line 0\n    rom[ 5]=8'hA2; rom[ 6]=8'h00;             // display offset 0\n    rom[ 7]=8'hA4;                            // normal display\n    rom[ 8]=8'hA8; rom[ 9]=8'h3F;             // multiplex 1/64\n    rom[10]=8'hAD; rom[11]=8'h8E;             // master configuration\n    rom[12]=8'hB0; rom[13]=8'h0B;             // power save off\n    rom[14]=8'hB1; rom[15]=8'h31;             // phase 1/2 period\n    rom[16]=8'hB3; rom[17]=8'hF0;             // display clock divide\n    rom[18]=8'hBB; rom[19]=8'h3A;             // precharge level\n    rom[20]=8'hBE; rom[21]=8'h3E;             // VCOMH\n    rom[22]=8'h87; rom[23]=8'h06;             // master current\n    rom[24]=8'hAF;                            // display ON\n    rom[25]=8'h15; rom[26]=8'h00; rom[27]=8'h5F; // column window 0..95\n    rom[28]=8'h75; rom[29]=8'h00; rom[30]=8'h3F; // row window 0..63\nend\n\n// ---------------- byte-level SPI engine (mode 3-ish, MSB first) ----------\n// Each bit takes 4 system clocks -> SCLK = 6.25 MHz (SSD1331 max ~6.6 MHz).\nreg  [7:0] shift;\nreg  [1:0] phase = 0;\nreg  [2:0] bitn  = 0;\nreg        busy  = 0;\nreg        start = 0;\nreg  [7:0] data;\n\nalways @(posedge clk_25mhz) begin\n    if (!busy) begin\n        if (start) begin\n            shift <= data; busy <= 1; phase <= 0; bitn <= 0;\n        end\n    end else begin\n        phase <= phase + 1'b1;\n        case (phase)\n            2'd0: begin oled_clk <= 0; oled_mosi <= shift[7]; end\n            2'd2: oled_clk <= 1;\n            2'd3: begin\n                shift <= {shift[6:0], 1'b0};\n                bitn  <= bitn + 1'b1;\n                if (bitn == 3'd7) busy <= 0;\n            end\n        endcase\n    end\nend\n\n// ---------------- top-level sequencer ------------------------------------\nlocalparam S_RESET = 0, S_WAIT = 1, S_INIT = 2, S_PIXEL = 3;\nreg [1:0]  state = S_RESET;\nreg [15:0] wait_cnt = 0;\nreg [4:0]  rom_i = 0;\n\nreg [6:0] x = 0;                 // 0..95\nreg [5:0] y = 0;                 // 0..63\nreg [7:0] frame = 0;\nreg       lohi = 0;              // which half of the 16-bit pixel\n\n// RGB565 gradient: red follows x, green follows y, blue breathes per frame\nwire [15:0] pixel = { x[6:2], y[5:0], frame[7:3] };\n\nalways @(posedge clk_25mhz) begin\n    start <= 0;\n    case (state)\n        S_RESET: begin\n            oled_resn <= 0;\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt[11:0]) begin oled_resn <= 1; state <= S_WAIT; wait_cnt <= 0; end\n        end\n        S_WAIT: begin                        // let the chip wake after reset\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt) state <= S_INIT;  // ~2.6 ms\n        end\n        S_INIT: if (!busy && !start) begin\n            oled_dc <= 0;\n            data    <= rom[rom_i];\n            start   <= 1;\n            if (rom_i == ROM_LEN-1) state <= S_PIXEL;\n            rom_i   <= rom_i + 1'b1;\n        end\n        S_PIXEL: if (!busy && !start) begin\n            oled_dc <= 1;\n            data    <= lohi ? pixel[7:0] : pixel[15:8];\n            start   <= 1;\n            lohi    <= ~lohi;\n            if (lohi) begin                  // finished low byte -> next pixel\n                if (x == 7'd95) begin\n                    x <= 0;\n                    if (y == 6'd63) begin y <= 0; frame <= frame + 1'b1; end\n                    else            y <= y + 1'b1;\n                end else x <= x + 1'b1;\n            end\n        end\n    endcase\nend\n\nassign led = {state, frame[7:2]};   // debug: state + frame counter\n",
+            "code": "assign oled_csn = 1'b0;          // sole device on the bus: keep selected\n\n// ---------------- init ROM: SSD1331 datasheet power-up sequence ----------\nlocalparam ROM_LEN = 31;\nreg [7:0] rom [0:ROM_LEN-1];\ninitial begin\n    rom[ 0]=8'hAE;                            // display off\n    rom[ 1]=8'hA0; rom[ 2]=8'h72;             // remap: RGB order, 65k color\n    rom[ 3]=8'hA1; rom[ 4]=8'h00;             // start line 0\n    rom[ 5]=8'hA2; rom[ 6]=8'h00;             // display offset 0\n    rom[ 7]=8'hA4;                            // normal display\n    rom[ 8]=8'hA8; rom[ 9]=8'h3F;             // multiplex 1/64\n    rom[10]=8'hAD; rom[11]=8'h8E;             // master configuration\n    rom[12]=8'hB0; rom[13]=8'h0B;             // power save off\n    rom[14]=8'hB1; rom[15]=8'h31;             // phase 1/2 period\n    rom[16]=8'hB3; rom[17]=8'hF0;             // display clock divide\n    rom[18]=8'hBB; rom[19]=8'h3A;             // precharge level\n    rom[20]=8'hBE; rom[21]=8'h3E;             // VCOMH\n    rom[22]=8'h87; rom[23]=8'h06;             // master current\n    rom[24]=8'hAF;                            // display ON\n    rom[25]=8'h15; rom[26]=8'h00; rom[27]=8'h5F; // column window 0..95\n    rom[28]=8'h75; rom[29]=8'h00; rom[30]=8'h3F; // row window 0..63\nend\n\n// ---------------- byte-level SPI engine (mode 3-ish, MSB first) ----------\n// Each bit takes 4 system clocks -> SCLK = 6.25 MHz (SSD1331 max ~6.6 MHz).\nreg  [7:0] shift;\nreg  [1:0] phase = 0;\nreg  [2:0] bitn  = 0;\nreg        busy  = 0;\nreg        start = 0;\nreg  [7:0] data;\n\nalways @(posedge clk_25mhz) begin\n    if (!busy) begin\n        if (start) begin\n            shift <= data; busy <= 1; phase <= 0; bitn <= 0;\n        end\n    end else begin\n        phase <= phase + 1'b1;\n        case (phase)\n            2'd0: begin oled_clk <= 0; oled_mosi <= shift[7]; end\n            2'd2: oled_clk <= 1;\n            2'd3: begin\n                shift <= {shift[6:0], 1'b0};\n                bitn  <= bitn + 1'b1;\n                if (bitn == 3'd7) busy <= 0;\n            end\n            // Phase 1 deliberately does nothing: it is the setup time\n            // between driving MOSI and raising SCLK. Stated explicitly\n            // because an unlisted case is how you accidentally forget one.\n            //\n            // Note this is safe in a way the same omission would not be in\n            // a combinational block: this block is clocked, so \"no\n            // assignment\" means the registers hold \u2014 it is not a latch.\n            default: ;\n        endcase\n    end\nend\n\n// ---------------- top-level sequencer ------------------------------------\nlocalparam S_RESET = 0, S_WAIT = 1, S_INIT = 2, S_PIXEL = 3;\nreg [1:0]  state = S_RESET;\nreg [15:0] wait_cnt = 0;\nreg [4:0]  rom_i = 0;\n\nreg [6:0] x = 0;                 // 0..95\nreg [5:0] y = 0;                 // 0..63\nreg [7:0] frame = 0;\nreg       lohi = 0;              // which half of the 16-bit pixel\n\n// RGB565 gradient: red follows x, green follows y, blue breathes per frame\nwire [15:0] pixel = { x[6:2], y[5:0], frame[7:3] };\n\nalways @(posedge clk_25mhz) begin\n    start <= 0;\n    case (state)\n        S_RESET: begin\n            oled_resn <= 0;\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt[11:0]) begin oled_resn <= 1; state <= S_WAIT; wait_cnt <= 0; end\n        end\n        S_WAIT: begin                        // let the chip wake after reset\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt) state <= S_INIT;  // ~2.6 ms\n        end\n        S_INIT: if (!busy && !start) begin\n            oled_dc <= 0;\n            data    <= rom[rom_i];\n            start   <= 1;\n            if (rom_i == ROM_LEN-1) state <= S_PIXEL;\n            rom_i   <= rom_i + 1'b1;\n        end\n        S_PIXEL: if (!busy && !start) begin\n            oled_dc <= 1;\n            data    <= lohi ? pixel[7:0] : pixel[15:8];\n            start   <= 1;\n            lohi    <= ~lohi;\n            if (lohi) begin                  // finished low byte -> next pixel\n                if (x == 7'd95) begin\n                    x <= 0;\n                    if (y == 6'd63) begin y <= 0; frame <= frame + 1'b1; end\n                    else            y <= y + 1'b1;\n                end else x <= x + 1'b1;\n            end\n        end\n    endcase\nend\n\nassign led = {state, frame[7:2]};   // debug: state + frame counter\n",
             "params": [],
             "ports": {
               "in": [
@@ -222,7 +222,7 @@
           }
         },
         {
-          "id": "b0642b2d-09d0-480b-8465-52c7724d63e1",
+          "id": "9ea646b5-7aaa-4717-a9f3-bf6b99d96f77",
           "type": "basic.info",
           "data": {
             "info": "## Lesson 06 - SPI and the OLED\n\nThree pieces stacked:\n\n1. a **bit-level SPI engine** - 4 system clocks per bit, so SCLK = 6.25 MHz\n2. a **31-byte init ROM** from the SSD1331 datasheet\n3. a **pixel source** that computes each pixel from its coordinate\n\nThe only interface between (1) and (3) is the `busy`/`start` handshake, which is why the sequencer needs to know nothing about SPI timing.\n\nThere is no framebuffer: the SSD1331 auto-increments its own address pointer, so the design only has to emit bytes in raster order.",
@@ -237,71 +237,71 @@
       "wires": [
         {
           "source": {
-            "block": "d494f4af-842b-40fe-be81-faf9402f12b6",
+            "block": "0992c734-d7a0-466e-a61d-f704b0ea8463",
             "port": "out"
           },
           "target": {
-            "block": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+            "block": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
             "port": "clk_25mhz"
           }
         },
         {
           "source": {
-            "block": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+            "block": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
             "port": "oled_csn"
           },
           "target": {
-            "block": "5648c2af-e28c-42a7-944f-48fba165a552",
+            "block": "07739cf3-aefd-4847-8036-1926c32b5dc7",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+            "block": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
             "port": "oled_resn"
           },
           "target": {
-            "block": "06fa15a1-f062-4d78-ae05-37ca9ad13491",
+            "block": "7c99b9ab-2e41-431e-a453-ff166f8f83f3",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+            "block": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
             "port": "oled_dc"
           },
           "target": {
-            "block": "2a67e13a-dc4f-46a2-8ca7-47c0e9a17d03",
+            "block": "2700dac2-1196-4f39-8cd7-c8f0e4f52d07",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+            "block": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
             "port": "oled_clk"
           },
           "target": {
-            "block": "bd63388f-6a3b-4d53-9379-65ca38947e58",
+            "block": "baa1caa8-6ebb-42f4-a9bd-999e02555d19",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+            "block": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
             "port": "oled_mosi"
           },
           "target": {
-            "block": "5b8ceceb-8830-4577-84d7-8e2c34822391",
+            "block": "d1b052f9-ecd3-4242-b6fa-f039ac79595e",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "1f70ef58-a9f2-49c8-83f4-8d7683fc7a47",
+            "block": "7c00851a-9622-4f5e-a50b-32ebec5d11a1",
             "port": "led"
           },
           "target": {
-            "block": "1d688685-985d-4eef-804d-d4de84c72b48",
+            "block": "28f3a48e-2602-4833-8c4b-b9383e1cdab2",
             "port": "in"
           },
           "size": 8

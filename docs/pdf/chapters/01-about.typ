@@ -3,8 +3,15 @@
 = About this course
 
 This is a hands-on refresher in digital design, worked from a single logic gate
-to a 32-bit RISC-V processor running compiled C, on a Radiona ULX3S board with
-a toolchain that is open source from the Verilog parser to the bitstream.
+to a 32-bit RISC-V processor running compiled C, with a toolchain that is open
+source from the Verilog parser to the bitstream.
+
+The lessons are built and measured on a #strong[Radiona ULX3S], carrying a
+Lattice ECP5 `LFE5U-85F`, and every number in this book was measured on that
+part. But roughly half the course is board-independent: gates, multiplexers,
+state machines, the ALU, the register file and instruction decode would be
+identical on any FPGA. Where a result depends on this particular fabric — and
+several of the most interesting ones do — the book says so.
 
 It is written for someone who studied this once — perhaps a long time ago, as
 an electrical engineer — and wants the ideas back *in their hands* rather than

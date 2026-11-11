@@ -2,9 +2,9 @@
   "name": "debounce",
   "board": "ulx3s-85f",
   "version": "1.0",
-  "author": "ULX3S Digital Design Course",
+  "author": "The Open FPGA Course",
   "description": "Lesson 03 - a saturating-counter debouncer.",
-  "from": { "file": "../debounce.v", "module": "debounce" },
+  "from": { "file": "../../common/rtl/debounce.v", "module": "debounce" },
   "params": [{ "name": "COUNT", "value": 250000 }],
   "inputs": [
     { "port": "clk",   "pin": "clk",   "label": "clk_25mhz" },

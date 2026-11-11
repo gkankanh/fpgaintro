@@ -1,5 +1,5 @@
 # ===========================================================================
-#  ULX3S Digital Design Course — top-level Makefile
+#  The Open FPGA Course — top-level Makefile
 #
 #  Per-lesson work happens inside a lesson folder (`cd 02-combinational &&
 #  make sim`). These targets act across the whole course.
@@ -15,7 +15,7 @@ TOOLS   := toolchain/oss-cad-suite/bin
 .PHONY: sim bit prog flash lint synth graph wave clean deploy list tasks
 
 help:
-	@echo "ULX3S Digital Design Course"
+	@echo "The Open FPGA Course"
 	@echo ""
 	@echo "  make sim-all     run every lesson's testbench (must all PASS)"
 	@echo "  make lint-all    verilator --lint-only across every lesson"

@@ -2,7 +2,7 @@
   "name": "traffic",
   "board": "ulx3s-85f",
   "version": "1.0",
-  "author": "ULX3S Digital Design Course",
+  "author": "The Open FPGA Course",
   "description": "Lesson 05 - a Moore state machine: the traffic light.",
   "from": { "file": "../traffic.v", "module": "traffic" },
   "params": [

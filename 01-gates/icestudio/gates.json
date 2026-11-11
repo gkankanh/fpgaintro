@@ -2,7 +2,7 @@
   "name": "gates",
   "board": "ulx3s-85f",
   "version": "1.0",
-  "author": "ULX3S Digital Design Course",
+  "author": "The Open FPGA Course",
   "description": "Lesson 01 - every two-input gate, plus NAND-only equivalents.",
   "from": { "file": "../gates.v", "module": "gates" },
   "inputs": [

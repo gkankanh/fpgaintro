@@ -2,7 +2,7 @@
   "name": "uart_tx",
   "board": "ulx3s-85f",
   "version": "1.0",
-  "author": "ULX3S Digital Design Course",
+  "author": "The Open FPGA Course",
   "description": "Lesson 09 - the UART transmitter: a shift register and a modulus.",
   "from": { "file": "../uart_tx.v", "module": "uart_tx" },
   "params": [

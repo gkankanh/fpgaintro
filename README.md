@@ -1,8 +1,11 @@
-# Digital Design on the ULX3S
+# From Gates to a RISC-V CPU
 
-A hands-on refresher in digital design, worked all the way from a single
-flip-flop to a **32-bit RISC-V CPU running compiled C**, on a Radiona
-**ULX3S 85F** (Lattice ECP5 LFE5U-85F) using a fully open toolchain.
+Hands-on digital design on an FPGA, worked all the way from a single logic
+gate to a **32-bit RISC-V CPU running compiled C**, using a fully open
+toolchain.
+
+Built and measured on a Radiona **ULX3S 85F** (Lattice ECP5 `LFE5U-85F`) —
+though roughly half the course is board-independent.
 
 It is written for someone who studied this once and wants the ideas back in
 their hands — concepts stated briefly, then built, simulated, and run on real
@@ -242,7 +245,7 @@ Two kinds of work, licensed separately:
 | **Code** — `*.v`, `tools/`, Makefiles, Icestudio specs, assembly | [MIT](LICENSE) |
 | **Prose** — lesson `README.md` files, `docs/`, the course book, diagrams | [CC BY 4.0](LICENSE-DOCS) |
 
-Copyright (c) 2026 ULX3S Digital Design Course.
+Copyright (c) 2026 The Open FPGA Course.
 
 So: use the Verilog in your own project, commercially or not, keeping the
 copyright notice. Teach from the lessons, translate them, or build a course on

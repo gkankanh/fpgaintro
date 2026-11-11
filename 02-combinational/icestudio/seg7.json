@@ -2,7 +2,7 @@
   "name": "seg7",
   "board": "ulx3s-85f",
   "version": "1.0",
-  "author": "ULX3S Digital Design Course",
+  "author": "The Open FPGA Course",
   "description": "Lesson 02 - a 7-segment hex decoder: 4 bits in, 7 segments out.",
   "from": { "file": "../seg7.v", "module": "seg7" },
   "inputs": [

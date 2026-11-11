@@ -1,7 +1,7 @@
 [book]
-title       = "Digital Design on the ULX3S"
-description = "A hands-on refresher in digital design, from a single flip-flop to a 32-bit RISC-V CPU, on a Lattice ECP5 FPGA with a fully open toolchain."
-authors     = ["ULX3S Digital Design Course"]
+title       = "From Gates to a RISC-V CPU"
+description = "Hands-on digital design on an FPGA, from a single logic gate to a 32-bit RISC-V CPU, with a fully open toolchain. Built on a Lattice ECP5."
+authors     = ["The Open FPGA Course"]
 language    = "en"
 src         = "src"
 

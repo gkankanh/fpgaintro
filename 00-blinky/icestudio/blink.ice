@@ -4,7 +4,7 @@
     "name": "blink",
     "version": "1.0",
     "description": "Lesson 00 - a counter divides 25 MHz down to human speed.",
-    "author": "ULX3S Digital Design Course",
+    "author": "The Open FPGA Course",
     "image": ""
   },
   "design": {
@@ -12,7 +12,7 @@
     "graph": {
       "blocks": [
         {
-          "id": "485add1a-7f56-4227-8a53-11606d53723e",
+          "id": "34aff5d6-ec8c-479b-aeb4-9d793e081275",
           "type": "basic.input",
           "data": {
             "name": "clk_25mhz",
@@ -31,7 +31,7 @@
           }
         },
         {
-          "id": "d572bc2f-6427-498e-b66c-31da16b6c0a6",
+          "id": "69a26987-f9b4-4a21-9a97-acdfaf369cf2",
           "type": "basic.output",
           "data": {
             "name": "led",
@@ -86,7 +86,7 @@
           }
         },
         {
-          "id": "14083a34-4091-4aab-82ae-339b15cc2fc7",
+          "id": "b1bd83c8-19b1-4539-a94f-aec78d8287dc",
           "type": "basic.code",
           "data": {
             "code": "reg [WIDTH-1:0] count = 0;\nalways @(posedge clk_25mhz)\n    count <= count + 1'b1;\nassign led = count[WIDTH-1 -: 8];   // top 8 bits: binary odometer\n",
@@ -116,7 +116,7 @@
           }
         },
         {
-          "id": "1f5c65a2-9052-4b7c-bade-743a580c6bff",
+          "id": "16c802eb-2f7a-4eae-91e9-1e24ca2b1feb",
           "type": "basic.constant",
           "data": {
             "name": "WIDTH",
@@ -129,7 +129,7 @@
           }
         },
         {
-          "id": "3cb83dfe-d6b5-40d1-9df0-59c6a99d863d",
+          "id": "95bac25c-9015-4b2c-ab08-bd7e39b50474",
           "type": "basic.info",
           "data": {
             "info": "## Lesson 00 - blinky\n\nThe 25 MHz board clock is far too fast to see. A **counter** is a frequency divider: bit *n* of a counter toggles every 2^n clocks. Tapping the top 8 bits gives a binary odometer slow enough to watch.\n\n- `WIDTH` = 26, so bit 25 toggles about every 1.3 s.\n- Change `WIDTH` on the constant block and rebuild to speed it up or slow it down.\n\nThis is the same logic as `blink.v` in the lesson folder - the code block body is generated from it, so both paths describe one design.",
@@ -144,31 +144,31 @@
       "wires": [
         {
           "source": {
-            "block": "1f5c65a2-9052-4b7c-bade-743a580c6bff",
+            "block": "16c802eb-2f7a-4eae-91e9-1e24ca2b1feb",
             "port": "constant-out"
           },
           "target": {
-            "block": "14083a34-4091-4aab-82ae-339b15cc2fc7",
+            "block": "b1bd83c8-19b1-4539-a94f-aec78d8287dc",
             "port": "WIDTH"
           }
         },
         {
           "source": {
-            "block": "485add1a-7f56-4227-8a53-11606d53723e",
+            "block": "34aff5d6-ec8c-479b-aeb4-9d793e081275",
             "port": "out"
           },
           "target": {
-            "block": "14083a34-4091-4aab-82ae-339b15cc2fc7",
+            "block": "b1bd83c8-19b1-4539-a94f-aec78d8287dc",
             "port": "clk_25mhz"
           }
         },
         {
           "source": {
-            "block": "14083a34-4091-4aab-82ae-339b15cc2fc7",
+            "block": "b1bd83c8-19b1-4539-a94f-aec78d8287dc",
             "port": "led"
           },
           "target": {
-            "block": "d572bc2f-6427-498e-b66c-31da16b6c0a6",
+            "block": "69a26987-f9b4-4a21-9a97-acdfaf369cf2",
             "port": "in"
           },
           "size": 8

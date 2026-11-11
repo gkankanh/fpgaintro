@@ -1,4 +1,4 @@
-# Digital Design on the ULX3S
+# From Gates to a RISC-V CPU
 
 A hands-on refresher in digital design, worked from a single flip-flop to a
 32-bit RISC-V CPU running compiled C, on a Radiona **ULX3S 85F** (Lattice ECP5

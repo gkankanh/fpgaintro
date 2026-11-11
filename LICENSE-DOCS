@@ -4,13 +4,13 @@ diagrams — is licensed under:
 
     Creative Commons Attribution 4.0 International (CC BY 4.0)
 
-    Copyright (c) 2026 ULX3S Digital Design Course
+    Copyright (c) 2026 The Open FPGA Course
 
 In short: you may share and adapt this material for any purpose, including
 commercially, provided you give appropriate credit, link to the licence, and
 indicate if changes were made. Suggested attribution:
 
-    "Digital Design on the ULX3S", ULX3S Digital Design Course,
+    "From Gates to a RISC-V CPU", The Open FPGA Course,
     licensed under CC BY 4.0.
 
 The code in this repository is licensed separately, under the MIT License.

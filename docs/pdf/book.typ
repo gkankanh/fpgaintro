@@ -1,7 +1,7 @@
 #import "style.typ": *
 
 // ===========================================================================
-//  Digital Design on the ULX3S — the course book.
+//  From Gates to a RISC-V CPU — the course book.
 //
 //  Build:  tools/mkpdf.sh      (or: cd docs/pdf && typst compile book.typ)
 // ===========================================================================
@@ -10,8 +10,8 @@
 #let BUILT   = datetime.today().display("[day] [month repr:long] [year]")
 
 #set document(
-  title: "Digital Design on the ULX3S",
-  author: "ULX3S Digital Design Course",
+  title: "From Gates to a RISC-V CPU",
+  author: "The Open FPGA Course",
 )
 
 #set page(
@@ -52,13 +52,13 @@
 // =========================================================== title page ====
 #page(numbering: none, margin: (x: 24mm, y: 30mm))[
   #v(44mm)
-  #text(size: 34pt, weight: "bold")[Digital Design\ on the ULX3S]
+  #text(size: 32pt, weight: "bold")[From Gates to a\ RISC-V CPU]
   #v(6mm)
   #line(length: 58mm, stroke: 2pt + accent)
   #v(6mm)
   #text(size: 14pt, fill: mute)[
-    From a single logic gate to a 32-bit RISC-V processor,\
-    on an open-source FPGA toolchain
+    Hands-on digital design on an FPGA,\
+    with an open-source toolchain
   ]
   #v(1fr)
   #text(size: 10pt, fill: mute)[
@@ -70,7 +70,7 @@
     This book is licensed under Creative Commons Attribution 4.0
     International.\
     The accompanying code is licensed under the MIT License.\
-    Copyright © 2026 ULX3S Digital Design Course.
+    Copyright © 2026 The Open FPGA Course.
   ]
 ]
 
