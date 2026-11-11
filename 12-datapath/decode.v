@@ -29,6 +29,7 @@ module decode (
     // --- ALU ---------------------------------------------------------------
     output wire [3:0]  alu_op,      // {instr[30], funct3}, as lesson 10 expects
     output wire        alu_a_pc,    // operand A is the PC, not rs1 (AUIPC, JAL)
+    output wire        alu_a_zero,  // operand A is zero, not rs1 (LUI)
     output wire        alu_b_imm,   // operand B is the immediate, not rs2
 
     // --- memory ------------------------------------------------------------
@@ -103,8 +104,8 @@ module decode (
     // what funct3 says -- for those instructions funct3 means something else
     // entirely (a width, or which comparison), so it must not reach the ALU.
     //
-    // LUI in particular reuses ADD with operand A forced to zero, which is
-    // why RV32I has no "pass-through" ALU operation: x0 is already zero.
+    // LUI reuses ADD with operand A forced to ZERO, which is why RV32I needs
+    // no "pass-through" ALU operation.
     wire needs_add = is_load || is_store || is_jal || is_jalr
                              || is_auipc || is_lui;
 
@@ -117,8 +118,24 @@ module decode (
     assign alu_op = needs_add ? 4'b0000 : {alu_bit30, funct3};
 
     // ---- operand sources --------------------------------------------------
-    assign alu_a_pc  = is_auipc || is_jal;
-    assign alu_b_imm = !is_reg && !is_branch;
+    //
+    // LUI AND OPERAND A. An earlier version of this file carried a comment
+    // claiming "rs1 is x0 by convention for LUI" and relied on it. That is
+    // FALSE: LUI has no rs1 field at all -- inst[19:15] is part of its 20-bit
+    // immediate. So the ALU was adding the immediate to whatever register
+    // those five bits happened to name, and since the register file starts
+    // undefined, lesson 13's CPU stored X and the X's propagated through
+    // every value built with `li` of a large constant.
+    //
+    // Found by running real software, which is exactly what lesson 13 is for:
+    // the decoder's own testbench checked that LUI asks the ALU for ADD, and
+    // it does. It never checked where operand A came from.
+    //
+    // JAL and AUIPC have the same field overlap but are already safe, because
+    // they take operand A from the PC.
+    assign alu_a_pc   = is_auipc || is_jal;
+    assign alu_a_zero = is_lui;
+    assign alu_b_imm  = !is_reg && !is_branch;
 
     // ---- memory -----------------------------------------------------------
     assign mem_read  = is_load;

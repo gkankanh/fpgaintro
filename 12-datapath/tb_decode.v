@@ -30,7 +30,7 @@ localparam NV = 52;
     immgen u_imm (.inst(inst), .imm(imm));
 
     wire [4:0] rs1, rs2, rd;
-    wire       reg_we, alu_a_pc, alu_b_imm, mem_read, mem_write;
+    wire       reg_we, alu_a_pc, alu_a_zero, alu_b_imm, mem_read, mem_write;
     wire [3:0] alu_op;
     wire [2:0] mem_op;
     wire       branch, jump, jalr, illegal;
@@ -38,7 +38,8 @@ localparam NV = 52;
 
     decode u_dec (
         .inst(inst), .rs1(rs1), .rs2(rs2), .rd(rd), .reg_we(reg_we),
-        .alu_op(alu_op), .alu_a_pc(alu_a_pc), .alu_b_imm(alu_b_imm),
+        .alu_op(alu_op), .alu_a_pc(alu_a_pc), .alu_a_zero(alu_a_zero),
+        .alu_b_imm(alu_b_imm),
         .mem_read(mem_read), .mem_write(mem_write), .mem_op(mem_op),
         .branch(branch), .jump(jump), .jalr(jalr),
         .wb_src(wb_src), .illegal(illegal));
@@ -185,6 +186,19 @@ localparam NV = 52;
         expect("lui alu_op", {28'd0, alu_op},    32'h0);
         expect("lui reg_we", {31'd0, reg_we},    32'd1);
         expect("lui b_imm",  {31'd0, alu_b_imm}, 32'd1);
+        // Operand A must be ZERO, not rs1. LUI has no rs1 field: inst[19:15]
+        // is part of its immediate, so reading a register there adds garbage.
+        // This check was added after lesson 13's CPU stored X for every
+        // large constant -- the decoder test had verified the ALU op and
+        // never asked where the operands came from.
+        expect("lui a_zero", {31'd0, alu_a_zero}, 32'd1);
+        expect("lui a_pc",   {31'd0, alu_a_pc},   32'd0);
+
+        // ...and nothing else forces operand A to zero.
+        inst = 32'h003100B3; #1;                         // add x1,x2,x3
+        expect("add a_zero",  {31'd0, alu_a_zero}, 32'd0);
+        inst = 32'h01000097; #1;                         // auipc x1,0x1000
+        expect("auipc a_zero", {31'd0, alu_a_zero}, 32'd0);
 
         // AUIPC: pc + immediate.
         inst = 32'h01000097; #1;                         // auipc x1,0x1000

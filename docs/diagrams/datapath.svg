@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" role="img"
+     aria-label="The single-cycle RV32I datapath: program counter into instruction memory, into decode and the immediate generator, into the register file and the ALU, then data memory and a writeback multiplexer, with the next-PC multiplexer selecting between PC+4, PC+immediate and rs1+immediate.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#9a6700;
+            --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922;
+              --panel:#161b22; }
+    }
+    .box { fill:var(--panel); stroke:var(--ink); stroke-width:1.5; }
+    .reg { fill:var(--panel); stroke:var(--accent); stroke-width:2; }
+    .w   { stroke:var(--ink); stroke-width:1.4; fill:none; }
+    .ctl { stroke:var(--warm); stroke-width:1.2; fill:none; stroke-dasharray:4 3; }
+    .l   { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; }
+    .s   { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .c   { fill:var(--warm); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t   { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+
+  <!-- PC -->
+  <rect class="reg" x="16" y="150" width="54" height="44" rx="4"/>
+  <text class="l" x="33" y="177">PC</text>
+  <text class="s" x="18" y="144">register</text>
+
+  <!-- instruction memory -->
+  <path class="w" d="M70 172 H 104"/>
+  <rect class="box" x="104" y="140" width="84" height="64" rx="4"/>
+  <text class="l" x="113" y="166">instr</text>
+  <text class="l" x="113" y="182">memory</text>
+  <text class="s" x="104" y="218">comb. read</text>
+
+  <!-- decode + immgen -->
+  <path class="w" d="M188 172 H 222"/>
+  <rect class="box" x="222" y="110" width="78" height="48" rx="4"/>
+  <text class="l" x="238" y="139">decode</text>
+  <rect class="box" x="222" y="186" width="78" height="48" rx="4"/>
+  <text class="l" x="238" y="215">immgen</text>
+  <path class="w" d="M206 172 V 134 H 222"/>
+  <path class="w" d="M206 172 V 210 H 222"/>
+
+  <!-- register file -->
+  <rect class="box" x="328" y="96" width="92" height="96" rx="4"/>
+  <text class="l" x="340" y="128">register</text>
+  <text class="l" x="340" y="146">file</text>
+  <text class="s" x="332" y="170">2 read</text>
+  <text class="s" x="332" y="184">1 write</text>
+  <path class="w" d="M300 134 H 328"/>
+
+  <!-- ALU -->
+  <path class="w" d="M420 124 H 456"/>
+  <path class="w" d="M300 210 H 440 V 160 H 456"/>
+  <rect class="box" x="456" y="104" width="72" height="72" rx="4"/>
+  <text class="l" x="474" y="146">ALU</text>
+  <text class="s" x="458" y="192">lesson 10</text>
+
+  <!-- data memory -->
+  <path class="w" d="M528 140 H 566"/>
+  <rect class="box" x="566" y="108" width="84" height="64" rx="4"/>
+  <text class="l" x="576" y="134">data</text>
+  <text class="l" x="576" y="150">memory</text>
+  <text class="s" x="566" y="186">comb. read</text>
+
+  <!-- writeback mux -->
+  <path class="w" d="M650 140 H 684 V 250 H 420"/>
+  <path class="w" d="M528 176 V 250"/>
+  <rect class="box" x="300" y="236" width="120" height="30" rx="4"/>
+  <text class="l" x="318" y="256">writeback mux</text>
+  <path class="w" d="M300 251 H 262 V 150 H 328"/>
+  <text class="s" x="266" y="276">ALU / memory / PC+4</text>
+
+  <!-- next PC -->
+  <rect class="box" x="104" y="312" width="130" height="32" rx="4"/>
+  <text class="l" x="118" y="333">next-PC mux</text>
+  <path class="w" d="M104 328 H 44 V 194"/>
+  <path class="w" d="M44 172 V 300 H 234 V 328" stroke-dasharray="0"/>
+  <text class="s" x="246" y="332">PC+4</text>
+  <text class="s" x="246" y="348">PC+imm   (branch, JAL)</text>
+  <text class="s" x="246" y="364">rs1+imm  (JALR)</text>
+
+  <!-- branch unit -->
+  <rect class="box" x="328" y="300" width="92" height="40" rx="4"/>
+  <text class="l" x="336" y="325">branch cmp</text>
+  <path class="ctl" d="M328 320 H 234"/>
+  <path class="w"   d="M374 300 V 192"/>
+
+  <!-- control annotation -->
+  <path class="ctl" d="M261 134 V 86 H 492 V 104"/>
+  <text class="c" x="300" y="80">control signals: ALU op, operand sources, write enables</text>
+
+  <text class="t" x="16" y="396">Everything above happens in ONE clock period. The critical path is the whole chain in series,</text>
+  <text class="t" x="16" y="412">which is why this core closes at 61 MHz where the ALU alone managed 116.</text>
+</svg>

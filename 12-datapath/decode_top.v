@@ -42,7 +42,7 @@ module decode_top (
         inst <= rom[sw];
 
     wire [4:0] rs1, rs2, rd;
-    wire       reg_we, alu_a_pc, alu_b_imm, mem_read, mem_write;
+    wire       reg_we, alu_a_pc, alu_a_zero, alu_b_imm, mem_read, mem_write;
     wire [3:0] alu_op;
     wire [2:0] mem_op;
     wire       branch, jump, jalr, illegal;
@@ -52,13 +52,14 @@ module decode_top (
     immgen u_imm (.inst(inst), .imm(imm));
     decode u_dec (
         .inst(inst), .rs1(rs1), .rs2(rs2), .rd(rd), .reg_we(reg_we),
-        .alu_op(alu_op), .alu_a_pc(alu_a_pc), .alu_b_imm(alu_b_imm),
+        .alu_op(alu_op), .alu_a_pc(alu_a_pc), .alu_a_zero(alu_a_zero),
+        .alu_b_imm(alu_b_imm),
         .mem_read(mem_read), .mem_write(mem_write), .mem_op(mem_op),
         .branch(branch), .jump(jump), .jalr(jalr),
         .wb_src(wb_src), .illegal(illegal));
 
     assign led = {illegal, reg_we, mem_read, mem_write, branch, jump, wb_src};
 
-    wire _unused = &{rs1, rs2, rd, alu_op, alu_a_pc, alu_b_imm,
+    wire _unused = &{rs1, rs2, rd, alu_op, alu_a_pc, alu_a_zero, alu_b_imm,
                      mem_op, jalr, imm, 1'b0};
 endmodule
