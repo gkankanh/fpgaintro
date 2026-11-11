@@ -12,7 +12,7 @@ BUILT   := $(foreach d,$(LESSONS),$(if $(wildcard $(d)/Makefile),$(d),))
 TOOLS   := toolchain/oss-cad-suite/bin
 
 .PHONY: help sim-all lint-all graph-all clean-all ice docs docs-serve toolchain check
-.PHONY: sim bit prog flash lint synth graph wave clean deploy list
+.PHONY: sim bit prog flash lint synth graph wave clean deploy list tasks
 
 help:
 	@echo "ULX3S Digital Design Course"
@@ -21,6 +21,7 @@ help:
 	@echo "  make lint-all    verilator --lint-only across every lesson"
 	@echo "  make graph-all   render every lesson as an SVG schematic"
 	@echo "  make ice         regenerate all Icestudio .ice projects from specs"
+	@echo "  make tasks       regenerate VS Code's per-lesson task list"
 	@echo "  make docs        build the lesson book into docs/book/"
 	@echo "  make docs-serve  serve the book at http://localhost:3000"
 	@echo "  make check       verify the toolchain is present and working"
@@ -58,6 +59,11 @@ graph-all:
 # Regenerate every Icestudio project from its JSON spec (see tools/mkice.py).
 ice:
 	@python3 tools/mkice.py --all
+
+# Regenerate .vscode/tasks.json so each lesson appears by name in VS Code's
+# Run Task list. Run after adding a lesson.
+tasks:
+	@python3 tools/mktasks.py
 
 docs:
 	@tools/mkdocs.sh build

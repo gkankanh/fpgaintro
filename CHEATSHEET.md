@@ -1,8 +1,18 @@
 # Cheat sheet
 
-## If you remember one thing
+## Deploy a lesson, with the mouse
 
-Open a terminal — **`Ctrl` + `` ` ``**, or **Terminal → New Terminal** — and
+**Terminal** menu → **Run Task…** → click **`▶ deploy  00 blinky`**
+
+Every lesson that has code appears in that list by name, deploy entries first.
+Clicking one builds it and loads it onto the board. Nothing has to be selected
+beforehand and it does not matter which file is open.
+
+`⌘⌥R` opens the same list from the keyboard.
+
+## Or from a terminal
+
+Open one — **`Ctrl` + `` ` ``**, or **Terminal → New Terminal** — and
 from the project root:
 
 ```bash
