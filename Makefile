@@ -86,6 +86,7 @@ check:
 
 clean-all:
 	@for d in $(BUILT); do $(MAKE) -s -C $$d clean; done
+	@for d in $(wildcard [0-9][0-9]-*/solutions); do $(MAKE) -s -C $$d clean; done
 	@rm -rf docs/book docs/src/lessons
 	@echo "cleaned"
 

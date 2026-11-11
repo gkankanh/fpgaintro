@@ -52,6 +52,26 @@ import re
 import sys
 import uuid
 
+# Block ids must be stable across runs. uuid4() is random, so regenerating an
+# unchanged design produced a different file every time -- `make ice` dirtied
+# the git tree on every invocation and the diffs were meaningless noise.
+# uuid5 derives the id from a name, so the same spec always yields the same
+# ids, and a real change to the design is the only thing that shows up in a
+# diff.
+_NS = uuid.UUID("6ba7b811-9dad-11d1-80b4-00c04fd430c8")   # the RFC 4122 URL namespace
+_seq = 0
+
+
+def _reset_ids() -> None:
+    global _seq
+    _seq = 0
+
+
+def _next_id(spec_name: str) -> str:
+    global _seq
+    _seq += 1
+    return str(uuid.uuid5(_NS, f"{spec_name}#{_seq}"))
+
 # Icestudio ships one pinout.json per board; it maps the friendly pin names
 # used on the canvas ("led_0") to the FPGA ball ("B2").
 BOARD_DIRS = [
@@ -158,9 +178,9 @@ def extract_body(path: str, module: str) -> str:
     return "\n".join(ln[cut:] if ln.strip() else "" for ln in lines).strip("\n") + "\n"
 
 
-def block(btype: str, data: dict, x: int, y: int) -> dict:
+def block(btype: str, data: dict, x: int, y: int, name: str = "") -> dict:
     return {
-        "id": str(uuid.uuid4()),
+        "id": _next_id(name),
         "type": btype,
         "data": data,
         "position": {"x": x, "y": y},
@@ -215,6 +235,8 @@ def build(spec_path: str) -> str:
     spec = json.load(open(spec_path))
     here = os.path.dirname(os.path.abspath(spec_path))
     board = spec.get("board", "ulx3s-85f")
+    name = spec.get("name", os.path.basename(spec_path))
+    _reset_ids()
     pinout = load_pinout(board)
 
     if "from" in spec:
@@ -239,7 +261,7 @@ def build(spec_path: str) -> str:
         data = {"name": s.get("label", s["port"]), "pins": pins, "virtual": False}
         if w > 1:
             data["range"] = f"[{w - 1}:0]"
-        b = block("basic.input", data, X_IN, Y_TOP + i * Y_STEP)
+        b = block("basic.input", data, X_IN, Y_TOP + i * Y_STEP, name)
         blocks.append(b)
         code_in.append(ranged(s["port"], w, s.get("range")))
         pending.append((b, s["port"], w, True))
@@ -249,7 +271,7 @@ def build(spec_path: str) -> str:
         data = {"name": s.get("label", s["port"]), "pins": pins, "virtual": False}
         if w > 1:
             data["range"] = f"[{w - 1}:0]"
-        b = block("basic.output", data, X_OUT, Y_TOP + i * Y_STEP)
+        b = block("basic.output", data, X_OUT, Y_TOP + i * Y_STEP, name)
         blocks.append(b)
         code_out.append(ranged(s["port"], w, s.get("range")))
         pending.append((b, s["port"], w, False))
@@ -263,6 +285,7 @@ def build(spec_path: str) -> str:
         },
         X_CODE,
         Y_TOP,
+        name,
     )
     blocks.append(code)
 
@@ -273,6 +296,7 @@ def build(spec_path: str) -> str:
             {"name": p["name"], "value": str(p["value"]), "local": False},
             X_CODE + 32,
             Y_TOP - 160 - i * 80,
+            name,
         )
         blocks.append(c)
         wires.append({
@@ -286,6 +310,7 @@ def build(spec_path: str) -> str:
             {"info": spec["info"], "readonly": True},
             X_IN, Y_TOP + max(len(spec.get("inputs", [])),
                               len(spec.get("outputs", []))) * Y_STEP + 64,
+            name,
         ))
 
     # Wire each I/O block straight to the like-named port on the code block.

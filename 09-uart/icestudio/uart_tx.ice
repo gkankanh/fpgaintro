@@ -12,7 +12,7 @@
     "graph": {
       "blocks": [
         {
-          "id": "75fe531a-d74c-44de-b9dd-352c92a489f1",
+          "id": "1956dbad-f0d0-57af-a607-6dd9a9e62f2e",
           "type": "basic.input",
           "data": {
             "name": "clk_25mhz",
@@ -31,7 +31,7 @@
           }
         },
         {
-          "id": "8deb903a-1917-4cd1-a085-b6d3cc8f0681",
+          "id": "e69927a2-b522-54e7-a9d8-f84f70a568f2",
           "type": "basic.input",
           "data": {
             "name": "start (press)",
@@ -50,7 +50,7 @@
           }
         },
         {
-          "id": "bc8e5530-bc7b-48da-846e-f1ad293166a2",
+          "id": "72067d1d-a1c7-5dd8-92d1-2fa890ce354a",
           "type": "basic.input",
           "data": {
             "name": "data (slide switches)",
@@ -105,7 +105,7 @@
           }
         },
         {
-          "id": "3126e0f4-5588-471f-a0c5-bf7e60eac8e6",
+          "id": "4c372c59-e148-56af-8f50-2ef4e838dadd",
           "type": "basic.output",
           "data": {
             "name": "tx -> host",
@@ -124,7 +124,7 @@
           }
         },
         {
-          "id": "fa8b7860-9837-476d-907b-5937debc87e8",
+          "id": "fdc6034f-f0c4-58af-8fff-e7b1a104289b",
           "type": "basic.output",
           "data": {
             "name": "busy",
@@ -143,7 +143,7 @@
           }
         },
         {
-          "id": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+          "id": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
           "type": "basic.code",
           "data": {
             "code": "localparam integer DIV = CLK_HZ / BAUD;\nlocalparam integer CW  = $clog2(DIV);\n\n// Sized explicitly, so the comparison below is not a 32-bit integer\n// against an 8-bit counter. Widen then slice, rather than relying on an\n// implicit narrowing -- lesson 08's lesson, and lesson 02's before it.\nlocalparam [31:0]   DIV_W    = DIV - 1;\nlocalparam [CW-1:0] DIV_LAST = DIV_W[CW-1:0];\n\nreg [CW-1:0] cnt   = 0;\nreg [3:0]    bitn  = 0;\nreg [9:0]    shift = 10'h3FF;   // all ones: the idle line\n\n// The whole frame lives in one shift register, and the output is simply\n// its low bit. Loading {stop, data, start} means shift[0] is the start bit\n// immediately, and once the frame has been shifted out the register is all\n// ones again -- so the line returns to idle with no special case.\nassign tx = shift[0];\n\nalways @(posedge clk)\n    if (!busy) begin\n        if (start) begin\n            shift <= {1'b1, data, 1'b0};   // stop, 8 data (LSB first), start\n            cnt   <= 0;\n            bitn  <= 0;\n            busy  <= 1;\n        end\n    end else if (cnt == DIV_LAST) begin\n        cnt   <= 0;\n        shift <= {1'b1, shift[9:1]};       // shift right, ones trailing in\n        bitn  <= bitn + 1'b1;\n        if (bitn == 4'd9) busy <= 0;       // start + 8 data + stop = 10\n    end else\n        cnt <= cnt + 1'b1;\n",
@@ -185,7 +185,7 @@
           }
         },
         {
-          "id": "e0e00dee-3f3a-45da-b80f-a8fceac7da99",
+          "id": "0a18324e-f2dc-5687-8b4a-1f90536e03f9",
           "type": "basic.constant",
           "data": {
             "name": "CLK_HZ",
@@ -198,7 +198,7 @@
           }
         },
         {
-          "id": "28bdeb8a-3c45-4916-9118-e1611cacb9ec",
+          "id": "9db75b7c-8a45-5c50-a105-91caf5d729a7",
           "type": "basic.constant",
           "data": {
             "name": "BAUD",
@@ -211,7 +211,7 @@
           }
         },
         {
-          "id": "36a13813-de83-4d69-819b-bef41037f9ea",
+          "id": "d80f9548-152b-5c2f-bbff-8c0645200cba",
           "type": "basic.info",
           "data": {
             "info": "## Lesson 09 - the UART transmitter\n\nThe whole 8N1 frame lives in one 10-bit shift register, loaded as `{stop, data, start}`, and the output is simply its low bit. Ones trail in from the top, so when the frame finishes the register is all ones again and the line returns to idle with **no special case for idle at all**.\n\n### Baud rate is a counter modulus\n\n```\n25,000,000 / 115,200 = 217.0139\n```\n\nSo DIV = 217, giving 115,207 baud - 0.0064% fast, which over 9.5 bit periods is 0.06% of a bit. Nothing.\n\n### Try it\n\nChange `BAUD` on the constant block to 9600 and rebuild, then open your terminal at 9600. Same design, different modulus.\n\nThe slide switches are wired to the data byte twice (high nibble and low nibble), so four switches set a repeating byte - enough to see something arrive.",
@@ -226,72 +226,72 @@
       "wires": [
         {
           "source": {
-            "block": "e0e00dee-3f3a-45da-b80f-a8fceac7da99",
+            "block": "0a18324e-f2dc-5687-8b4a-1f90536e03f9",
             "port": "constant-out"
           },
           "target": {
-            "block": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+            "block": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
             "port": "CLK_HZ"
           }
         },
         {
           "source": {
-            "block": "28bdeb8a-3c45-4916-9118-e1611cacb9ec",
+            "block": "9db75b7c-8a45-5c50-a105-91caf5d729a7",
             "port": "constant-out"
           },
           "target": {
-            "block": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+            "block": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
             "port": "BAUD"
           }
         },
         {
           "source": {
-            "block": "75fe531a-d74c-44de-b9dd-352c92a489f1",
+            "block": "1956dbad-f0d0-57af-a607-6dd9a9e62f2e",
             "port": "out"
           },
           "target": {
-            "block": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+            "block": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
             "port": "clk"
           }
         },
         {
           "source": {
-            "block": "8deb903a-1917-4cd1-a085-b6d3cc8f0681",
+            "block": "e69927a2-b522-54e7-a9d8-f84f70a568f2",
             "port": "out"
           },
           "target": {
-            "block": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+            "block": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
             "port": "start"
           }
         },
         {
           "source": {
-            "block": "bc8e5530-bc7b-48da-846e-f1ad293166a2",
+            "block": "72067d1d-a1c7-5dd8-92d1-2fa890ce354a",
             "port": "out"
           },
           "target": {
-            "block": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+            "block": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
             "port": "data"
           },
           "size": 8
         },
         {
           "source": {
-            "block": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+            "block": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
             "port": "tx"
           },
           "target": {
-            "block": "3126e0f4-5588-471f-a0c5-bf7e60eac8e6",
+            "block": "4c372c59-e148-56af-8f50-2ef4e838dadd",
             "port": "in"
           }
         },
         {
           "source": {
-            "block": "4cf6624b-6c77-4cd1-aba2-730a09d1d27a",
+            "block": "e2b32098-c8c2-5b96-ba07-27f895ddfe80",
             "port": "busy"
           },
           "target": {
-            "block": "fa8b7860-9837-476d-907b-5937debc87e8",
+            "block": "fdc6034f-f0c4-58af-8fff-e7b1a104289b",
             "port": "in"
           }
         }
