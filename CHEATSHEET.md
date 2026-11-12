@@ -84,6 +84,7 @@ Every lesson understands the same ones. Run them from inside a lesson folder.
 | `make lint` | verilator `-Wall` — latches, widths, multiple drivers |
 | `make graph` | yosys + graphviz — render the design as a schematic SVG |
 | `make synth` | resource report: LUT4s, flip-flops, BRAM, carry cells |
+| `make synth M=mod` | the same report for **one module** instead of the top |
 | `make bit` | yosys → nextpnr → ecppack — a bitstream, with timing closure |
 | `make prog` | load into FPGA **SRAM** — volatile, use while iterating |
 | `make flash` | write to **SPI flash** — survives power-off |
@@ -130,7 +131,7 @@ Open the **folder**, not a file — `.vscode/tasks.json` only loads when its
 parent is the workspace root:
 
 ```bash
-cd /Users/gopal/projects/ULX3S && tools/code.sh
+cd path/to/ULX3S && tools/code.sh
 ```
 
 `tools/code.sh` also puts the toolchain on `PATH`, which the Verilog extension
