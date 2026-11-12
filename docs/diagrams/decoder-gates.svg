@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 364" role="img"
+     aria-label="A two-to-four decoder: each select bit is inverted, and each of the four AND gates combines one polarity of each bit, so exactly one output is high for each value of the select input.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g  { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .wa { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bub{ fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot{ fill:var(--ink); }
+    .n  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .l  { fill:var(--ink);  font:11px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <path class="g" d="M120,18 L164,40 L120,62 Z"/>
+  <circle class="bub" cx="169" cy="40" r="5"/>
+  <path class="g" d="M120,72 L164,94 L120,116 Z"/>
+  <circle class="bub" cx="169" cy="94" r="5"/>
+  <path class="w" d="M174,40 H196"/>
+  <path class="w" d="M174,94 H196"/>
+  <path class="w" d="M50,40 L120,40"/>
+  <text class="s" x="34" y="44">s1</text>
+  <path class="w" d="M50,94 L120,94"/>
+  <text class="s" x="34" y="98">s0</text>
+  <text class="s" x="202" y="44">~s1</text>
+  <text class="s" x="202" y="98">~s0</text>
+  <path class="g" d="M470,124 H497 A22,22 0 0 1 497,168 H470 Z"/>
+  <path class="w" d="M519,146 H541"/>
+  <path class="w" d="M400,137 L470,137"/>
+  <path class="w" d="M400,155 L470,155"/>
+  <text class="s" x="342" y="141">~s1</text>
+  <text class="s" x="342" y="159">~s0</text>
+  <text class="l" x="549" y="150">y[0]</text>
+  <text class="s" x="595" y="150">= 1 when s = 0</text>
+  <path class="g" d="M470,176 H497 A22,22 0 0 1 497,220 H470 Z"/>
+  <path class="w" d="M519,198 H541"/>
+  <path class="w" d="M400,189 L470,189"/>
+  <path class="w" d="M400,207 L470,207"/>
+  <text class="s" x="342" y="193">~s1</text>
+  <text class="s" x="348" y="211">s0</text>
+  <text class="l" x="549" y="202">y[1]</text>
+  <text class="s" x="595" y="202">= 1 when s = 1</text>
+  <path class="g" d="M470,228 H497 A22,22 0 0 1 497,272 H470 Z"/>
+  <path class="w" d="M519,250 H541"/>
+  <path class="w" d="M400,241 L470,241"/>
+  <path class="w" d="M400,259 L470,259"/>
+  <text class="s" x="348" y="245">s1</text>
+  <text class="s" x="342" y="263">~s0</text>
+  <text class="l" x="549" y="254">y[2]</text>
+  <text class="s" x="595" y="254">= 1 when s = 2</text>
+  <path class="g" d="M470,280 H497 A22,22 0 0 1 497,324 H470 Z"/>
+  <path class="w" d="M519,302 H541"/>
+  <path class="w" d="M400,293 L470,293"/>
+  <path class="w" d="M400,311 L470,311"/>
+  <text class="s" x="348" y="297">s1</text>
+  <text class="s" x="348" y="315">s0</text>
+  <text class="l" x="549" y="306">y[3]</text>
+  <text class="s" x="595" y="306">= 1 when s = 3</text>
+  <text class="t" x="50" y="150">Each output is one AND</text>
+  <text class="t" x="50" y="166">of the two select bits,</text>
+  <text class="t" x="50" y="182">in the polarity that</text>
+  <text class="t" x="50" y="198">matches its number.</text>
+  <text class="t" x="50" y="348">A decoder is a multiplexer in a mirror: one line raised out of many, rather than one of many inputs selected onto a single output.</text>
+</svg>

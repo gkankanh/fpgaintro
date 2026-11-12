@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 476" role="img"
+     aria-label="One bit of an ALU: AND, OR and XOR gates and a full adder all compute at once on the same pair of operand bits, and a multiplexer driven by the opcode chooses which of their results leaves.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g  { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .wa { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bub{ fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot{ fill:var(--ink); }
+    .n  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .l  { fill:var(--ink);  font:11px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <path class="g" d="M230,60 H257 A22,22 0 0 1 257,104 H230 Z"/>
+  <path class="w" d="M279,82 H301"/>
+  <text class="s" x="307" y="74">a &amp; b</text>
+  <path class="g" d="M230,140 Q252,162 230,184 Q264,184 284,162 Q264,140 230,140 Z"/>
+  <path class="w" d="M284,162 H306"/>
+  <text class="s" x="312" y="154">a | b</text>
+  <path class="g" d="M230,220 Q252,242 230,264 Q264,264 284,242 Q264,220 230,220 Z"/>
+  <path class="w" d="M222,220 Q244,242 222,264"/>
+  <path class="w" d="M284,242 H306"/>
+  <text class="s" x="312" y="234">a ^ b</text>
+  <rect class="g" x="230" y="300" width="96" height="56" rx="3"/>
+  <text class="l" x="246" y="324">full</text>
+  <text class="l" x="246" y="342">adder</text>
+  <text class="s" x="232" y="372">drawn out in lesson 02</text>
+  <path class="w" d="M326,328 L390,328"/>
+  <path class="w" d="M60,26 L86,26 L86,316"/>
+  <text class="s" x="40" y="30">a[i]</text>
+  <path class="w" d="M60,44 L110,44 L110,330"/>
+  <text class="s" x="40" y="48">b[i]</text>
+  <path class="w" d="M86,73 L230,73"/>
+  <circle class="dot" cx="86" cy="73" r="3"/>
+  <path class="w" d="M110,91 L230,91"/>
+  <circle class="dot" cx="110" cy="91" r="3"/>
+  <path class="w" d="M86,153 L230,153"/>
+  <circle class="dot" cx="86" cy="153" r="3"/>
+  <path class="w" d="M110,171 L230,171"/>
+  <circle class="dot" cx="110" cy="171" r="3"/>
+  <path class="w" d="M86,233 L230,233"/>
+  <circle class="dot" cx="86" cy="233" r="3"/>
+  <path class="w" d="M110,251 L230,251"/>
+  <circle class="dot" cx="110" cy="251" r="3"/>
+  <path class="w" d="M86,316 L230,316"/>
+  <path class="w" d="M110,330 L230,330"/>
+  <path class="w" d="M170,344 L230,344"/>
+  <text class="s" x="134" y="348">cin</text>
+  <path class="g" d="M470,56 L510,96 L510,340 L470,380 Z"/>
+  <path class="w" d="M301,82 L440,82 L440,96 L470,96"/>
+  <text class="s" x="478" y="100">0</text>
+  <path class="w" d="M306,162 L440,162 L440,168 L470,168"/>
+  <text class="s" x="478" y="172">1</text>
+  <path class="w" d="M306,242 L440,242 L440,240 L470,240"/>
+  <text class="s" x="478" y="244">2</text>
+  <path class="w" d="M390,328 L440,328 L440,312 L470,312"/>
+  <text class="s" x="478" y="316">3</text>
+  <path class="w" d="M510,218 L580,218"/>
+  <text class="s" x="586" y="222">result[i]</text>
+  <path class="w" d="M490,380 L490,398"/>
+  <text class="s" x="498" y="402">alu_op</text>
+  <text class="t" x="60" y="426">This slice, thirty-two times over, is the cheap half of the ALU: every operation is computed on every</text>
+  <text class="t" x="60" y="442">cycle and the opcode decides which one leaves. Each bit needs only its own two operand bits.</text>
+  <text class="ta" x="60" y="462">The shifter is the expensive half precisely because it cannot be drawn this way: result[i] depends on a bit of a that the shift amount chooses.</text>
+</svg>

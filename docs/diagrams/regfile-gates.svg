@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 470" role="img"
+     aria-label="A register file: a five-to-thirty-two decoder, enabled by the write-enable, raises the load line of exactly one register, while two thirty-two-to-one multiplexers driven by the read addresses produce the two read ports; x0 is a hardwired constant rather than a register.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g  { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .wa { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bub{ fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot{ fill:var(--ink); }
+    .n  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .l  { fill:var(--ink);  font:11px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <text class="t" x="34" y="34">Two reads and one write, every cycle, and no clock anywhere on the read path.</text>
+  <text class="t" x="34" y="52">The write side is a decoder; the read side is two 32-to-1 multiplexers, and that is where the logic goes.</text>
+  <rect class="g" x="110" y="150" width="120" height="214" rx="3"/>
+  <text class="l" x="124" y="178">5 → 32</text>
+  <text class="s" x="124" y="196">decoder,</text>
+  <text class="s" x="124" y="212">enabled by we</text>
+  <path class="w" d="M50,200 L110,200"/>
+  <text class="s" x="26" y="204">rd</text>
+  <path class="w" d="M50,330 L110,330"/>
+  <text class="s" x="26" y="334">we</text>
+  <rect class="g" x="390" y="90" width="168" height="40" rx="3"/>
+  <text class="l" x="402" y="115">x0</text>
+  <text class="s" x="434" y="114">— constant 0, no flip-flops</text>
+  <rect class="g" x="390" y="166" width="168" height="40" rx="3"/>
+  <text class="l" x="402" y="191">x1</text>
+  <text class="s" x="442" y="190">— 32 flip-flops</text>
+  <path class="w" d="M230,176 L390,176"/>
+  <text class="s" x="258" y="170">load</text>
+  <path class="w" d="M352,196 L390,196"/>
+  <circle class="dot" cx="352" cy="196" r="3"/>
+  <rect class="g" x="390" y="238" width="168" height="40" rx="3"/>
+  <text class="l" x="402" y="263">x2</text>
+  <text class="s" x="442" y="262">— 32 flip-flops</text>
+  <path class="w" d="M230,248 L390,248"/>
+  <text class="s" x="258" y="242">load</text>
+  <path class="w" d="M352,268 L390,268"/>
+  <circle class="dot" cx="352" cy="268" r="3"/>
+  <rect class="g" x="390" y="332" width="168" height="40" rx="3"/>
+  <text class="l" x="402" y="357">x31</text>
+  <text class="s" x="442" y="356">— 32 flip-flops</text>
+  <path class="w" d="M230,342 L390,342"/>
+  <text class="s" x="258" y="336">load</text>
+  <path class="w" d="M352,362 L390,362"/>
+  <circle class="dot" cx="352" cy="362" r="3"/>
+  <text class="s" x="460" y="310">⋮</text>
+  <text class="s" x="166" y="392">⋮</text>
+  <path class="w" d="M50,446 L352,446 L352,176"/>
+  <text class="s" x="8" y="450">wdata</text>
+  <path class="w" d="M586,110 L586,352"/>
+  <path class="w" d="M558,110 L586,110"/>
+  <circle class="dot" cx="586" cy="110" r="3"/>
+  <path class="w" d="M558,186 L586,186"/>
+  <circle class="dot" cx="586" cy="186" r="3"/>
+  <path class="w" d="M558,258 L586,258"/>
+  <circle class="dot" cx="586" cy="258" r="3"/>
+  <path class="w" d="M558,352 L586,352"/>
+  <circle class="dot" cx="586" cy="352" r="3"/>
+  <path class="g" d="M624,80 L664,110 L664,188 L624,218 Z"/>
+  <text class="s" x="630" y="152">32:1</text>
+  <path class="w" d="M586,149 L624,149"/>
+  <path class="w" d="M664,149 L714,149"/>
+  <text class="s" x="670" y="132">rdata1</text>
+  <path class="w" d="M644,218 L644,236"/>
+  <text class="s" x="652" y="240">rs1</text>
+  <path class="g" d="M624,300 L664,330 L664,408 L624,438 Z"/>
+  <text class="s" x="630" y="372">32:1</text>
+  <path class="w" d="M586,330 L624,330"/>
+  <circle class="dot" cx="586" cy="330" r="3"/>
+  <path class="w" d="M664,369 L714,369"/>
+  <text class="s" x="670" y="352">rdata2</text>
+  <path class="w" d="M644,438 L644,456"/>
+  <text class="s" x="652" y="460">rs2</text>
+</svg>

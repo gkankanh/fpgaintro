@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 318" role="img"
+     aria-label="Exclusive-OR built from four NAND gates: the first NANDs a and b, two more combine that result with each input, and the fourth NANDs those together to produce a XOR b.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g  { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .wa { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bub{ fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot{ fill:var(--ink); }
+    .n  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .l  { fill:var(--ink);  font:11px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <path class="g" d="M170,40 H197 A22,22 0 0 1 197,84 H170 Z"/>
+  <circle class="bub" cx="224" cy="62" r="5"/>
+  <path class="g" d="M330,104 H357 A22,22 0 0 1 357,148 H330 Z"/>
+  <circle class="bub" cx="384" cy="126" r="5"/>
+  <path class="g" d="M330,176 H357 A22,22 0 0 1 357,220 H330 Z"/>
+  <circle class="bub" cx="384" cy="198" r="5"/>
+  <path class="g" d="M500,140 H527 A22,22 0 0 1 527,184 H500 Z"/>
+  <circle class="bub" cx="554" cy="162" r="5"/>
+  <path class="w" d="M229,62 H251"/>
+  <path class="w" d="M389,126 H411"/>
+  <path class="w" d="M389,198 H411"/>
+  <path class="w" d="M559,162 H581"/>
+  <path class="w" d="M64,24 L310,24"/>
+  <path class="w" d="M120,24 L120,53 L170,53"/>
+  <circle class="dot" cx="120" cy="24" r="3"/>
+  <path class="w" d="M310,24 L310,117 L330,117"/>
+  <path class="w" d="M64,262 L300,262"/>
+  <path class="w" d="M150,262 L150,71 L170,71"/>
+  <circle class="dot" cx="150" cy="262" r="3"/>
+  <path class="w" d="M300,262 L300,207 L330,207"/>
+  <path class="w" d="M251,62 L286,62 L286,189 L330,189"/>
+  <path class="w" d="M286,135 L330,135"/>
+  <circle class="dot" cx="286" cy="135" r="3"/>
+  <path class="w" d="M411,126 L466,126 L466,153 L500,153"/>
+  <path class="w" d="M411,198 L466,198 L466,171 L500,171"/>
+  <text class="s" x="48" y="28">a</text>
+  <text class="s" x="48" y="266">b</text>
+  <text class="s" x="587" y="166">y</text>
+  <text class="s" x="176" y="34">NAND 1</text>
+  <text class="s" x="336" y="98">NAND 2</text>
+  <text class="s" x="336" y="170">NAND 3</text>
+  <text class="s" x="506" y="134">NAND 4</text>
+  <text class="ta" x="64" y="292">What you wrote: four NAND gates, because NAND alone can build any function.</text>
+  <text class="ta" x="64" y="308">What the synthesiser built: one LUT4 holding the XOR truth table. It worked out the function and never built the chain.</text>
+</svg>

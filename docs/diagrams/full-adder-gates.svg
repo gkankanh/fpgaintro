@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 400" role="img"
+     aria-label="A full adder built from two XOR gates, two AND gates and an OR gate, and below it four of them chained so each carry-out feeds the next stage's carry-in.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g  { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .wa { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bub{ fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot{ fill:var(--ink); }
+    .n  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .l  { fill:var(--ink);  font:11px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <path class="g" d="M190,30 Q212,52 190,74 Q224,74 244,52 Q224,30 190,30 Z"/>
+  <path class="w" d="M182,30 Q204,52 182,74"/>
+  <path class="g" d="M400,86 Q422,108 400,130 Q434,130 454,108 Q434,86 400,86 Z"/>
+  <path class="w" d="M392,86 Q414,108 392,130"/>
+  <path class="g" d="M190,150 H217 A22,22 0 0 1 217,194 H190 Z"/>
+  <path class="g" d="M400,200 H427 A22,22 0 0 1 427,244 H400 Z"/>
+  <path class="g" d="M560,150 Q582,172 560,194 Q594,194 614,172 Q594,150 560,150 Z"/>
+  <path class="w" d="M244,52 H266"/>
+  <path class="w" d="M454,108 H476"/>
+  <path class="w" d="M239,172 H261"/>
+  <path class="w" d="M449,222 H471"/>
+  <path class="w" d="M614,172 H636"/>
+  <path class="w" d="M60,43 L190,43"/>
+  <path class="w" d="M100,43 L100,163 L190,163"/>
+  <circle class="dot" cx="100" cy="43" r="3"/>
+  <path class="w" d="M60,61 L190,61"/>
+  <path class="w" d="M140,61 L140,181 L190,181"/>
+  <circle class="dot" cx="140" cy="61" r="3"/>
+  <path class="w" d="M266,52 L360,52 L360,213 L400,213"/>
+  <path class="w" d="M360,99 L400,99"/>
+  <circle class="dot" cx="360" cy="99" r="3"/>
+  <path class="w" d="M60,250 L330,250"/>
+  <path class="w" d="M330,250 L330,117 L400,117"/>
+  <path class="w" d="M330,231 L400,231"/>
+  <circle class="dot" cx="330" cy="231" r="3"/>
+  <path class="w" d="M261,172 L520,172 L520,163 L560,163"/>
+  <path class="w" d="M471,222 L520,222 L520,181 L560,181"/>
+  <text class="s" x="44" y="47">a</text>
+  <text class="s" x="44" y="65">b</text>
+  <text class="s" x="34" y="254">cin</text>
+  <text class="s" x="482" y="112">sum</text>
+  <text class="s" x="642" y="176">cout</text>
+  <text class="s" x="262" y="26">a ^ b</text>
+  <text class="s" x="262" y="146">a &amp; b</text>
+  <text class="t" x="60" y="292">sum = a ^ b ^ cin   ·   cout = (a &amp; b) | ((a ^ b) &amp; cin)</text>
+  <rect class="g" x="90" y="320" width="86" height="40" rx="3"/>
+  <text class="l" x="104" y="345">FA 3</text>
+  <text class="s" x="92" y="314">a3 b3</text>
+  <path class="w" d="M120,320 L120,304"/>
+  <rect class="g" x="240" y="320" width="86" height="40" rx="3"/>
+  <text class="l" x="254" y="345">FA 2</text>
+  <text class="s" x="242" y="314">a2 b2</text>
+  <path class="w" d="M270,320 L270,304"/>
+  <path class="w" d="M240,340 L176,340"/>
+  <rect class="g" x="390" y="320" width="86" height="40" rx="3"/>
+  <text class="l" x="404" y="345">FA 1</text>
+  <text class="s" x="392" y="314">a1 b1</text>
+  <path class="w" d="M420,320 L420,304"/>
+  <path class="w" d="M390,340 L326,340"/>
+  <rect class="g" x="540" y="320" width="86" height="40" rx="3"/>
+  <text class="l" x="554" y="345">FA 0</text>
+  <text class="s" x="542" y="314">a0 b0</text>
+  <path class="w" d="M570,320 L570,304"/>
+  <path class="w" d="M540,340 L476,340"/>
+  <path class="w" d="M626,340 L700,340"/>
+  <path class="w" d="M90,340 L60,340"/>
+  <text class="s" x="34" y="344">cout</text>
+  <text class="s" x="704" y="344">cin</text>
+  <text class="ta" x="60" y="382">Chained, each carry waits for the one below it: a hand-built 32-bit adder is slow as well as large.</text>
+  <text class="ta" x="60" y="396">The fabric has a dedicated carry chain for exactly this reason — one CCU2C cell per two bits.</text>
+</svg>

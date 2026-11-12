@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 428" role="img"
+     aria-label="One bit of a register: a two-to-one multiplexer chooses between new data and the flip-flop's own output, and its result feeds a D flip-flop; below, four such bits sharing one clock and one enable make a four-bit register.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g  { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .wa { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bub{ fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot{ fill:var(--ink); }
+    .n  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .l  { fill:var(--ink);  font:11px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <path class="g" d="M250,54 L286,66 L286,106 L250,118 Z"/>
+  <text class="s" x="256" y="74">0</text>
+  <text class="s" x="256" y="105">1</text>
+  <rect class="g" x="350" y="54" width="92" height="64" rx="3"/>
+  <text class="l" x="358" y="76">D</text>
+  <text class="l" x="424" y="76">Q</text>
+  <path class="w" d="M350,104 l11,-7 l-11,-7 z" fill="none"/>
+  <path class="w" d="M150,72 L250,72"/>
+  <text class="s" x="116" y="76">d[i]</text>
+  <path class="w" d="M286,86 L350,86"/>
+  <path class="w" d="M442,86 L560,86"/>
+  <text class="s" x="566" y="90">q[i]</text>
+  <circle class="dot" cx="500" cy="86" r="3"/>
+  <path class="w" d="M500,86 L500,150 L232,150 L232,100 L250,100"/>
+  <text class="s" x="300" y="166">the old value, straight back in</text>
+  <path class="w" d="M150,236 L268,236 L268,112"/>
+  <text class="s" x="120" y="240">en</text>
+  <path class="w" d="M150,252 L330,252 L330,104 L350,104"/>
+  <text class="s" x="116" y="256">clk</text>
+  <text class="t" x="116" y="34">One bit: a multiplexer in front of a D flip-flop.</text>
+  <rect class="g" x="116" y="304" width="128" height="44" rx="3"/>
+  <text class="l" x="128" y="332">bit 3</text>
+  <text class="s" x="178" y="326">mux +</text>
+  <text class="s" x="178" y="340">flip-flop</text>
+  <path class="w" d="M180,304 L180,288"/>
+  <text class="s" x="156" y="284">d[3]</text>
+  <path class="w" d="M180,348 L180,362"/>
+  <text class="s" x="156" y="376">q[3]</text>
+  <rect class="g" x="268" y="304" width="128" height="44" rx="3"/>
+  <text class="l" x="280" y="332">bit 2</text>
+  <text class="s" x="330" y="326">mux +</text>
+  <text class="s" x="330" y="340">flip-flop</text>
+  <path class="w" d="M332,304 L332,288"/>
+  <text class="s" x="308" y="284">d[2]</text>
+  <path class="w" d="M332,348 L332,362"/>
+  <text class="s" x="308" y="376">q[2]</text>
+  <rect class="g" x="420" y="304" width="128" height="44" rx="3"/>
+  <text class="l" x="432" y="332">bit 1</text>
+  <text class="s" x="482" y="326">mux +</text>
+  <text class="s" x="482" y="340">flip-flop</text>
+  <path class="w" d="M484,304 L484,288"/>
+  <text class="s" x="460" y="284">d[1]</text>
+  <path class="w" d="M484,348 L484,362"/>
+  <text class="s" x="460" y="376">q[1]</text>
+  <rect class="g" x="572" y="304" width="128" height="44" rx="3"/>
+  <text class="l" x="584" y="332">bit 0</text>
+  <text class="s" x="634" y="326">mux +</text>
+  <text class="s" x="634" y="340">flip-flop</text>
+  <path class="w" d="M636,304 L636,288"/>
+  <text class="s" x="612" y="284">d[0]</text>
+  <path class="w" d="M636,348 L636,362"/>
+  <text class="s" x="612" y="376">q[0]</text>
+  <text class="t" x="116" y="268">And the register is that, once per bit, on one shared clock and one shared enable.</text>
+  <text class="t" x="116" y="400">The enable is a multiplexer, never a switch on the clock: when en is low the register loads its own output back.</text>
+  <text class="ta" x="116" y="416">There is no "do nothing" in hardware. Every flip-flop is clocked on every edge, for ever; the only question is what it loads.</text>
+</svg>

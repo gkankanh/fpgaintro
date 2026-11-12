@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 366" role="img"
+     aria-label="The seven basic logic gates drawn as standard symbols — AND, OR, XOR, NOT, NAND, NOR and XNOR — each with its Verilog expression and the output column of its truth table.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g  { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .wa { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bub{ fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot{ fill:var(--ink); }
+    .n  { fill:var(--ink);  font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .l  { fill:var(--ink);  font:11px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <path class="g" d="M36,46 H63 A22,22 0 0 1 63,90 H36 Z"/>
+  <path class="w" d="M16,59 H38"/>
+  <path class="w" d="M16,77 H38"/>
+  <path class="w" d="M85,68 H107"/>
+  <text class="s" x="4" y="63">a</text>
+  <text class="s" x="4" y="81">b</text>
+  <text class="s" x="113" y="72">y</text>
+  <text class="n" x="16" y="118">AND</text>
+  <text class="l" x="16" y="135">y = a &amp; b</text>
+  <text class="s" x="16" y="152">ab = 00 01 10 11</text>
+  <text class="s" x="16" y="166">y  =  0  0  0  1</text>
+  <path class="g" d="M221,46 Q243,68 221,90 Q255,90 275,68 Q255,46 221,46 Z"/>
+  <path class="w" d="M201,59 H223"/>
+  <path class="w" d="M201,77 H223"/>
+  <path class="w" d="M275,68 H297"/>
+  <text class="s" x="189" y="63">a</text>
+  <text class="s" x="189" y="81">b</text>
+  <text class="s" x="303" y="72">y</text>
+  <text class="n" x="201" y="118">OR</text>
+  <text class="l" x="201" y="135">y = a | b</text>
+  <text class="s" x="201" y="152">ab = 00 01 10 11</text>
+  <text class="s" x="201" y="166">y  =  0  1  1  1</text>
+  <path class="g" d="M406,46 Q428,68 406,90 Q440,90 460,68 Q440,46 406,46 Z"/>
+  <path class="w" d="M398,46 Q420,68 398,90"/>
+  <path class="w" d="M378,59 H400"/>
+  <path class="w" d="M378,77 H400"/>
+  <path class="w" d="M460,68 H482"/>
+  <text class="s" x="366" y="63">a</text>
+  <text class="s" x="366" y="81">b</text>
+  <text class="s" x="488" y="72">y</text>
+  <text class="n" x="386" y="118">XOR</text>
+  <text class="l" x="386" y="135">y = a ^ b</text>
+  <text class="s" x="386" y="152">ab = 00 01 10 11</text>
+  <text class="s" x="386" y="166">y  =  0  1  1  0</text>
+  <path class="g" d="M591,46 L635,68 L591,90 Z"/>
+  <circle class="bub" cx="640" cy="68" r="5"/>
+  <path class="w" d="M571,68 H592"/>
+  <path class="w" d="M645,68 H667"/>
+  <text class="s" x="559" y="72">a</text>
+  <text class="s" x="673" y="72">y</text>
+  <text class="n" x="571" y="118">NOT</text>
+  <text class="l" x="571" y="135">y = ~a</text>
+  <text class="s" x="571" y="152">a = 0 1</text>
+  <text class="s" x="571" y="166">y  =  1  0</text>
+  <path class="g" d="M36,196 H63 A22,22 0 0 1 63,240 H36 Z"/>
+  <circle class="bub" cx="90" cy="218" r="5"/>
+  <path class="w" d="M16,209 H38"/>
+  <path class="w" d="M16,227 H38"/>
+  <path class="w" d="M95,218 H117"/>
+  <text class="s" x="4" y="213">a</text>
+  <text class="s" x="4" y="231">b</text>
+  <text class="s" x="123" y="222">y</text>
+  <text class="n" x="16" y="268">NAND</text>
+  <text class="l" x="16" y="285">y = ~(a &amp; b)</text>
+  <text class="s" x="16" y="302">ab = 00 01 10 11</text>
+  <text class="s" x="16" y="316">y  =  1  1  1  0</text>
+  <path class="g" d="M221,196 Q243,218 221,240 Q255,240 275,218 Q255,196 221,196 Z"/>
+  <circle class="bub" cx="280" cy="218" r="5"/>
+  <path class="w" d="M201,209 H223"/>
+  <path class="w" d="M201,227 H223"/>
+  <path class="w" d="M285,218 H307"/>
+  <text class="s" x="189" y="213">a</text>
+  <text class="s" x="189" y="231">b</text>
+  <text class="s" x="313" y="222">y</text>
+  <text class="n" x="201" y="268">NOR</text>
+  <text class="l" x="201" y="285">y = ~(a | b)</text>
+  <text class="s" x="201" y="302">ab = 00 01 10 11</text>
+  <text class="s" x="201" y="316">y  =  1  0  0  0</text>
+  <path class="g" d="M406,196 Q428,218 406,240 Q440,240 460,218 Q440,196 406,196 Z"/>
+  <path class="w" d="M398,196 Q420,218 398,240"/>
+  <circle class="bub" cx="465" cy="218" r="5"/>
+  <path class="w" d="M378,209 H400"/>
+  <path class="w" d="M378,227 H400"/>
+  <path class="w" d="M470,218 H492"/>
+  <text class="s" x="366" y="213">a</text>
+  <text class="s" x="366" y="231">b</text>
+  <text class="s" x="498" y="222">y</text>
+  <text class="n" x="386" y="268">XNOR</text>
+  <text class="l" x="386" y="285">y = ~(a ^ b)</text>
+  <text class="s" x="386" y="302">ab = 00 01 10 11</text>
+  <text class="s" x="386" y="316">y  =  1  0  0  1</text>
+  <text class="t" x="36" y="336">A bubble on the output means "and then invert".</text>
+  <text class="t" x="36" y="354">Each is a function of at most two inputs, so each costs exactly one LUT4 — a 2-input AND and a 4-input XOR are the same price.</text>
+</svg>
