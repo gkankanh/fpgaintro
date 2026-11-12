@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 324" role="img"
+     aria-label="The path from Verilog to a running FPGA: yosys synthesises the source into a netlist of LUT4s and flip-flops, nextpnr places and routes that netlist onto the fabric and checks the clock, ecppack turns the result into a bitstream, and the bitstream is loaded into the chip. Simulation branches off the source and must pass before any of it.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .b  { fill:var(--panel); stroke:var(--ink); stroke-width:1.4; }
+    .w  { stroke:var(--ink); stroke-width:1.3; fill:none; }
+    .ah { fill:var(--ink); }
+    .aa { fill:var(--accent); }
+    .sb { stroke:var(--accent); stroke-width:1.3; fill:none; stroke-dasharray:4 3; }
+    .l  { fill:var(--ink);  font:13px ui-sans-serif,system-ui,sans-serif; }
+    .m  { fill:var(--ink);  font:12px ui-monospace,monospace; }
+    .s  { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .k  { fill:var(--mute); font:10px ui-monospace,monospace; }
+    .t  { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ta { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+
+  <!-- the five stages -->
+  <rect class="b" x="14"  y="96" width="96"  height="52" rx="4"/>
+  <text class="m" x="30"  y="120">design.v</text>
+  <text class="s" x="30"  y="138">what you write</text>
+
+  <rect class="b" x="152" y="96" width="126" height="52" rx="4"/>
+  <text class="l" x="168" y="120">yosys</text>
+  <text class="s" x="168" y="138">synthesis</text>
+
+  <rect class="b" x="312" y="96" width="126" height="52" rx="4"/>
+  <text class="l" x="328" y="120">nextpnr</text>
+  <text class="s" x="328" y="138">place &amp; route</text>
+
+  <rect class="b" x="472" y="96" width="118" height="52" rx="4"/>
+  <text class="l" x="488" y="120">ecppack</text>
+  <text class="s" x="488" y="138">bitstream</text>
+
+  <rect class="b" x="628" y="96" width="98"  height="52" rx="4"/>
+  <text class="l" x="652" y="120">the FPGA</text>
+  <text class="s" x="648" y="138">your circuit</text>
+
+  <!-- arrows -->
+  <path class="w" d="M110 122 H 144"/><path class="ah" d="M144 117 l10 5 l-10 5 z"/>
+  <path class="w" d="M278 122 H 304"/><path class="ah" d="M304 117 l10 5 l-10 5 z"/>
+  <path class="w" d="M438 122 H 464"/><path class="ah" d="M464 117 l10 5 l-10 5 z"/>
+  <path class="w" d="M590 122 H 620"/><path class="ah" d="M620 117 l10 5 l-10 5 z"/>
+
+  <!-- what each stage decides -->
+  <text class="s" x="14"  y="176">a description of</text>
+  <text class="s" x="14"  y="190">a circuit, not a</text>
+  <text class="s" x="14"  y="204">list of steps</text>
+
+  <text class="s" x="152" y="176">chooses LUT4s,</text>
+  <text class="s" x="152" y="190">flip-flops, carry</text>
+  <text class="k" x="152" y="204">make synth</text>
+
+  <text class="s" x="312" y="176">chooses which cell</text>
+  <text class="s" x="312" y="190">and which wire; checks</text>
+  <text class="s" x="312" y="204">the clock is met</text>
+
+  <text class="s" x="472" y="176">config bits, in the</text>
+  <text class="s" x="472" y="190">order the chip</text>
+  <text class="s" x="472" y="204">expects them</text>
+
+  <text class="k" x="628" y="176">make prog</text>
+  <text class="s" x="628" y="190">→ SRAM, volatile</text>
+  <text class="k" x="628" y="204">make flash</text>
+  <text class="s" x="628" y="218">→ survives power-off</text>
+
+  <!-- the simulation branch, which comes first -->
+  <path class="sb" d="M62 96 V 58 H 258"/>
+  <path class="aa" d="M258 53 l10 5 l-10 5 z"/>
+  <text class="ta" x="72"  y="50">iverilog, verilator</text>
+  <text class="ta" x="276" y="62">make sim — must print PASS before any of the above is worth running</text>
+
+  <path class="sb" d="M270 148 V 240 H 300"/>
+  <path class="aa" d="M300 235 l10 5 l-10 5 z"/>
+  <text class="ta" x="316" y="236">make graph — the netlist drawn back as a schematic:</text>
+  <text class="ta" x="316" y="250">what was inferred, rather than what you thought you wrote</text>
+
+  <text class="t" x="14" y="288">Each stage is a translation, not a compilation to instructions: text, then a netlist of cells, then a placed and routed design, then</text>
+  <text class="t" x="14" y="304">configuration bits. The chip does not run the bitstream — it becomes what the bitstream describes.</text>
+</svg>

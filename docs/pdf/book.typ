@@ -60,6 +60,11 @@
     Hands-on digital design on an FPGA,\
     with an open-source toolchain
   ]
+  #v(10mm)
+  #text(size: 10.5pt, fill: mute)[
+    Lessons 00–14 are built, tested and measured.\
+    Lessons 15–17 are planned: scope settled, nothing measured.
+  ]
   #v(1fr)
   #text(size: 10pt, fill: mute)[
     Lattice ECP5 `LFE5U-85F` · Radiona ULX3S\
@@ -83,10 +88,11 @@
 #counter(page).update(1)
 
 #include "chapters/01-about.typ"
-#include "chapters/02-ulx3s.typ"
-#include "chapters/03-credits.typ"
-#include "chapters/04-install.typ"
-#include "chapters/05-howto.typ"
+#include "chapters/02-fpga.typ"
+#include "chapters/03-ulx3s.typ"
+#include "chapters/04-credits.typ"
+#include "chapters/05-install.typ"
+#include "chapters/06-howto.typ"
 
 #include "chapters/L00.typ"
 #include "chapters/L01.typ"

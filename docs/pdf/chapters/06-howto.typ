@@ -32,6 +32,9 @@ Every lesson understands the same verbs. Run them from inside a lesson folder:
   [`make lint`],  [Verilator `-Wall` — latches, widths, multiple drivers],
   [`make graph`], [yosys + graphviz — render the design as a schematic],
   [`make synth`], [the resource report: LUT4s, flip-flops, block RAM, carry cells],
+  [`make synth M=mod`], [the same report for one module rather than the whole
+                        design — how every per-module cost in this book was
+                        produced],
   [`make bit`],   [yosys → nextpnr → ecppack — a bitstream, with timing closure],
   [`make prog`],  [load into FPGA SRAM — volatile, for iterating],
   [`make flash`], [write to SPI flash — survives power-off],
@@ -136,6 +139,43 @@ exercise states what you should see.
     reports; lesson 04 is about exactly this
   ],
 )
+
+== Reproducing the numbers in this book
+
+Every resource count and every frequency in this book was produced by the
+commands printed beside it, on the setup below. Synthesis results are not
+universal constants: a different toolchain release can move a LUT4 count by a
+few percent, and a different device or speed grade moves the frequencies.
+
+#ttable(
+  columns: (auto, 1fr),
+  [*board*],        [Radiona ULX3S, `ulx3s_v20.lpf` — the constraint file for
+                     board revisions v2.x.x and v3.0.x],
+  [*device*],       [Lattice ECP5 `LFE5U-85F-6BG381C` — 85F size grade,
+                     #strong[speed grade 6], 381-ball caBGA, commercial],
+  [*clock*],        [25 MHz, from the board crystal, constrained in the `.lpf`
+                     with `FREQUENCY PORT "clk_25mhz" 25 MHZ`],
+  [*place & route*], [`nextpnr-ecp5 --85k --package CABGA381 --freq 25`],
+  [*toolchain*],    [OSS CAD Suite release `2026-11-10`],
+  [*synthesis*],    [Yosys 0.70+368 (`7cf88aca6`), `synth_ecp5`],
+  [*p\&r*],         [nextpnr 0.11.1-89 (`445e2a65`)],
+  [*bitstream*],    [Project Trellis `ecppack` 1.4-88],
+  [*simulation*],   [Icarus Verilog 14.0 (devel)],
+  [*linting*],      [Verilator 5.055 devel],
+)
+
+The resource numbers come from `make synth`, which runs `synth_ecp5` and
+`stat` — not from a placed design, so they do not include the board wiring
+unless the quoted module is the lesson's top. The frequencies come from
+`make bit`, which is `nextpnr` reporting the routed design's maximum frequency
+for each clock.
+
+#why[
+  A measured number without its conditions is an anecdote. If your own `make
+  synth` disagrees with this book by a cell or two, the likely reason is a
+  newer OSS CAD Suite — which is the right thing to trust, since it is the one
+  that built your bitstream.
+]
 
 == Keeping the whole course green
 
