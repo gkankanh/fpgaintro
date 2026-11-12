@@ -136,13 +136,24 @@ flagged.
 
 == What it cost
 
-#measured("decode is cheap; execution is where the silicon goes")[
-  #ttable(
-    columns: (auto, auto),
-    [`immgen`], [70 LUT4 + 27 muxes],
-    [`decode`], [44 LUT4 + 12 muxes],
-  )
-  The immediate generator costs more than the entire control decoder —
-  consistent with the multiplexer count. Both are tiny beside lesson 10's ALU
-  at 885 LUT4.
+#cost([`decode_top` — the whole design],
+      (LUT4: 53, TRELLIS_FF: 14, PFUMX: 14, L6MUX21: 9), share: true)[]
+
+#cost([`immgen` — the immediate generator],
+      (LUT4: 70, PFUMX: 17, L6MUX21: 10), cmd: "make synth M=immgen")[]
+
+#cost([`decode` — the control decoder],
+      (LUT4: 45, PFUMX: 8, L6MUX21: 3), cmd: "make synth M=decode")[
+  #strong[The immediate generator costs more than the entire control
+  decoder] — consistent with the multiplexer counts. Both are tiny beside
+  lesson 10's ALU at 885 LUT4, and both vanish inside the board demo above,
+  which only has to show a few of their outputs on LEDs.
 ]
+
+== Wrap-up
+
+#strong[What you built.] An instruction decoder and an immediate generator, tested on legal encodings and the illegal ones next door — and the immediate generator costs more than the decoder.
+
+#strong[What to keep.] Fixed field positions are what let every field be decoded in parallel.
+
+#strong[What comes next.] Lesson 13 wires the ALU, the register file and this decoder into a processor.

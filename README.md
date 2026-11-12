@@ -1,8 +1,13 @@
 # From Gates to a RISC-V CPU
 
 Hands-on digital design on an FPGA, worked all the way from a single logic
-gate to a **32-bit RISC-V CPU running compiled C**, using a fully open
-toolchain.
+gate to a **32-bit RISC-V CPU running real programs on real silicon**, using a
+fully open toolchain.
+
+**Status.** Lessons 00–14 are built, tested and measured — every number in them
+came from the tools, and every testbench runs. Lessons 15–17, which take the
+core to compiled C, a pipeline and interrupts, are **planned**: their scope is
+settled and written down, their code and measurements are not here yet.
 
 Built and measured on a Radiona **ULX3S 85F** (Lattice ECP5 `LFE5U-85F`) —
 though roughly half the course is board-independent.

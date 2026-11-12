@@ -70,16 +70,13 @@ Every one of those is #strong[free], and that is the point:
 
 == What it cost, and the question it raises
 
-#measured("adding text to lesson 06")[
-  #ttable(
-    columns: (auto, auto, auto),
-    [], [*lesson 06*], [*lesson 07*],
-    [`LUT4`],       [108], [#strong[185]],
-    [`TRELLIS_FF`], [72],  [72 — #strong[unchanged]],
-    [`PFUMX`],      [29],  [50],
-  )
+#cost([`text_top` — the whole design],
+      (LUT4: 185, TRELLIS_FF: 72, CCU2C: 22, PFUMX: 50, L6MUX21: 25),
+      share: true)[
+  Set that beside lesson 06's display controller — 108 LUT4, 72 flip-flops,
+  22 carry cells, 29 muxes — and the interesting row is the second.
   #strong[No new flip-flops at all.] The text added no state, only
-  combinational arithmetic. The extra 77 LUTs are the coordinate chain and the
+  combinational arithmetic. The extra 77 LUT4 are the coordinate chain and the
   font ROM.
 ]
 
@@ -106,3 +103,11 @@ comparing against a reference.
   mutation that survives for a good reason, lesson 12 finds a hole in its own
   vectors, and lesson 13 finds a bug that 161 passing checks had missed.
 ]
+
+== Wrap-up
+
+#strong[What you built.] A font ROM and the coordinate chain that turns a pixel position into a glyph row — 77 more LUT4 than lesson 06 and #strong[no new flip-flops].
+
+#strong[What to keep.] Combinational work adds area, not state; and a 32-byte ROM becomes logic rather than memory.
+
+#strong[What comes next.] Lesson 08 explains where that line sits, and what it costs to be on the wrong side of it.

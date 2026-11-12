@@ -64,8 +64,8 @@ state machines — occasionally what you want, frequently a timing problem.
 #measured("Mealy has fewer states and costs more")[
   #ttable(
     columns: (auto, auto),
-    [`seq_moore`], [2 LUT4, 2 flip-flops],
-    [`seq_mealy`], [#strong[5 LUT4], 2 flip-flops],
+    [`seq_moore`], [2 `LUT4`, 2 `TRELLIS_FF`],
+    [`seq_mealy`], [#strong[5 `LUT4`], 2 `TRELLIS_FF`],
   )
   Mealy genuinely needs fewer states — 3 against 4 — and the saving buys
   nothing, because both counts fit in two flip-flops, while making the output
@@ -77,9 +77,9 @@ state machines — occasionally what you want, frequently a timing problem.
   #ttable(
     columns: (auto, auto),
     [*encoding*], [*cost*],
-    [the synthesiser's own choice], [11 LUT4, 3 muxes, 5 FF],
-    [`"binary"`],  [12 LUT4, 3 muxes, 5 FF],
-    [`"one-hot"`], [#strong[41 LUT4], 30 muxes, 7 FF],
+    [the synthesiser's own choice], [11 `LUT4`, 3 `PFUMX`, 5 `TRELLIS_FF`],
+    [`"binary"`],  [12 `LUT4`, 3 `PFUMX`, 5 `TRELLIS_FF`],
+    [`"one-hot"`], [#strong[41 `LUT4`], 18 `PFUMX`, 12 `L6MUX21`, 7 `TRELLIS_FF`],
   )
   Nearly four times worse. Four states is too few for one-hot's decode saving
   to appear, while every comparison against the state must now be built from
@@ -127,6 +127,10 @@ enable.
 
 == What it cost
 
+#cost([`fsm_top` — the whole design],
+      (LUT4: 75, TRELLIS_FF: 113, CCU2C: 49, PFUMX: 12, L6MUX21: 3),
+      share: true)[]
+
 #measured("113 flip-flops, and the proportion is the lesson")[
   #ttable(
     columns: (auto, auto),
@@ -142,3 +146,11 @@ enable.
   world. That ratio is normal, and worth seeing once: the interesting logic is
   usually a small fraction of a real design.
 ]
+
+== Wrap-up
+
+#strong[What you built.] A traffic light, a Moore and a Mealy sequence detector, and a combination lock — 113 flip-flops, of which the state machines are eight.
+
+#strong[What to keep.] Encodings are measured, not inherited: one-hot cost four times binary here.
+
+#strong[What comes next.] Lesson 06 points an FSM at a real peripheral, whose datasheet decides what the states have to be.

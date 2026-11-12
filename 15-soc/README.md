@@ -10,6 +10,13 @@
 
 **Paths:** editor
 
+**By the end you can:**
+
+- Decode an address space into RAM, ROM and peripherals.
+- Explain what `volatile` in C corresponds to in hardware.
+- Build the toolchain path from C source to a hex file in block RAM.
+- Explain what must happen before `main`, when there is no operating system.
+
 > **Status: planned.** Scope and ordering are settled; the code and the written
 > lesson are not here yet. Lessons are built in order, so this one is written
 > once lesson 14 is complete. See

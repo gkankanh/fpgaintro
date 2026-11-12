@@ -124,12 +124,17 @@ difficulty of a UART. The tolerance sweep is the test that does.
 
 == What it cost
 
-#measured("the asymmetry has a price")[
-  #ttable(
-    columns: (auto, auto),
-    [`uart_tx`], [23 LUT4, 22 flip-flops],
-    [`uart_rx`], [#strong[53 LUT4], 33 flip-flops],
-  )
+#cost([`uart_top` — both halves, the echo and the LEDs],
+      (LUT4: 91, TRELLIS_FF: 71, CCU2C: 8, PFUMX: 16, L6MUX21: 7),
+      share: true)[]
+
+#cost([`uart_tx` — the transmitter],
+      (LUT4: 23, TRELLIS_FF: 22, CCU2C: 4, PFUMX: 1),
+      cmd: "make synth M=uart_tx")[]
+
+#cost([`uart_rx` — the receiver],
+      (LUT4: 48, TRELLIS_FF: 33, CCU2C: 4, PFUMX: 9, L6MUX21: 4),
+      cmd: "make synth M=uart_rx")[
   The receiver costs more than twice the transmitter. That is the resource
   footprint of not knowing when the bits start: the transmitter only has to
   count, while the receiver has to work out #emph[when to look].
@@ -141,3 +146,11 @@ difficulty of a UART. The tolerance sweep is the test that does.
   transmits, so the FPGA reads it. `output ftdi_rxd` and `input ftdi_txd` are
   correct and look backwards. This is the classic place to lose an afternoon.
 ]
+
+== Wrap-up
+
+#strong[What you built.] A UART transmitter and receiver that talk to a terminal over the same cable that programs the board — 23 LUT4 against the receiver's 48.
+
+#strong[What to keep.] The receiver pays, in logic, for not knowing when the bits start.
+
+#strong[What comes next.] Lesson 10 begins the processor. The UART comes back in lesson 15 as its console.

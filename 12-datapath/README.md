@@ -13,6 +13,13 @@ their control signals
 
 **Paths:** editor only
 
+**By the end you can:**
+
+- Explain why the opcode and register fields sit at fixed positions.
+- Explain the immediate layout in terms of multiplexer inputs.
+- Avoid the trap that makes every negative `addi` subtract.
+- Test a decoder with legal cases adjacent to its illegal ones.
+
 ---
 
 ## The idea
@@ -202,10 +209,44 @@ them apart is the skill.
 
 ## What it cost
 
-| module | cost |
-|---|---|
-| `immgen` | 70 LUT4 + 27 muxes |
-| `decode` | 44 LUT4 + 12 muxes |
+`decode_top` — the whole design:
+
+```bash
+make synth
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 53 |
+| `TRELLIS_FF` | 14 |
+| `PFUMX` | 14 |
+| `L6MUX21` | 9 |
+
+53 of the 85F's 83,640 LUT4 — 0.06% of the part.
+
+`immgen` — the immediate generator:
+
+```bash
+make synth M=immgen
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 70 |
+| `PFUMX` | 17 |
+| `L6MUX21` | 10 |
+
+`decode` — the control decoder:
+
+```bash
+make synth M=decode
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 45 |
+| `PFUMX` | 8 |
+| `L6MUX21` | 3 |
 
 **The immediate generator costs more than the entire control decoder.** Which
 is consistent with the mux count: 41 inputs spread across 32 output bits, plus
@@ -254,17 +295,10 @@ and 6 (`beq`) are the two that write no register — `led[6]` goes dark.
    registers and the immediate using only the format table. Then check it
    against the testbench vectors.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why the opcode and register fields are at fixed positions.
-- Why B and J immediates are shuffled, in terms of mux inputs.
-- Why the sign bit is always `inst[31]`.
-- Why B and J immediates have an implicit zero in bit 0.
-- Why `addi x1, x2, -1` breaks a naive `{inst[30], funct3}` ALU selector.
-- Why loads and stores must force an ADD regardless of `funct3`.
-- Why a decoder test needs legal cases adjacent to its illegal ones.
-- The difference between a mutation that survives because the code is
-  redundant and one that survives because the test is incomplete.
+**What you built.** An instruction decoder and an immediate generator, tested on legal encodings and the illegal ones next door — and the immediate generator costs more than the decoder.
 
-**Next:** [lesson 13 — single-cycle RV32I](../13-rv32i-single/). The ALU, the
-register file and this decoder become a CPU that runs real RISC-V assembly.
+**What to keep.** Fixed field positions are what let every field be decoded in parallel.
+
+**What comes next.** Lesson 13 wires the ALU, the register file and this decoder into a processor.

@@ -13,6 +13,14 @@ button sequence.
 
 **Paths:** editor + visual
 
+**By the end you can:**
+
+- Write an FSM in the canonical three-part form, and say why it is three parts.
+- Choose between Moore and Mealy on the basis of what the consumer needs.
+- Measure state encoding rather than inheriting a rule about it.
+- Handle a wrong symbol in a sequence detector without losing a valid prefix.
+- Test by transition coverage, since there is no input space to sweep.
+
 ---
 
 ## The idea
@@ -115,8 +123,8 @@ And then the measurement, which does not say what the textbook says:
 
 | module | cost |
 |---|---|
-| `seq_moore` | 2 LUT4, 2 flip-flops |
-| `seq_mealy` | **5 LUT4**, 2 flip-flops |
+| `seq_moore` | 2 `LUT4`, 2 `TRELLIS_FF` |
+| `seq_mealy` | **5 `LUT4`**, 2 `TRELLIS_FF` |
 
 Mealy has **fewer states** and costs **more logic**. The state saving buys
 nothing, because 3 states and 4 states both fit in two flip-flops, while making
@@ -143,10 +151,10 @@ For the traffic light:
 
 | encoding | cost |
 |---|---|
-| *(yosys's choice)* | 11 LUT4, 3 PFUMX, 5 FF |
-| `"binary"` | 12 LUT4, 3 PFUMX, 5 FF |
-| `"none"` (keep mine) | 11 LUT4, 3 PFUMX, 5 FF |
-| `"one-hot"` | **41 LUT4**, 18 PFUMX, 12 L6MUX21, 7 FF |
+| *(yosys's choice)* | 11 `LUT4`, 3 `PFUMX`, 5 `TRELLIS_FF` |
+| `"binary"` | 12 `LUT4`, 3 `PFUMX`, 5 `TRELLIS_FF` |
+| `"none"` (keep mine) | 11 `LUT4`, 3 `PFUMX`, 5 `TRELLIS_FF` |
+| `"one-hot"` | **41 `LUT4`**, 18 `PFUMX`, 12 `L6MUX21`, 7 `TRELLIS_FF` |
 
 One-hot is nearly four times worse. The conventional advice — "one-hot is
 usually better on an FPGA, since flops are free" — is wrong *for this machine*,
@@ -217,15 +225,21 @@ Add `state` to the viewer as a single bus and read it as a trace of the journey
 
 ## What it cost
 
+`fsm_top` — the whole design:
+
 ```bash
 make synth
 ```
 
-```
-113   TRELLIS_FF
- 75   LUT4
- 49   CCU2C
-```
+| resource | count |
+|---|---:|
+| `LUT4` | 75 |
+| `TRELLIS_FF` | 113 |
+| `CCU2C` | 49 |
+| `PFUMX` | 12 |
+| `L6MUX21` | 3 |
+
+75 of the 85F's 83,640 LUT4 — 0.09% of the part.
 
 113 flip-flops, all accountable:
 
@@ -296,15 +310,10 @@ different questions.
    shortens the green phase. Draw the modified state diagram first, then
    implement it, then extend the testbench to cover the new transitions.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why the state register and the next-state logic go in separate blocks.
-- Why you assign a default at the top of a combinational block.
-- What Moore buys you and what Mealy buys you, and why "Mealy needs fewer
-  states" did not translate into fewer resources here.
-- Why one-hot encoding lost badly on a four-state machine.
-- Why a sequence detector must preserve valid prefixes on a wrong symbol.
-- Why FSM testing is about transition coverage rather than input sweeps.
+**What you built.** A traffic light, a Moore and a Mealy sequence detector, and a combination lock — 113 flip-flops, of which the state machines are eight.
 
-**Next:** [lesson 06 — SPI and the OLED](../06-spi-oled/), where this exact
-pattern is used to talk to a real chip that has its own opinions about timing.
+**What to keep.** Encodings are measured, not inherited: one-hot cost four times binary here.
+
+**What comes next.** Lesson 06 points an FSM at a real peripheral, whose datasheet decides what the states have to be.

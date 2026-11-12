@@ -13,6 +13,13 @@ sequence of twelve operations.
 
 **Paths:** editor
 
+**By the end you can:**
+
+- Explain what a bounded model checker does, and what "bounded" excludes.
+- Write assertions, assumptions and covers — and recognise when an assumption has made a proof vacuous.
+- Read a counterexample trace as a minimal failing program.
+- Judge when testing is enough and when it is not.
+
 ---
 
 ## Why this lesson is here
@@ -210,6 +217,13 @@ The real ALU proof carries seven covers for exactly this reason — including
 that signed and unsigned comparison genuinely disagree, that `SRA` differs
 from `SRL`, and that addition wraps around. All seven are reached.
 
+## What it cost
+
+Nothing, and that is not an oversight: this lesson has no design of its own.
+It proves lesson 10's ALU and lesson 11's register file, so `make synth` here
+would report their numbers, which those lessons already report. What this
+lesson spends is **solver time**, and `run-proofs.sh` prints it.
+
 ## What this lesson does not do
 
 **`riscv-formal`.** Claire Wolf's instruction-level specification of RV32I can
@@ -238,16 +252,10 @@ CPU is mostly made of.
 5. **Prove something false.** Assert that the ALU's `SLL` never produces zero.
    Read the counterexample, and notice it is minimal rather than merely valid.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why depth 1 is a complete proof for combinational logic and not for anything
-  with state.
-- Why a property restating the implementation proves nothing, and two
-  different ways to avoid it.
-- What `anyconst` buys, and why one shadow register proves a fact about
-  thirty-two.
-- Why `cover` is the only defence against a vacuous proof.
-- Why a passing proof with a bad assumption is more dangerous than no proof.
+**What you built.** Proofs: the ALU correct for all 2^64 input combinations, a planted bug caught as a minimal counterexample, and a vacuous proof exposed by its own cover statement.
 
-**Next:** [lesson 15 — a system on chip](../15-soc/), where the CPU gets a
-memory map and runs C.
+**What to keep.** A proof is only as strong as its assumptions, and a passing proof that covers nothing is worse than no proof.
+
+**What comes next.** The remaining lessons are planned rather than built; their scope is described, and nothing in them is measured.

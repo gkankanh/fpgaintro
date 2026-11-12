@@ -3,8 +3,19 @@
 = About this course
 
 This is a hands-on refresher in digital design, worked from a single logic gate
-to a 32-bit RISC-V processor running compiled C, with a toolchain that is open
-source from the Verilog parser to the bitstream.
+to a 32-bit RISC-V processor running real programs on real silicon, with a
+toolchain that is open source from the Verilog parser to the bitstream.
+
+#watch[
+  #strong[Where the course stands.] Lessons 00 to 14 are built, tested and
+  measured: every number in those chapters came out of the tools on the
+  author's machine, and every testbench runs. Lessons 15 to 17 — the system on
+  chip that runs compiled C, the pipeline, and traps and interrupts — are
+  #strong[planned]. Their scope, ordering and theory are settled and written
+  down here; their code and their measurements do not exist yet, and nothing in
+  those three chapters is a measurement. Read them as a design, not as a
+  result.
+]
 
 The lessons are built and measured on a #strong[Radiona ULX3S], carrying a
 Lattice ECP5 `LFE5U-85F`, and every number in this book was measured on that
@@ -25,7 +36,8 @@ counter synthesised into a latch.
 == What you will build
 
 Eighteen lessons, each self-contained, each ending in something you can see
-working. The sequence is not arbitrary — every lesson exists because a later
+working. #strong[Fifteen of them are finished] — 00 to 14 — and the last three
+are planned. The sequence is not arbitrary: every lesson exists because a later
 one needs it.
 
 #fig("/figures/course-map.svg",
@@ -33,9 +45,39 @@ one needs it.
       processor, assembled from parts built in the left-hand ones.],
      width: 100%)
 
-By lesson 13 you have a RISC-V CPU running programs. By lesson 15 it runs C
-compiled by a standard GNU toolchain, printing to your terminal. Lesson 16
-pipelines it.
+By lesson 13 you have a RISC-V CPU running assembled programs on the board, and
+by lesson 14 you have proved part of it correct rather than merely tested it.
+That is where the built course ends. The three planned lessons take the same
+core to a system that runs C compiled by a standard GNU toolchain, then to a
+five-stage pipeline, then to traps and interrupts.
+
+The course falls into four stages, and knowing which one you are in is worth
+more than knowing the lesson number:
+
+#ttable(
+  columns: (auto, 1fr),
+  [*stage*], [*what it is for*],
+  [#strong[A] · 00–05], [Digital logic: the toolchain, gates, combinational
+                         structures, clocked state, timing, and state machines.
+                         Ends with a synchronous controller you designed,
+                         simulated and ran.],
+  [#strong[B] · 06–09], [Interfaces and memory: a display over SPI, a font ROM,
+                         FPGA memory, and a UART. Ends with a small interactive
+                         system with a screen and a serial console.],
+  [#strong[C] · 10–13], [The processor: ALU, register file, decode and
+                         immediates, then the single-cycle core. Ends with a
+                         program of your own running on the board.],
+  [#strong[D] · 14–17], [Verify and extend: a formal proof of the ALU, and the
+                         three planned lessons. Lesson 14 is built; 15 to 17
+                         are not.],
+)
+
+#strong[Which lessons the processor actually needs.] Stage C depends on 00–05,
+08 and 10–12. Lessons 06 and 07 are the display path and 09 is the serial
+path — they teach how logic meets a real device, and the UART returns in the
+planned lesson 15 as the processor's console, but the CPU in lesson 13 does not
+depend on either. If your goal is the processor and nothing else, you can read
+06, 07 and 09 afterwards without being stuck.
 
 == The method
 

@@ -12,6 +12,14 @@ alternative, measured against each other at two very different sizes.
 
 **Paths:** editor only
 
+**By the end you can:**
+
+- Explain why RISC instructions have at most two source registers.
+- Explain what `x0` buys, and count the instructions it eliminates.
+- Justify a combinational read here, having been warned against one in lesson 08.
+- Explain why read-during-write must return the old value.
+- Distinguish a mutation that survives from a test that is weak.
+
 ---
 
 ## The idea
@@ -31,6 +39,8 @@ know them could not exist.
 > that cost is visible in the shape of every RISC instruction set. This is the
 > clearest example in the course of hardware constraints writing software
 > syntax.
+
+![The register file as gates and flip-flops: a 5-to-32 decoder enabled by the write-enable raising one register's load line, two 32-to-1 multiplexers forming the read ports, and x0 wired to a constant zero](../docs/diagrams/regfile-gates.svg)
 
 ## x0
 
@@ -113,12 +123,36 @@ be remembered and the written value substituted on the way out. And because the
 *address* is now registered too, even x0's zero-check has to be delayed to
 match. Latency makes everything one step more awkward, which is the lesson.
 
-### Measured at 32 registers
+## What it cost, at 32 registers
 
-| | cost |
-|---|---|
-| `regfile` — combinational read | 266 LUT4 + 198 muxes + 32 DPR16X4 |
-| `regfile_bram` — registered read | 214 LUT4 + 108 FF + 10 muxes + 32 DPR16X4 |
+`regfile` — combinational read, as RV32I needs:
+
+```bash
+make synth M=regfile
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 266 |
+| `PFUMX` | 132 |
+| `L6MUX21` | 66 |
+| `TRELLIS_DPR16X4` | 32 |
+
+266 of the 85F's 83,640 LUT4 — 0.32% of the part.
+
+`regfile_bram` — the same file, asking for block RAM:
+
+```bash
+make synth M=regfile_bram
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 214 |
+| `TRELLIS_FF` | 108 |
+| `PFUMX` | 6 |
+| `L6MUX21` | 4 |
+| `TRELLIS_DPR16X4` | 32 |
 
 Look at what is **missing** from the second row: there is **no `DP16KD` at
 all.** Thirty-two entries is too small for yosys to spend a block RAM on, so
@@ -128,12 +162,14 @@ flip-flops of pipeline registers, plus a cycle of latency, for nothing.
 **Asking for block RAM at this size does not even get you block RAM.** It gets
 you a slower version of the same design.
 
-### Measured at 1024 registers
+## And at 1024 registers
+
+Same two modules, same code, with `P="DEPTH 1024"` on each command:
 
 | | cost |
 |---|---|
-| `regfile` — combinational read | **3,660 LUT4** + 454 muxes + 1,024 DPR16X4 |
-| `regfile_bram` — registered read | **4 DP16KD** + 192 LUT4 + 131 FF |
+| `regfile` — combinational read | **3,660 LUT4** + 454 muxes + 1,024 `TRELLIS_DPR16X4` |
+| `regfile_bram` — registered read | **4 `DP16KD`** + 192 LUT4 + 131 `TRELLIS_FF` |
 
 And there is the line. At 1024 entries the combinational version is roughly
 5,100 cells and the memory version is four block RAMs and a handful of logic.
@@ -226,16 +262,10 @@ The standalone module measurements above are the real numbers.
    bits but reports zero `TRELLIS_FF`. Where are those bits? (`make graph`
    helps.)
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why RV32I instructions have at most two source registers.
-- Why `jal x0, L` is an unconditional jump, and why that saves an opcode.
-- Why a combinational read is the right choice here, and the wrong one at 1024
-  entries.
-- Why a 2-read/1-write register file costs two memories rather than one.
-- Why read-during-write must return the old value in a single-cycle CPU.
-- Why one of the four mutations survived, and why that is not a test failure.
+**What you built.** A register file with two read ports, one write port and an `x0` that reads as zero — 266 LUT4, 32 distributed RAMs, and no block RAM at all.
 
-**Next:** [lesson 12 — decode and control](../12-datapath/), the last piece
-before the CPU: turning a 32-bit instruction word into the signals that drive
-this register file and lesson 10's ALU.
+**What to keep.** Size decides how storage gets built, and a combinational read is the right answer here for the reason lesson 08 warned against it elsewhere.
+
+**What comes next.** Lesson 12 produces the control signals that tell the ALU and the register file what to do.

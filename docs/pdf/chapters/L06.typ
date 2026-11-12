@@ -89,14 +89,9 @@ wire [15:0] pixel = { x[6:2], y[5:0], frame[7:3] };
 
 == What it cost
 
-#measured("the whole display controller")[
-  #ttable(
-    columns: (auto, auto),
-    [`LUT4`],       [108],
-    [`TRELLIS_FF`], [72],
-    [`CCU2C`],      [22],
-    [`PFUMX`],      [29],
-  )
+#cost([`oled_top` — the whole display controller],
+      (LUT4: 108, TRELLIS_FF: 72, CCU2C: 22, PFUMX: 29, L6MUX21: 4),
+      share: true)[
   The 72 flip-flops are the shift register, the phase and bit counters, the
   state, the reset delay counter, and the x/y/frame counters. The 29
   multiplexers are mostly the 31-entry initialisation ROM, which the
@@ -121,3 +116,11 @@ pixel data keeps arriving with `D/C` high.
   hardware probably will not. When another chip's timing is involved,
   simulation is necessary and not sufficient.
 ]
+
+== Wrap-up
+
+#strong[What you built.] An SPI controller driving a colour OLED, built from a datasheet's timing requirements — 108 LUT4 and 72 flip-flops.
+
+#strong[What to keep.] A datasheet becomes clock counts, and clock counts become states.
+
+#strong[What comes next.] Lesson 07 puts readable text on that display, which needs a ROM and some coordinate arithmetic.

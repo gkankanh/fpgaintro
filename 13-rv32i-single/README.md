@@ -12,6 +12,14 @@ program's own output.
 
 **Paths:** editor only
 
+**By the end you can:**
+
+- See a CPU as a state machine whose state is a program counter.
+- Explain why a single-cycle core needs separate instruction and data memories.
+- Handle byte and halfword access, and sign versus zero extension.
+- Test a processor through its architectural interface.
+- Explain why the whole core runs at half the ALU's clock.
+
 ---
 
 ## The idea
@@ -172,17 +180,46 @@ With no toolchain it says so and exits cleanly. Once you install it for lesson
 `test.hex` is read by `$readmemh` at **elaboration** time (lesson 08), so it is
 a source file: change `test.s` and you must reassemble *and* resynthesise.
 
-## What it cost, and what it cost in time
+## What it cost
 
-The core alone, memories external:
+`cpu` — the processor itself, memories external:
 
-| | |
-|---|---|
-| LUT4 | **1,765** |
-| muxes (PFUMX + L6MUX21) | 773 |
-| CCU2C | 80 |
-| flip-flops | 32 — *the program counter, and nothing else* |
-| DPR16X4 | 32 — the register file, as distributed RAM (lesson 11) |
+```bash
+make synth M=cpu
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 1,765 |
+| `TRELLIS_FF` | 32 |
+| `CCU2C` | 80 |
+| `PFUMX` | 547 |
+| `L6MUX21` | 226 |
+| `TRELLIS_DPR16X4` | 32 |
+
+1,765 of the 85F's 83,640 LUT4 — 2.11% of the part.
+
+`cpu_top` — the core plus its memories and board wiring:
+
+```bash
+make synth
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 1,268 |
+| `TRELLIS_FF` | 40 |
+| `CCU2C` | 52 |
+| `PFUMX` | 316 |
+| `L6MUX21` | 153 |
+| `TRELLIS_DPR16X4` | 42 |
+
+Fewer LUT4 in the wrapper than in the core it contains, which is not a
+misprint: synthesised on its own, `cpu` must build every output it exposes,
+while inside `cpu_top` only the parts that drive something survive. **A
+module's cost depends on what is asked of it** — so a per-module number means
+nothing without the command that produced it, which is why every table in this
+course carries one.
 
 **Thirty-two flip-flops in an entire CPU.** All the state a single-cycle
 machine has is its PC; the register file lives in distributed RAM and everything
@@ -191,7 +228,7 @@ precisely what pipelining *is*.
 
 Lesson 10 measured the ALU at 885 LUT4, so the ALU is roughly half the core.
 
-### Timing: the number this lesson exists to produce
+## What it cost in time — the number this lesson exists to produce
 
 ```
 Info: Max frequency for clock 'clk': 61.24 MHz (PASS at 25.00 MHz)
@@ -214,6 +251,25 @@ hazard logic.
 (nextpnr reports max frequency twice: once after placement, once after routing.
 The post-route figure — 61.24 MHz here — is the real one; the earlier 49.51 MHz
 is an estimate made before routing is known.)
+
+## Exactly what this core implements
+
+The core executes the **RV32I base integer instruction set, less the privileged
+and system parts**. Being precise matters here: "RISC-V" on its own claims
+rather a lot, and lesson 14 is about not claiming what you have not shown.
+
+| | |
+|---|---|
+| **implemented** | all nine base opcodes and every instruction under them: `LUI`, `AUIPC`, `JAL`, `JALR`, the six branches, the five loads, the three stores, the nine register-immediate and ten register-register operations — with byte and halfword access and sign or zero extension |
+| **not implemented** | `FENCE`, `ECALL`, `EBREAK`, and the whole CSR and privileged architecture: no traps, no interrupts, no machine mode. That is the planned lesson 17 |
+| **illegal instruction** | the decoder raises `illegal`, the register file and data memory are held off, and the PC stops advancing. The core **halts** rather than trapping, because trapping needs CSRs it does not have |
+| **misaligned access** | **not detected.** A misaligned load or store does something well-defined by the aligner and wrong by the specification |
+| **memory** | Harvard: separate instruction and data memory, both block RAM, no caches, no bus |
+
+RV32I user-level integer code assembled by [`tools/rvasm.py`](../tools/rvasm.py)
+runs correctly, and lesson 14 takes that claim seriously for the ALU. It is not
+a compliance claim about the whole core: the official `riscv-arch-test` suite
+has not been run against it.
 
 ## On the board
 
@@ -253,17 +309,10 @@ you configured.** Worth a moment.
 6. **Count the cycles.** 88 instructions take 109 cycles. Where do the extra 21
    come from?
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why a CPU is a state machine whose state is a program counter.
-- Why a single-cycle core needs separate instruction and data memories.
-- Why branches get their own comparator rather than using the ALU.
-- Why `LB` and `LBU` both exist.
-- Why `LUI` must force operand A to zero, and why a passing decoder test did
-  not catch it.
-- Why the whole core runs at half the ALU's clock, and what that implies.
-- Why a single-cycle CPU has only 32 flip-flops.
+**What you built.** A single-cycle RV32I core running real assembled programs, tested through its architectural interface — 1,765 LUT4, 32 flip-flops, 61.24 MHz.
 
-**Next:** [lesson 14 — formal verification](../14-formal/). Twenty-four passing
-checks is not a proof, and this lesson just demonstrated why: the bug was in an
-assumption no test asked about.
+**What to keep.** One cycle for every instruction means every instruction pays for the slowest one.
+
+**What comes next.** Lesson 14 proves components correct rather than testing them. Lessons 15 to 17, which are planned rather than built, take this core to a system that runs C, a pipeline, and traps.

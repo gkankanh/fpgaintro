@@ -27,6 +27,16 @@ one of 2#super[n] outputs goes high. Wherever a number must become a
 #emph[choice] — instruction decode, address decode, one-hot state — there is a
 decoder.
 
+#fig("/figures/mux-gates.svg",
+     [A 2:1 multiplexer, in gates and as the symbol you will use once you
+      trust it. Both inputs are computed every cycle; one is thrown away.],
+     width: 100%)
+
+#fig("/figures/decoder-gates.svg",
+     [A 2-to-4 decoder: one AND per output, each taking the polarity of the
+      select bits that matches its own number.],
+     width: 100%)
+
 #strong[The adder] is the first structure with an interesting internal shape,
 because each bit's result depends on a carry from the bit below.
 
@@ -40,6 +50,11 @@ One bit of addition is two gates' worth of logic:
 assign s    = a ^ b ^ cin;                 // odd number of ones
 assign cout = (a & b) | (cin & (a ^ b));   // at least two ones
 ```
+
+#fig("/figures/full-adder-gates.svg",
+     [One bit of addition in five gates, and four of them chained. The carry
+      is the dependency that makes addition take time.],
+     width: 100%)
 
 Chain #emph[W] of them and the top bit of the sum cannot settle until the carry
 has propagated through every stage below it. At 4 bits nobody cares. At 32 bits
@@ -78,25 +93,34 @@ end
 
 == What it cost
 
-#measured("a case statement and a ROM array are the same thing")[
-  #ttable(
-    columns: (auto, auto),
-    [`seg7` — a 16-way `case` statement], [7 LUT4],
-    [`seg7_rom` — the same table as an array of constants], [7 LUT4],
-  )
-  The synthesiser cannot tell the difference, because there is none. A `case`
-  is not "logic" and an array is not "memory"; both describe one function of
-  four inputs, and only the function survives.
+#cost([`comb_top` — the whole design], (LUT4: 14, CCU2C: 3, PFUMX: 2),
+      share: true)[
+  Small, because almost everything in this lesson is a function of four or
+  fewer inputs. The three carry cells are the 4-bit adder the board demo uses.
 ]
 
-#measured("hand-built addition versus the + operator")[
-  #ttable(
-    columns: (auto, auto, auto),
-    [], [*at 4 bits*], [*at 32 bits — CPU width*],
-    [built from full adders], [24 LUT4 + 17 muxes], [138 LUT4 + 74 muxes],
-    [`a + b + cin`],          [#strong[3 CCU2C]],   [#strong[17 CCU2C]],
-  )
-  At CPU width that is #strong[212 cells against 17] — a factor of twelve.
+Two comparisons inside it are the lesson, though, and both are worth
+reproducing module by module.
+
+#cost([`seg7` — a 16-way `case` statement], (LUT4: 7),
+      cmd: "make synth M=seg7")[]
+
+#cost([`seg7_rom` — the same table as an array of constants], (LUT4: 7),
+      cmd: "make synth M=seg7_rom")[
+  Identical. The synthesiser cannot tell the difference, because there is
+  none. A `case` is not "logic" and an array is not "memory"; both describe
+  one function of four inputs, and only the function survives.
+]
+
+#cost([`adder_ripple` — 32 bits built from full adders],
+      (LUT4: 138, PFUMX: 44, L6MUX21: 30),
+      cmd: "make synth M=adder_ripple")[]
+
+#cost([`adder` — the same 32 bits, written `a + b + cin`], (CCU2C: 17),
+      cmd: "make synth M=adder")[
+  #strong[212 cells against 17], a factor of twelve. At 4 bits — `P="W 4"` on
+  either command — it is 24 LUT4 and 17 muxes against 3 carry cells, so the
+  gap widens with width rather than closing.
 ]
 
 The reason is what is #emph[absent] from the hand-built rows: there are no
@@ -117,9 +141,10 @@ carry logic goes unused.
   once to understand what a carry is. Then write `+` forever.
 ]
 
-== Learning outcomes
+== Wrap-up
 
-Why a mux and a decoder are mirror images; why `1'b1 << sel` is always zero;
-why a `case` statement and a lookup table cost the same; and why the
-hand-built adder loses by twelve times in terms of what the synthesiser can
-and cannot recognise.
+#strong[What you built.] Multiplexers, decoders, a hex decoder written two ways, and an adder built twice — once from gates at 212 cells and once as `+` at 17.
+
+#strong[What to keep.] Write what you mean, at the highest level the tool can recognise.
+
+#strong[What comes next.] Lesson 03 adds a clock, so that a result can be kept rather than recomputed.

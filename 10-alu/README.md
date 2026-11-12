@@ -12,6 +12,14 @@ and against an independent second implementation.
 
 **Paths:** editor only
 
+**By the end you can:**
+
+- Explain why RV32I has exactly ten integer operations.
+- Derive subtraction, signed and unsigned comparison from one adder.
+- Get signed less-than right, including where the difference overflows.
+- Replace exhaustive testing with directed cases, randomisation and an independent model.
+- Verify that a testbench has teeth, by mutating the design.
+
 ---
 
 ## The idea
@@ -30,6 +38,8 @@ compiler out of these — negation is `sub` from `x0`, bitwise NOT is `xor` with
 −1, branch-if-greater is branch-if-less with the operands swapped. That
 austerity is the "reduced" in RISC, and it is a claim about what hardware
 should cost rather than about what programmers should write.
+
+![One bit of an ALU in gates: AND, OR and XOR gates and a full adder all computing at once on the same pair of operand bits, with a multiplexer choosing which result leaves](../docs/diagrams/alu-slice.svg)
 
 ### The encoding is a gift
 
@@ -162,18 +172,60 @@ the exact operands named:
 > this is the systematic version of that check. Every testbench from here on
 > is worth mutating once.
 
-## What it cost — and the surprise
+## What it cost
+
+The surprise is in the proportions, so each piece is reported on its own.
+
+`alu` — the whole thing:
 
 ```bash
-make synth
+make synth M=alu
 ```
 
-| module | cost |
-|---|---|
-| `adder` (32-bit) | **17 CCU2C** |
-| `shift_barrel` | 667 LUT4 + 262 PFUMX + 139 L6MUX21 |
-| `shift_iterative` | 76 LUT4 + 40 FF + 32 PFUMX |
-| **`alu`** (whole thing) | **885 LUT4 + 281 PFUMX + 127 L6MUX21 + 17 CCU2C** |
+| resource | count |
+|---|---:|
+| `LUT4` | 885 |
+| `CCU2C` | 17 |
+| `PFUMX` | 281 |
+| `L6MUX21` | 127 |
+
+885 of the 85F's 83,640 LUT4 — 1.06% of the part.
+
+`adder` — 32-bit addition:
+
+```bash
+make synth M=adder
+```
+
+| resource | count |
+|---|---:|
+| `CCU2C` | 17 |
+
+`shift_barrel` — single-cycle shifting:
+
+```bash
+make synth M=shift_barrel
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 667 |
+| `PFUMX` | 262 |
+| `L6MUX21` | 139 |
+
+`shift_iterative` — the same shifts in up to 31 cycles:
+
+```bash
+make synth M=shift_iterative
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 76 |
+| `TRELLIS_FF` | 40 |
+| `CCU2C` | 3 |
+| `PFUMX` | 32 |
+| `L6MUX21` | 1 |
 
 **The shifter is about 80% of the ALU.** The adder — the thing you would assume
 an ALU is mostly about — is seventeen carry cells and essentially free, because
@@ -230,18 +282,10 @@ candidates. Both are on the critical path, which is exactly the argument lesson
    signed comparator (`$signed(a) < $signed(b)`). Does yosys build a second
    subtractor, and what does it cost?
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why RV32I has exactly these ten operations.
-- Why `{instr[30], funct3}` is a well-chosen encoding.
-- Why one adder serves ADD, SUB, SLT and SLTU.
-- Why unsigned less-than is just the inverted carry.
-- Why signed less-than needs an overflow term, and which operand pairs expose
-  its absence.
-- Why `a >>> sh` is a logical shift and `$signed(a) >>> sh` is not.
-- Why the shifter dominates the ALU's area while the adder is nearly free.
-- Why randomised testing against a model cannot validate the shifts, and what
-  can.
+**What you built.** The complete RV32I ALU, verified against a reference model and an independent second implementation — 885 LUT4, of which the shifter is about 80%.
 
-**Next:** [lesson 11 — the register file](../11-regfile/), the CPU's second
-part, where lesson 08's "16 entries wants distributed RAM" becomes the design.
+**What to keep.** Which operations are expensive is a property of the fabric, not of arithmetic.
+
+**What comes next.** Lesson 11 builds the thing that feeds it: the register file.

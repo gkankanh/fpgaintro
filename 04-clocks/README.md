@@ -12,6 +12,14 @@ it fails timing.
 **Prerequisites:** lesson 03
 
 **Paths:** editor only (hard blocks and timing constraints have no block-diagram
+
+**By the end you can:**
+
+- Explain why a design is correct *at a frequency* rather than correct.
+- Divide a clock to make an *enable*, never a clock, and say why.
+- Explain why a PLL's output frequencies are not freely chosen.
+- Cross a bus between clock domains without corrupting it.
+- Explain why no simulation can validate a clock-domain crossing.
 form)
 
 ---
@@ -206,7 +214,30 @@ what a neat 1:4 ratio would hide.
 
 The pass message says what it does not prove, on purpose.
 
-## Timing, measured
+## What it cost
+
+`clocks_top` — the whole design:
+
+```bash
+make synth
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 19 |
+| `TRELLIS_FF` | 67 |
+| `CCU2C` | 26 |
+| `EHXPLLL` | 1 |
+
+19 of the 85F's 83,640 LUT4 — 0.02% of the part.
+
+Almost all flip-flops and carry: two counters, the synchronisers and the
+handshake registers. The row that matters is the last one — **the PLL is one
+`EHXPLLL` and no logic at all**, because it is a hard block sitting in the
+corner of the die rather than something built out of the fabric. You cannot
+have five of them; the part has four.
+
+## What it cost in time
 
 ```bash
 make bit
@@ -299,16 +330,10 @@ If the top nibble never moves, the PLL did not lock.
    frequency. Where does it cross 100 MHz? Then try to make the chain survive
    optimisation — `(* keep *)` on the intermediate wires is one way.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why a design is correct *at a frequency* rather than correct in general.
-- Why you divide a clock to make an enable and never to make a clock.
-- Why a PLL's output frequencies are not freely chosen.
-- Why a two-flop synchroniser works, and why "it works" is a probability
-  statement rather than a proof.
-- Why one synchroniser per bit corrupts a bus, and what to do instead.
-- Why no simulation, however thorough, can validate a clock-domain crossing.
-- Why you cannot read your critical path off your source code.
+**What you built.** A PLL, a safe crossing between two clock domains, and a design pushed until it failed timing — 342 MHz achieved where 25 was required.
 
-**Next:** [lesson 05 — finite state machines](../05-fsm/), where the clock gets
-put to work keeping track of where a process has got to.
+**What to keep.** A design is correct *at a frequency*, and the critical path is the tool's answer rather than yours.
+
+**What comes next.** Lesson 05 builds the first designs complex enough for that budget to matter.

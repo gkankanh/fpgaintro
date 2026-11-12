@@ -11,6 +11,13 @@ with an animated gradient — with no framebuffer anywhere.
 
 **Paths:** editor + visual
 
+**By the end you can:**
+
+- Read a datasheet's timing requirements and turn them into clock counts.
+- Set up data before clocking it, and say why that ordering is universal.
+- Use a `busy`/`start` handshake to separate timing from sequencing.
+- Recognise when a design needs no frame buffer at all.
+
 ---
 
 ## The idea
@@ -143,16 +150,21 @@ init sequence as 31 bursts followed by an unbroken pixel stream.
 
 ## What it cost
 
+`oled_top` — the whole display controller:
+
 ```bash
 make synth
 ```
 
-```
- 108   LUT4
-  72   TRELLIS_FF
-  22   CCU2C
-  29   PFUMX
-```
+| resource | count |
+|---|---:|
+| `LUT4` | 108 |
+| `TRELLIS_FF` | 72 |
+| `CCU2C` | 22 |
+| `PFUMX` | 29 |
+| `L6MUX21` | 4 |
+
+108 of the 85F's 83,640 LUT4 — 0.13% of the part.
 
 Seventy-two flip-flops: the shift register, the phase and bit counters, the
 state, the wait counter, and the x/y/frame counters. The 29 `PFUMX` cells are
@@ -197,13 +209,10 @@ between them, which is exactly the structure that is hardest to see in the text.
 5. **Count the bytes.** How many SPI bytes per frame, and therefore what is the
    frame rate at 6.25 MHz SCLK? Check your arithmetic against the waveform.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why the data is driven on one phase and the clock raised on a later one.
-- What `busy`/`start` buys you, and why the sequencer needs no timing knowledge.
-- Why this design needs no framebuffer, and what would change if the display
-  had no auto-incrementing address pointer.
-- Why a passing simulation does not prove an interface meets a datasheet.
+**What you built.** An SPI controller driving a colour OLED, built from a datasheet's timing requirements — 108 LUT4 and 72 flip-flops.
 
-**Next:** [lesson 07 — font ROM](../07-font-rom/), which draws text over this
-same gradient without storing a single pixel.
+**What to keep.** A datasheet becomes clock counts, and clock counts become states.
+
+**What comes next.** Lesson 07 puts readable text on that display, which needs a ROM and some coordinate arithmetic.

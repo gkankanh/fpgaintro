@@ -32,6 +32,11 @@ instructions as we know them could not exist.
   the course of hardware constraints writing software syntax.
 ]
 
+#fig("/figures/regfile-gates.svg",
+     [The register file as gates and flip-flops: a decoder on the write side,
+      two large multiplexers on the read side, and `x0` wired to zero.],
+     width: 100%)
+
 == `x0`
 
 Reads of `x0` return zero; writes are discarded. Two lines of Verilog, and they
@@ -65,22 +70,26 @@ because lesson 08's #emph[other] finding applies: at a few tens of entries the
 fabric builds arrays from lookup tables as distributed RAM, cheaply and with no
 latency.
 
-#measured("at 32 registers, asking for block RAM does not even get you block RAM")[
-  #ttable(
-    columns: (auto, auto),
-    [combinational read], [266 LUT4 + 198 muxes + 32 DPR16X4],
-    [registered read],    [214 LUT4 + 108 FF + 32 DPR16X4 — #strong[no DP16KD at all]],
-  )
-  Thirty-two entries is too small for the synthesiser to spend a block on, so
-  the "block RAM version" got distributed RAM too — the same storage, plus 108
-  flip-flops of pipeline registers, plus a cycle of latency, for nothing.
+== What it cost
+
+#cost([`regfile` — combinational read, as RV32I needs],
+      (LUT4: 266, PFUMX: 132, L6MUX21: 66, TRELLIS_DPR16X4: 32),
+      cmd: "make synth M=regfile", share: true)[]
+
+#cost([`regfile_bram` — the same file, asking for block RAM],
+      (LUT4: 214, TRELLIS_FF: 108, PFUMX: 6, L6MUX21: 4, TRELLIS_DPR16X4: 32),
+      cmd: "make synth M=regfile_bram")[
+  #strong[No `DP16KD` in either.] Thirty-two entries is too small for the
+  synthesiser to spend a block on, so the "block RAM version" got distributed
+  RAM too — the same storage, plus 108 flip-flops of pipeline registers, plus
+  a cycle of latency, for nothing.
 ]
 
 #measured("at 1024 registers the trade flips decisively")[
   #ttable(
     columns: (auto, auto),
-    [combinational read], [#strong[3,660 LUT4] + 454 muxes + 1,024 DPR16X4],
-    [registered read],    [#strong[4 DP16KD] + 192 LUT4 + 131 FF],
+    [combinational read], [#strong[3,660 LUT4] + 454 muxes + 1,024 `TRELLIS_DPR16X4`],
+    [registered read],    [#strong[4 `DP16KD`] + 192 LUT4 + 131 flip-flops],
   )
 ]
 
@@ -134,3 +143,11 @@ A register file has 32 addresses, not 2#super[32] values, so the thing that
 matters — #emph[which register] — can be swept completely. All 961 pairs of
 distinct registers are read simultaneously, which is what catches a second port
 quietly sharing the first one's address decoder.
+
+== Wrap-up
+
+#strong[What you built.] A register file with two read ports, one write port and an `x0` that reads as zero — 266 LUT4, 32 distributed RAMs, and no block RAM at all.
+
+#strong[What to keep.] Size decides how storage gets built, and a combinational read is the right answer here for the reason lesson 08 warned against it elsewhere.
+
+#strong[What comes next.] Lesson 12 produces the control signals that tell the ALU and the register file what to do.

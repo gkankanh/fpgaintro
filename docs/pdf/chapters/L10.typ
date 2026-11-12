@@ -35,6 +35,11 @@ one is the signed or arithmetic variant of the other: `ADD`/`SUB` and
 `SRL`/`SRA`. So lesson 12's decoder pulls this field straight out of the
 instruction word with no translation table at all.
 
+#fig("/figures/alu-slice.svg",
+     [One bit of the ALU in gates. Every operation is computed on every cycle;
+      the opcode only decides which result is allowed out.],
+     width: 100%)
+
 == Theory
 
 === One adder does four jobs
@@ -121,17 +126,27 @@ deliberately and check the test notices.
   mutating once.
 ]
 
-== The surprise in the resource report
+== What it cost
 
-#measured("the shifter is about 80% of the ALU")[
-  #ttable(
-    columns: (auto, auto),
-    [`adder` (32-bit)],  [#strong[17 CCU2C] — essentially free],
-    [`shift_barrel`],    [667 LUT4 + 401 muxes],
-    [`shift_iterative`], [76 LUT4 + 40 flip-flops],
-    [*the whole ALU*],   [*885 LUT4 + 408 muxes + 17 CCU2C*],
-  )
+The surprise is in the proportions, so each piece is reported on its own.
+
+#cost([`alu` — the whole thing],
+      (LUT4: 885, CCU2C: 17, PFUMX: 281, L6MUX21: 127),
+      cmd: "make synth M=alu", share: true)[]
+
+#cost([`adder` — 32-bit addition], (CCU2C: 17), cmd: "make synth M=adder")[
+  Essentially free: no LUT4 at all.
 ]
+
+#cost([`shift_barrel` — single-cycle shifting],
+      (LUT4: 667, PFUMX: 262, L6MUX21: 139),
+      cmd: "make synth M=shift_barrel")[
+  #strong[About 80% of the ALU], for one operation out of ten.
+]
+
+#cost([`shift_iterative` — the same shifts, 31 cycles],
+      (LUT4: 76, TRELLIS_FF: 40, CCU2C: 3, PFUMX: 32, L6MUX21: 1),
+      cmd: "make synth M=shift_iterative")[]
 
 The adder — what you would assume an ALU is mostly about — is seventeen carry
 cells, because the fabric has dedicated carry hardware. Shifting has
@@ -149,9 +164,17 @@ whether it likes it or not.
   answer would invert.
 ]
 
-== Timing: the ceiling lesson 13 will hit
+== What it cost in time — the ceiling lesson 13 will hit
 
 A registered 32-bit ALU closes at #strong[115.94 MHz], with the critical path
 running through the adder's carry chain #emph[and] the ten-way result
 multiplexer. Both on one path — which is precisely the argument lesson 16 makes
 for splitting them across pipeline stages.
+
+== Wrap-up
+
+#strong[What you built.] The complete RV32I ALU, verified against a reference model and an independent second implementation — 885 LUT4, of which the shifter is about 80%.
+
+#strong[What to keep.] Which operations are expensive is a property of the fabric, not of arithmetic.
+
+#strong[What comes next.] Lesson 11 builds the thing that feeds it: the register file.

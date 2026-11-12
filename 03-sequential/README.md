@@ -12,6 +12,13 @@ per press, next to an undebounced one that does not.
 
 **Paths:** editor + visual
 
+**By the end you can:**
+
+- Explain `<=` versus `=` as two different circuits, not as a style rule.
+- Design a debouncer, and choose its time constant from first principles.
+- Turn a level into a one-clock pulse, and know when you need to.
+- Distinguish the missing `else` that is a latch from the one that is not.
+
 ---
 
 ## The idea
@@ -24,6 +31,8 @@ and holds that value until the next edge. Nothing else in this course stores a
 bit. A register, a shift register, a counter, a state machine and a 32-bit CPU
 are all arrangements of flip-flops with combinational logic deciding what goes
 into them.
+
+![A register built from flip-flops: one bit shown in full — a two-to-one multiplexer choosing between new data and the flip-flop's own output, feeding a D flip-flop — and four such bits sharing one clock and one enable](../docs/diagrams/register-ff.svg)
 
 In Verilog there is exactly one way to ask for one:
 
@@ -206,15 +215,21 @@ that sawtooth is the debouncer doing its job.
 
 ## What it cost
 
+`seq_top` — the whole design:
+
 ```bash
 make synth
 ```
 
-```
-29   TRELLIS_FF
-24   LUT4
- 9   CCU2C
-```
+| resource | count |
+|---|---:|
+| `LUT4` | 24 |
+| `TRELLIS_FF` | 29 |
+| `CCU2C` | 9 |
+| `PFUMX` | 4 |
+| `L6MUX21` | 1 |
+
+24 of the 85F's 83,640 LUT4 — 0.03% of the part.
 
 Twenty-nine flip-flops, and every one is accountable:
 
@@ -278,16 +293,10 @@ start to agree, because the window is now shorter than the bounce.
    "sample the button every 10 ms" design — one flip-flop clocked by a slow
    enable. It mostly works. Construct the bounce pattern that defeats it.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why `<=` gives three flip-flops and `=` gives one, and why nothing warns you.
-- Why 10 ms of bounce is 250,000 clock cycles of real, clean transitions.
-- Why a saturating counter beats a simple delay for debouncing.
-- Why `if (en) q <= d;` with no `else` is correct in a clocked block and a bug
-  in a combinational one.
-- Why this lesson's debounce test cannot be exhaustive, and what replaces
-  exhaustiveness.
+**What you built.** A D flip-flop, two shift registers that differ only in one operator, a debouncer and an edge detector — 29 flip-flops, all accounted for.
 
-**Next:** [lesson 04 — clocks and timing](../04-clocks/), where the clock stops
-being something you are given and becomes something with properties you have to
-respect.
+**What to keep.** `<=` and `=` are two different circuits, not two styles.
+
+**What comes next.** Lesson 04 asks whether the clock underneath all of this can be trusted, and what the tools check when they check timing.

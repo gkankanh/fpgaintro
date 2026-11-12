@@ -9,6 +9,13 @@ go.
 
 **Prerequisites:** none — start here.
 
+**By the end you can:**
+
+- Explain why bit *n* of a counter toggles every 2ⁿ clocks.
+- Use non-blocking assignment in a clocked block, and say why.
+- Make a design's time constant a parameter, so it can be simulated.
+- Read a resource report and account for what is in it.
+
 ---
 
 ## The idea
@@ -122,15 +129,19 @@ where you tap.
 
 ## What it cost
 
+`blink` — the whole design:
+
 ```bash
 make synth
 ```
 
-```
-13   CCU2C
- 1   LUT4
-26   TRELLIS_FF
-```
+| resource | count |
+|---|---:|
+| `LUT4` | 1 |
+| `TRELLIS_FF` | 26 |
+| `CCU2C` | 13 |
+
+1 of the 85F's 83,640 LUT4 — less than 0.01% of the part.
 
 Twenty-six flip-flops — exactly one per counter bit, as you would expect.
 
@@ -193,13 +204,10 @@ after editing the Verilog.
 5. **Count down.** `count <= count - 1'b1`. Check `make synth` — does
    subtraction cost more than addition on this fabric?
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why bit *n* of a counter toggles every 2<sup>n</sup> clocks, without
-  looking it up.
-- Why `<=` is the right assignment inside a clocked block.
-- Why the testbench overrides `WIDTH` instead of simulating 67 million cycles.
-- What a `CCU2C` is, and why a 26-bit counter costs 1 LUT instead of 26.
+**What you built.** A 26-bit counter dividing the board's 25 MHz down to something an eye can follow, simulated at a smaller width and accounted for down to the last flip-flop.
 
-**Next:** [lesson 01 — logic gates](../01-gates/), where you measure the
-surprising fact that this FPGA contains no gates at all.
+**What to keep.** A counter is a frequency divider, and a resource report is something you read rather than glance at.
+
+**What comes next.** Lesson 01 goes underneath it, to what the fabric actually builds when you write a logic expression.

@@ -15,6 +15,14 @@
 
 == The idea
 
+These are the symbols, and they are worth knowing by sight: every schematic in
+this course, and every diagram `make graph` draws for you, is made of them.
+
+#fig("/figures/gate-symbols.svg",
+     [The seven gates every digital circuit is described with. The bubble means
+      "and then invert".],
+     width: 100%)
+
 A gate is a Boolean function of its inputs. In Verilog you write it as a
 permanent connection rather than as something that happens:
 
@@ -40,6 +48,11 @@ Every Boolean function can be built from NAND alone:
   [`a XOR b`], [four NANDs], [the classic construction],
 )
 
+#fig("/figures/nand-xor.svg",
+     [The classic one, drawn out: exclusive-OR from four NANDs. Hold on to
+      this picture — the measurement below is about what became of it.],
+     width: 100%)
+
 Historically this mattered enormously: one gate type meant one mask, one part
 number, one bin of 7400s on the shelf.
 
@@ -58,7 +71,12 @@ than computed with the same operator being tested.
 
 == What it cost, and why it is the point
 
-#measured("eleven outputs, seven LUT4s, zero flip-flops")[
+#cost([`gates_top` — eleven outputs, no state at all], (LUT4: 7), share: true)[
+  Seven LUT4, no flip-flops: this design has no memory, so nothing is
+  registered.
+]
+
+#measured("eleven outputs from seven LUT4s")[
   Fewer LUTs than outputs, because the synthesiser does not implement what you
   *wrote*. It works out what each output #emph[is], as a function of `a` and
   `b`, and shares whatever can be shared.
@@ -68,7 +86,8 @@ than computed with the same operator being tested.
   programmed one lookup table. #strong[It never built the chain.]
 ]
 
-The fabric has no gates — only 4-input lookup tables (page 7). So a 2-input AND
+The fabric has no gates — only 4-input lookup tables, as "What is actually
+inside" showed. So a 2-input AND
 and a 4-input XOR cost exactly the same: one LUT4 each. So does any other
 function of up to four inputs, however complicated.
 
@@ -96,9 +115,10 @@ no matter how simple the function:
 #strong[Count inputs, not operators.] "Simplifying" a four-input expression
 from five operators to three saves nothing.
 
-== Learning outcomes
+== Wrap-up
 
-Why `assign` is a connection rather than a statement; why NAND is universal;
-why a 2-input AND and a 4-input XOR cost the same here; and the difference
-between `&` and `&&`, which is invisible on one-bit signals and produces
-wrong answers on a bus.
+#strong[What you built.] Every two-input gate, tested against its complete truth table, and four of them rebuilt from NAND alone — eleven outputs that cost seven LUT4.
+
+#strong[What to keep.] The synthesiser keeps your function and discards your structure.
+
+#strong[What comes next.] Lesson 02 assembles those gates into the three structures a processor is actually made of, where structure starts to matter again.

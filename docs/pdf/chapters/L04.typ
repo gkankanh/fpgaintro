@@ -116,7 +116,18 @@ are safe to read; the data itself crosses with no synchroniser at all, because
 by the time the request's toggle is noticed the data has been stable for two
 destination clock periods.
 
-== What was measured
+== What it cost
+
+#cost([`clocks_top` — the whole design],
+      (LUT4: 19, TRELLIS_FF: 67, CCU2C: 26, EHXPLLL: 1), share: true)[
+  The design is almost all flip-flops and carry: two counters, the
+  synchronisers and the handshake registers. The row that matters is the last
+  one — #strong[the PLL is one `EHXPLLL` and no logic at all], because it is a
+  hard block sitting in the corner of the die rather than something built out
+  of the fabric. You cannot have five of them; the part has four.
+]
+
+== What it cost in time
 
 #measured("timing on the real build")[
   #ttable(
@@ -167,3 +178,11 @@ something slower:
   design. What changes is whether it is enough. That is what timing closure
   #emph[is].
 ]
+
+== Wrap-up
+
+#strong[What you built.] A PLL, a safe crossing between two clock domains, and a design pushed until it failed timing — 342 MHz achieved where 25 was required.
+
+#strong[What to keep.] A design is correct #emph[at a frequency], and the critical path is the tool's answer rather than yours.
+
+#strong[What comes next.] Lesson 05 builds the first designs complex enough for that budget to matter.

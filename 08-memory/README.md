@@ -14,6 +14,13 @@ runs on the board.
 
 **Paths:** editor only
 
+**By the end you can:**
+
+- Write the coding pattern that infers block RAM, and spot the ones that cannot.
+- Explain why a combinational read rules out block RAM at any size.
+- Know roughly where the size threshold between logic and memory sits.
+- Present address, write-enable and write-data in the same cycle.
+
 ---
 
 ## The idea
@@ -83,10 +90,10 @@ The whole lesson, in one table. `W = 32`, measured with `make synth`:
 
 | DEPTH | `ram_sp` — synchronous read | `ram_async` — combinational read |
 |---|---|---|
-| 16 | 8 DPR16X4 + 32 FF | **8 DPR16X4** |
-| 64 | **1 DP16KD** | 32 DPR16X4 + 132 LUT4 + 96 muxes |
-| 256 | **1 DP16KD** | 128 DPR16X4 + **919 LUT4** + 672 muxes |
-| 1024 | **2 DP16KD** | *(don't)* |
+| 16 | 8 `TRELLIS_DPR16X4` + 32 `TRELLIS_FF` | **8 `TRELLIS_DPR16X4`** |
+| 64 | **1 `DP16KD`** | 32 `TRELLIS_DPR16X4` + 132 LUT4 + 96 muxes |
+| 256 | **1 `DP16KD`** | 128 `TRELLIS_DPR16X4` + **919 LUT4** + 672 muxes |
+| 1024 | **2 `DP16KD`** | *(don't)* |
 
 Three readings.
 
@@ -96,7 +103,7 @@ different. `TRELLIS_DPR16X4` is *distributed* RAM — 16 words of 4 bits built
 out of a logic cell's LUTs — so the array becomes a pile of those plus an
 enormous mux tree to select among them.
 
-**At 1024 × 32 the synchronous version is 2 DP16KD and nothing else.** 32,768
+**At 1024 × 32 the synchronous version is 2 `DP16KD` and nothing else.** 32,768
 bits, and a DP16KD holds 18,432, so two blocks. Clean inference, zero LUTs.
 
 **And look at the top row.** At 16 entries *both* produce distributed RAM, and
@@ -110,10 +117,27 @@ want a block, and know where that line is".
 
 Two ROMs, identical in shape, differing only in size:
 
-| module | size | cost |
-|---|---|---|
-| `font_small` | 32 bytes (lesson 07's font) | 9 LUT4 + 4 PFUMX + 5 FF |
-| `font_full` | 1024 bytes (128 chars × 8 rows) | **1 DP16KD** |
+`font_small` — 32 bytes, lesson 07's font:
+
+```bash
+make synth M=font_small
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 9 |
+| `TRELLIS_FF` | 5 |
+| `PFUMX` | 4 |
+
+`font_full` — 1,024 bytes, 128 characters × 8 rows:
+
+```bash
+make synth M=font_full
+```
+
+| resource | count |
+|---|---:|
+| `DP16KD` | 1 |
 
 So lesson 07's font became logic because it was *too small to be worth a
 block*. One DP16KD holds 18,432 bits; spending a whole one on 256 bits wastes
@@ -182,8 +206,8 @@ wire [15:0] waddr = (wy << 6) + (wy << 5) + wx;   // 96 = 64 + 32
 
 | | cost |
 |---|---|
-| `wy * 96 + wx` | 1 DP16KD + **2 MULT18X18D** + 8 CCU2C |
-| `(wy<<6) + (wy<<5) + wx` | 1 DP16KD + 14 CCU2C + 24 LUT4 |
+| `wy * 96 + wx` | 1 `DP16KD` + **2 `MULT18X18D`** + 8 `CCU2C` |
+| `(wy<<6) + (wy<<5) + wx` | 1 `DP16KD` + 14 `CCU2C` + 24 `LUT4` |
 
 > **Third time in this course** — the synthesiser is very good and still does
 > not read your mind. Lesson 01: it discarded your structure. Lesson 02: it
@@ -269,16 +293,21 @@ it is the most common BRAM bug there is.
 
 ## What it cost
 
+`mem_top` — the whole design:
+
 ```bash
 make synth
 ```
 
-```
- 2   DP16KD
-80   LUT4
-61   TRELLIS_FF
-27   CCU2C
-```
+| resource | count |
+|---|---:|
+| `LUT4` | 80 |
+| `TRELLIS_FF` | 61 |
+| `CCU2C` | 27 |
+| `PFUMX` | 6 |
+| `DP16KD` | 2 |
+
+80 of the 85F's 83,640 LUT4 — 0.10% of the part.
 
 Two block RAMs: 1024 × 32 bits is 32,768 bits, and a DP16KD holds 18,432. Out
 of 208 blocks on the part, so this design uses **1%** of the memory and would
@@ -321,16 +350,10 @@ which is rather the point of running it.
    and confirm the two `MULT18X18D` return. Then try a width of 128 instead of
    96 and see what happens to both forms — and why.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why a combinational read rules out block RAM at any size.
-- Why lesson 07's 32-byte font became logic, and a 1024-byte one does not.
-- Why a 16-entry asynchronous array is cheaper than a synchronous one, and a
-  256-entry one is dramatically worse.
-- Why `$readmemh` makes its file a source file.
-- Why reading a block RAM needs two states in an FSM.
-- Why a memory test's data must be derived from its address.
-- Why address, write-enable and write-data must be presented in the same cycle.
+**What you built.** Block RAM, distributed RAM and a dual-port framebuffer, with the synchronous and combinational forms measured against each other from 16 entries to 1024.
 
-**Next:** [lesson 09 — UART](../09-uart/), where the design has to agree about
-timing with a device it shares no clock with.
+**What to keep.** Write the shape that *can* become a block RAM and let size decide.
+
+**What comes next.** Lesson 09 is the last peripheral before the processor — and lesson 11's register file is this lesson's threshold question asked again.

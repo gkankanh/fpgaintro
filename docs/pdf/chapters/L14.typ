@@ -155,6 +155,13 @@ that the proof above was hollow.
   are reached.
 ]
 
+== What it cost
+
+Nothing, and the absence is deliberate: this lesson has no design of its own.
+It proves lesson 10's ALU and lesson 11's register file, both of which report
+their own area. What this lesson spends is #strong[solver time], and
+`run-proofs.sh` prints it.
+
 == What this lesson does not do
 
 `riscv-formal` itself — checking a whole core against an instruction-level
@@ -166,3 +173,11 @@ to the two components the CPU is mostly built from.
 Formal verification is not a replacement for testing. It is bounded, and
 writing a property that is both true and useful is a skill. What it does that
 testing cannot is #strong[search] rather than sample.
+
+== Wrap-up
+
+#strong[What you built.] Proofs: the ALU correct for all 2#super[64] input combinations, a planted bug caught as a minimal counterexample, and a vacuous proof exposed by its own cover statement.
+
+#strong[What to keep.] A proof is only as strong as its assumptions, and a passing proof that covers nothing is worse than no proof.
+
+#strong[What comes next.] The remaining lessons are planned rather than built; their scope is described, and nothing in them is measured.

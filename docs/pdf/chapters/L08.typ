@@ -29,16 +29,27 @@ That last one is not a style preference. A block RAM's output is registered
 `DP16KD` cannot do, so asking for one takes block RAM off the table —
 permanently, at any size.
 
+== What it cost
+
+#cost([`mem_top` — the whole design],
+      (LUT4: 80, TRELLIS_FF: 61, CCU2C: 27, PFUMX: 6, DP16KD: 2),
+      share: true)[
+  Two block RAMs out of the part's 208, and the rest of the design is the test
+  harness around them. The row to notice is the one that is #emph[absent]:
+  almost no LUT4 go into the storage itself, because the storage is not built
+  from logic at all.
+]
+
 == The measurement
 
 #measured("the same array, two ways, at W = 32")[
   #ttable(
     columns: (auto, auto, auto),
     [*depth*], [*synchronous read*], [*combinational read*],
-    [16],   [8 DPR16X4 + 32 FF], [#strong[8 DPR16X4]],
-    [64],   [#strong[1 DP16KD]], [32 DPR16X4 + 132 LUT4 + 96 muxes],
-    [256],  [#strong[1 DP16KD]], [128 DPR16X4 + #strong[919 LUT4] + 672 muxes],
-    [1024], [#strong[2 DP16KD]], [—],
+    [16],   [8 `TRELLIS_DPR16X4` + 32 `TRELLIS_FF`], [#strong[8 `TRELLIS_DPR16X4`]],
+    [64],   [#strong[1 `DP16KD`]], [32 `TRELLIS_DPR16X4` + 132 LUT4 + 96 muxes],
+    [256],  [#strong[1 `DP16KD`]], [128 `TRELLIS_DPR16X4` + #strong[919 LUT4] + 672 muxes],
+    [1024], [#strong[2 `DP16KD`]], [—],
   )
 ]
 
@@ -65,12 +76,12 @@ legitimate home, and that is exactly how a 16-entry register file gets built.
 
 == Lesson 07's puzzle, answered
 
-#measured("identical code, different sizes")[
-  #ttable(
-    columns: (auto, auto, auto),
-    [`font_small`], [32 bytes — lesson 07's font], [9 LUT4],
-    [`font_full`],  [1024 bytes],                   [#strong[1 DP16KD]],
-  )
+#cost([`font_small` — 32 bytes, lesson 07's font],
+      (LUT4: 9, TRELLIS_FF: 5, PFUMX: 4), cmd: "make synth M=font_small")[]
+
+#cost([`font_full` — 1,024 bytes of identical code], (DP16KD: 1),
+      cmd: "make synth M=font_full")[
+  Same Verilog, different size, opposite answer.
 ]
 
 Lesson 07's font became logic because it was #emph[too small to be worth a
@@ -142,3 +153,11 @@ A display memory is written one way and read another, simultaneously: written
 by coordinate in whatever order the drawing code likes, and read in raster
 order relentlessly, because the display never stops. One port cannot serve both
 without one side waiting, which is largely why the `DP16KD` exists at all.
+
+== Wrap-up
+
+#strong[What you built.] Block RAM, distributed RAM and a dual-port framebuffer, with the synchronous and combinational forms measured against each other from 16 entries to 1024.
+
+#strong[What to keep.] Write the shape that #emph[can] become a block RAM and let size decide.
+
+#strong[What comes next.] Lesson 09 is the last peripheral before the processor — and lesson 11's register file is this lesson's threshold question asked again.

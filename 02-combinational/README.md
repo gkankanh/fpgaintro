@@ -13,6 +13,13 @@ exhaustively, wired together on the board by a multiplexer.
 
 **Paths:** editor + visual
 
+**By the end you can:**
+
+- Recognise the mux and the decoder as mirror images, and find them in a CPU.
+- Explain why addition has a critical path at all.
+- Avoid the two silent width traps: shift results and discarded carries.
+- Measure why writing `+` beats building an adder from gates by 12×.
+
 ---
 
 ## The idea
@@ -29,6 +36,10 @@ between them.
 **The decoder** is the mux's mirror image: one input number, and exactly one of
 2ⁿ outputs goes high. Wherever a number has to become a *choice* — instruction
 decode, address decode, chip select, one-hot state — there is a decoder.
+
+![A two-to-one multiplexer built from gates — sel inverted, two AND gates masking a and b, an OR gate combining them — beside the same circuit as its trapezoid symbol](../docs/diagrams/mux-gates.svg)
+
+![A two-to-four decoder: each select bit inverted, and four AND gates each combining one polarity of each bit](../docs/diagrams/decoder-gates.svg)
 
 **The adder** is the first structure with an interesting internal shape, because
 each bit's result depends on a carry from the bit below. That dependency is the
@@ -92,6 +103,11 @@ default: seg = 7'b0000000;
 > clock. Make the default a reflex.
 
 ### Addition — [`adder.v`](../common/rtl/adder.v)
+
+One bit of it, drawn out, and four of them chained:
+
+![A full adder built from two XOR gates, two AND gates and an OR gate, and below it four of them chained so each carry-out feeds the next stage's carry-in](../docs/diagrams/full-adder-gates.svg)
+
 
 One bit of addition is two gates' worth of logic:
 
@@ -166,23 +182,77 @@ nothing.
 
 ## What it cost
 
-This is where the lesson earns its keep. Measured with `make synth` on each
-module separately:
+This is where the lesson earns its keep. Each module is reported on its own,
+with the command that produces it.
 
-| module | cost |
-|---|---|
-| `full_adder` | 2 LUT4 |
-| `adder_ripple` at W=4 — built by hand from gates | 24 LUT4 + 10 PFUMX + 7 L6MUX21 |
-| `adder` at W=4 — just `a + b + cin` | **3 CCU2C** |
-| `adder_ripple` at W=32 — *CPU width* | 138 LUT4 + 44 PFUMX + 30 L6MUX21 |
-| `adder` at W=32 — *CPU width* | **17 CCU2C** |
-| `seg7` — case statement | 7 LUT4 |
-| `seg7_rom` — ROM array | 7 LUT4 |
-| `mux2` at W=1 | 1 LUT4 |
-| `mux4` at W=1 | 4 LUT4 + 2 PFUMX + 1 L6MUX21 |
-| `dec` at N=2 | 4 LUT4 |
+`comb_top` — the whole design:
 
-Three things to take from that table.
+```bash
+make synth
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 14 |
+| `CCU2C` | 3 |
+| `PFUMX` | 2 |
+
+14 of the 85F's 83,640 LUT4 — 0.02% of the part.
+
+`seg7` — the hex decoder as a 16-way `case`:
+
+```bash
+make synth M=seg7
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 7 |
+
+`seg7_rom` — the same table as an array of constants:
+
+```bash
+make synth M=seg7_rom
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 7 |
+
+`adder_ripple` — 32 bits built by hand from gates:
+
+```bash
+make synth M=adder_ripple
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 138 |
+| `PFUMX` | 44 |
+| `L6MUX21` | 30 |
+
+`adder` — the same 32 bits, written `a + b + cin`:
+
+```bash
+make synth M=adder
+```
+
+| resource | count |
+|---|---:|
+| `CCU2C` | 17 |
+
+And the smaller pieces, each at the width the board demo uses:
+
+| module | command | cost |
+|---|---|---|
+| `full_adder` | `make synth M=full_adder` | 2 LUT4 |
+| `mux2` | `make synth M=mux2 P="W 1"` | 1 LUT4 |
+| `mux4` | `make synth M=mux4 P="W 1"` | 4 LUT4 + 2 PFUMX + 1 L6MUX21 |
+| `dec` | `make synth M=dec P="N 2"` | 4 LUT4 |
+| `adder_ripple` | `make synth M=adder_ripple P="W 4"` | 24 LUT4 + 10 PFUMX + 7 L6MUX21 |
+| `adder` | `make synth M=adder P="W 4"` | **3 CCU2C** |
+
+Three things to take from those numbers.
 
 **The two hex decoders cost exactly the same.** Seven LUT4s each. One is a
 `case` statement and one is an array of constants, and the synthesiser cannot
@@ -282,15 +352,10 @@ happen before you run it.
    using nested conditionals. Does it cost the same? (It should. Why is this
    case different from exercise 4's adder?)
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why a mux and a decoder are mirror images, and where each appears in a CPU.
-- Why `1'b1 << sel` is always zero, and the general rule behind it.
-- Why a `case` statement and a ROM array cost the same.
-- Why the hand-built adder costs 12× what `+` does at 32 bits, in terms of
-  what yosys can and cannot recognise.
-- Why combinational `always` blocks need a `default`.
-- Why 512 test cases is exhaustive here and hopeless by lesson 10.
+**What you built.** Multiplexers, decoders, a hex decoder written two ways, and an adder built twice — once from gates at 212 cells and once as `+` at 17.
 
-**Next:** [lesson 03 — sequential logic](../03-sequential/), where a clock
-arrives and outputs start depending on the past.
+**What to keep.** Write what you mean, at the highest level the tool can recognise.
+
+**What comes next.** Lesson 03 adds a clock, so that a result can be kept rather than recomputed.

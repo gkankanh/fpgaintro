@@ -109,21 +109,31 @@ testbench reads data memory rather than peeking at the register file.
   flag and forbids the marker.
 ]
 
-== What it cost, and what it cost in time
+== What it cost
 
-#measured("thirty-two flip-flops in an entire CPU")[
-  #ttable(
-    columns: (auto, auto),
-    [`LUT4`],      [1,765],
-    [muxes],       [773],
-    [`CCU2C`],     [80],
-    [flip-flops],  [#strong[32] — the program counter, and nothing else],
-    [`DPR16X4`],   [32 — the register file, as distributed RAM],
-  )
-  All the state a single-cycle machine has is its PC. The register file lives in
-  distributed RAM and everything else is combinational. Lesson 16 will add
-  hundreds of flip-flops, and that is precisely what pipelining #emph[is].
+#cost([`cpu` — the processor itself],
+      (LUT4: 1765, TRELLIS_FF: 32, CCU2C: 80, PFUMX: 547, L6MUX21: 226,
+       TRELLIS_DPR16X4: 32),
+      cmd: "make synth M=cpu", share: true)[
+  #strong[Thirty-two flip-flops in an entire CPU], and they are the program
+  counter. All the state a single-cycle machine has is its PC: the register
+  file lives in distributed RAM and everything else is combinational. Lesson
+  16 will add hundreds of flip-flops, and that is precisely what pipelining
+  #emph[is].
 ]
+
+#cost([`cpu_top` — the core plus its memories and board wiring],
+      (LUT4: 1268, TRELLIS_FF: 40, CCU2C: 52, PFUMX: 316, L6MUX21: 153,
+       TRELLIS_DPR16X4: 42))[
+  Fewer LUT4 than the core it contains, which is not a misprint: synthesised
+  on its own, `cpu` must build every output it exposes, while inside `cpu_top`
+  only the parts that drive something survive. #strong[A module's cost depends
+  on what is asked of it] — so a per-module number only means anything
+  alongside the command that produced it, which is why every table in this
+  book carries one.
+]
+
+== What it cost in time
 
 #measured("the number this lesson exists to produce")[
   #ttable(
@@ -144,6 +154,48 @@ cycle must be long enough for the slowest one.
   in hazard logic.
 ]
 
+== Exactly what this core implements
+
+The core executes the #strong[RV32I base integer instruction set, less the
+privileged and system parts]. Being precise about that matters: "RISC-V" on its
+own claims rather a lot, and lesson 14 is about not claiming what you have not
+shown.
+
+#ttable(
+  columns: (auto, 1fr),
+  [*implemented*], [
+    All nine base opcodes and every instruction under them: `LUI`, `AUIPC`,
+    `JAL`, `JALR`, the six branches, the five loads, the three stores, the nine
+    register-immediate operations and the ten register-register operations —
+    the full RV32I arithmetic, logic, shift, compare, branch, jump and
+    load/store set, with byte and halfword access and sign or zero extension
+  ],
+  [*not implemented*], [
+    `FENCE` (there is nothing to order), `ECALL` and `EBREAK`, and the entire
+    CSR and privileged architecture — so no traps, no interrupts, no machine
+    mode. Those are the planned lesson 17
+  ],
+  [*on an illegal instruction*], [
+    the decoder raises `illegal`, the register file and data memory are held
+    off, and the program counter stops advancing. The core halts rather than
+    trapping, because trapping needs CSRs it does not have
+  ],
+  [*misaligned access*], [
+    #strong[not detected.] A misaligned load or store does something
+    well-defined by the aligner and wrong by the specification. A real core
+    would trap; this one has nowhere to trap to
+  ],
+  [*memory*], [
+    Harvard: separate instruction and data memories, both block RAM on the
+    FPGA, no caches and no bus. One cycle, always
+  ],
+)
+
+So: RV32I user-level integer code, assembled by this repository's assembler,
+runs correctly — and that is the claim lesson 14 then takes seriously for the
+ALU. It is not a compliance claim about the whole core, and the official
+riscv-arch-test suite has not been run against it.
+
 == On the board
 
 Set the switches to 2 and you are reading the result of `addi t2, t0, -1`,
@@ -151,3 +203,11 @@ which must be #strong[9]. Had lesson 12's trap gone unfixed it would read 11.
 
 This is a RISC-V processor you built, running a program you wrote, on a chip
 you configured. Worth a moment.
+
+== Wrap-up
+
+#strong[What you built.] A single-cycle RV32I core running real assembled programs, tested through its architectural interface — 1,765 LUT4, 32 flip-flops, 61.24 MHz.
+
+#strong[What to keep.] One cycle for every instruction means every instruction pays for the slowest one.
+
+#strong[What comes next.] Lesson 14 proves components correct rather than testing them. Lessons 15 to 17, which are planned rather than built, take this core to a system that runs C, a pipeline, and traps.

@@ -22,6 +22,11 @@ clock edge it samples its input and holds that value until the next edge.
 register, a counter, a state machine and a 32-bit CPU are all arrangements of
 flip-flops with combinational logic deciding what goes into them.
 
+#fig("/figures/register-ff.svg",
+     [A register, drawn out: one flip-flop per bit, and a multiplexer in front
+      of each deciding whether to take new data or reload the old value.],
+     width: 100%)
+
 == Theory
 
 === `<=` versus `=`, as two circuits
@@ -123,7 +128,14 @@ on, so the tool has to invent some.
 
 == What it cost
 
-#measured("every flip-flop accounted for")[
+#cost([`seq_top` — the whole design],
+      (LUT4: 24, TRELLIS_FF: 29, CCU2C: 9, PFUMX: 4, L6MUX21: 1),
+      share: true)[
+  The nine carry cells are the debounce counter's 18-bit increment — one per
+  two bits, exactly as lesson 02 predicted.
+]
+
+#measured("every one of the 29 flip-flops accounted for")[
   #ttable(
     columns: (auto, auto),
     [debounce: an 18-bit counter plus `clean`], [19],
@@ -131,13 +143,12 @@ on, so the tool has to invent some.
     [two 4-bit counters],                        [8],
     [*total*],                                   [*29*],
   )
-  And the nine carry cells are the debounce counter's 18-bit increment — one
-  per two bits, exactly as lesson 02 predicted.
 ]
 
-== Learning outcomes
+== Wrap-up
 
-Why `<=` gives three flip-flops and `=` gives one; why 10 ms of bounce is a
-quarter of a million real clock cycles; why a saturating counter beats a simple
-delay; and why `if (en) q <= d;` with no `else` is correct in a clocked block
-and a bug in a combinational one.
+#strong[What you built.] A D flip-flop, two shift registers that differ only in one operator, a debouncer and an edge detector — 29 flip-flops, all accounted for.
+
+#strong[What to keep.] `<=` and `=` are two different circuits, not two styles.
+
+#strong[What comes next.] Lesson 04 asks whether the clock underneath all of this can be trusted, and what the tools check when they check timing.

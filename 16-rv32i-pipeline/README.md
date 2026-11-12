@@ -10,6 +10,13 @@
 
 **Paths:** editor
 
+**By the end you can:**
+
+- Explain why pipelining raises the clock without making any stage faster.
+- Identify data, control and structural hazards.
+- Explain which hazard forwarding can fix and which it cannot.
+- Measure cycles-per-instruction and say where the cost went.
+
 > **Status: planned.** Scope and ordering are settled; the code and the written
 > lesson are not here yet. Lessons are built in order, so this one is written
 > once lesson 15 is complete. See

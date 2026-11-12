@@ -67,16 +67,12 @@ out of range.
 
 == What it cost
 
-#measured("a 26-bit counter")[
-  #ttable(
-    columns: (auto, auto, 1fr),
-    [`TRELLIS_FF`], [26], [one flip-flop per counter bit, as expected],
-    [`CCU2C`],      [13], [the ECP5's carry cells — #strong[two bits each]],
-    [`LUT4`],       [1],  [],
-  )
-  Thirteen carry cells do 26 bits of addition in dedicated hardware, which is
-  why a wide counter is nearly free. The general-purpose logic contributes a
-  single LUT.
+#cost([`blink` — a 26-bit counter], (LUT4: 1, TRELLIS_FF: 26, CCU2C: 13),
+      share: true)[
+  Twenty-six flip-flops: one per counter bit, exactly as expected. Thirteen
+  carry cells do all 26 bits of the addition in dedicated hardware — two bits
+  per cell — which is why a wide counter is nearly free here. General-purpose
+  logic contributes a single LUT4.
 ]
 
 #why[
@@ -86,9 +82,10 @@ out of range.
   explain, you have inferred something you did not intend.
 ]
 
-== Learning outcomes
+== Wrap-up
 
-By the end you should be able to say, without looking anything up, why bit 25
-of a counter clocked at 25 MHz toggles roughly every 1.3 seconds; why `<=`
-belongs in a clocked block; and why a 26-bit counter costs one LUT rather than
-twenty-six.
+#strong[What you built.] A 26-bit counter dividing the board's 25 MHz down to something an eye can follow, simulated at a smaller width and accounted for down to the last flip-flop.
+
+#strong[What to keep.] A counter is a frequency divider, and a resource report is something you read rather than glance at.
+
+#strong[What comes next.] Lesson 01 goes underneath it, to what the fabric actually builds when you write a logic expression.

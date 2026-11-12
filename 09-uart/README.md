@@ -12,6 +12,13 @@ computer
 
 **Paths:** editor + visual
 
+**By the end you can:**
+
+- Explain why a start bit exists when there is no clock on the wire.
+- Compute a baud divisor and judge whether its error matters.
+- Decide where in a bit to sample, and why.
+- Explain why a framing error is not a reliable corruption detector.
+
 ---
 
 ## The idea
@@ -185,15 +192,48 @@ hardware. The tolerance sweep is the test that does.
 
 ## What it cost
 
+`uart_top` — both halves, the echo and the LEDs:
+
 ```bash
 make synth
 ```
 
-| module | cost |
-|---|---|
-| `uart_tx` | 23 LUT4, 22 FF, 4 CCU2C |
-| `uart_rx` | 53 LUT4, 33 FF, 4 CCU2C, 23 muxes |
-| `uart_top` (both + echo + LEDs) | 91 LUT4, 71 FF, 8 CCU2C, 23 muxes |
+| resource | count |
+|---|---:|
+| `LUT4` | 91 |
+| `TRELLIS_FF` | 71 |
+| `CCU2C` | 8 |
+| `PFUMX` | 16 |
+| `L6MUX21` | 7 |
+
+91 of the 85F's 83,640 LUT4 — 0.11% of the part.
+
+`uart_tx` — the transmitter:
+
+```bash
+make synth M=uart_tx
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 23 |
+| `TRELLIS_FF` | 22 |
+| `CCU2C` | 4 |
+| `PFUMX` | 1 |
+
+`uart_rx` — the receiver:
+
+```bash
+make synth M=uart_rx
+```
+
+| resource | count |
+|---|---:|
+| `LUT4` | 48 |
+| `TRELLIS_FF` | 33 |
+| `CCU2C` | 4 |
+| `PFUMX` | 9 |
+| `L6MUX21` | 4 |
 
 The receiver costs more than twice the transmitter, which is the resource
 footprint of the asymmetry: the transmitter knows when every bit starts, and
@@ -259,15 +299,10 @@ rebuild, then open your terminal at 9600 and watch it still work.
 5. **Send a string.** Add a small ROM of characters and an FSM that transmits
    them in order on a button press, so the board greets you when you press it.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why a start bit exists at all, given there is no clock on the wire.
-- Why 16× oversampling is wrong for a 25 MHz clock, with the arithmetic.
-- Why sampling at the midpoint of a bit is the right place.
-- Why the receiver re-checks the start bit at its midpoint.
-- Why a framing error does not reliably detect corruption.
-- Why a passing loopback test proves much less than it appears to.
-- Which of `ftdi_rxd` and `ftdi_txd` your design should drive.
+**What you built.** A UART transmitter and receiver that talk to a terminal over the same cable that programs the board — 23 LUT4 against the receiver's 48.
 
-**Next:** [lesson 10 — the ALU](../10-alu/), where the course turns toward the
-CPU and the modules start being parts of it.
+**What to keep.** The receiver pays, in logic, for not knowing when the bits start.
+
+**What comes next.** Lesson 10 begins the processor. The UART comes back in lesson 15 as its console.

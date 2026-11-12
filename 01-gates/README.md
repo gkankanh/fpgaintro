@@ -12,12 +12,25 @@ table, plus NAND-only versions of four of them.
 
 **Paths:** editor + visual
 
+**By the end you can:**
+
+- Write combinational logic as continuous assignment, not as statements.
+- Test exhaustively while the input space still allows it.
+- Explain NAND universality, and why it mattered more in 1975 than now.
+- Measure why a 2-input AND and a 4-input XOR cost the same.
+
 ---
 
 ## The idea
 
-A gate is a Boolean function of its inputs, and in Verilog you write it as a
-permanent connection rather than as something that happens:
+A gate is a Boolean function of its inputs. These are the symbols, and they
+are worth knowing by sight: every schematic in this course, and every diagram
+`make graph` draws for you, is made of them.
+
+![The seven basic logic gates: AND, OR, XOR, NOT, NAND, NOR and XNOR, each with its Verilog expression and truth table](../docs/diagrams/gate-symbols.svg)
+
+In Verilog you write a gate as a permanent connection rather than as something
+that happens:
 
 ```verilog
 assign y_and = a & b;
@@ -38,6 +51,11 @@ Four of them, one line each:
 | `a AND b` | `NAND(NAND(a,b), NAND(a,b))` | the second NAND is a NOT |
 | `a OR b` | `NAND(NOT a, NOT b)` | De Morgan: `a\|b == ~(~a & ~b)` |
 | `a XOR b` | four NANDs, see the source | the classic construction |
+
+That last one is worth drawing, because the lesson's measurement is about what
+happens to it:
+
+![Exclusive-OR built from four NAND gates: the first NANDs a and b, two more combine that result with each input, and the fourth NANDs those together](../docs/diagrams/nand-xor.svg)
 
 Historically this mattered enormously: one gate type meant one mask, one part
 number, one bin of 7400s. Which brings us to the second point.
@@ -130,13 +148,17 @@ can fully understand.
 
 ## What it cost
 
+`gates_top` — the whole design:
+
 ```bash
 make synth
 ```
 
-```
-7   LUT4
-```
+| resource | count |
+|---|---:|
+| `LUT4` | 7 |
+
+7 of the 85F's 83,640 LUT4 — less than 0.01% of the part.
 
 Eleven outputs, **seven** LUT4s — and no flip-flops at all, because nothing
 here stores anything.
@@ -202,14 +224,10 @@ synthesiser throwing your structure away.
 
 Worked answers to 1, 3 and 4 are in [`solutions/`](./solutions/).
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why `assign` is a connection rather than a statement.
-- Why NAND is universal, and why that mattered more in 1975 than it does now.
-- Why a 2-input AND and a 4-input XOR cost the same on this FPGA, and what
-  *does* cost.
-- Why eleven outputs synthesised into seven LUTs.
-- The difference between `&` and `&&`, and when it is invisible.
+**What you built.** Every two-input gate, tested against its complete truth table, and four of them rebuilt from NAND alone — eleven outputs that cost seven LUT4.
 
-**Next:** [lesson 02 — combinational logic](../02-combinational/), where gates
-become muxes, decoders and adders, and the testbench still checks every case.
+**What to keep.** The synthesiser keeps your function and discards your structure.
+
+**What comes next.** Lesson 02 assembles those gates into the three structures a processor is actually made of, where structure starts to matter again.

@@ -12,6 +12,13 @@ gradient — still with no framebuffer.
 
 **Paths:** editor
 
+**By the end you can:**
+
+- Turn a raster coordinate into a ROM address and a bit select.
+- Choose constants so that the arithmetic disappears.
+- Recognise a hidden coupling between two distant constants.
+- Explain why a 32-byte ROM becomes logic rather than memory.
+
 ---
 
 ## The idea
@@ -128,17 +135,23 @@ sweeps — the letters appear as a pattern on a single trace.
 
 ## What it cost
 
+`text_top` — the whole design:
+
 ```bash
 make synth
 ```
 
-```
- 185   LUT4         (was 108 in lesson 06)
-  72   TRELLIS_FF   (unchanged)
-  22   CCU2C
-  50   PFUMX
-```
+| resource | count |
+|---|---:|
+| `LUT4` | 185 |
+| `TRELLIS_FF` | 72 |
+| `CCU2C` | 22 |
+| `PFUMX` | 50 |
+| `L6MUX21` | 25 |
 
+185 of the 85F's 83,640 LUT4 — 0.22% of the part.
+
+Set that beside lesson 06 — 108 LUT4, 72 `TRELLIS_FF`, 22 `CCU2C`, 29 `PFUMX`.
 No new flip-flops at all — the text added no state, only combinational
 arithmetic. The extra 77 LUT4s and 21 PFUMX muxes are the coordinate chain and
 the font ROM.
@@ -193,14 +206,10 @@ make graph      # -> text_top.svg
    into a 96×64 array and assert that the pixel at a known position inside the
    H is white and one in the gap is not.
 
-## What you should now be able to explain
+## Wrap-up
 
-- Why a bitmap font is just a ROM addressed by concatenation.
-- Why powers of two make the coordinate arithmetic free, and what non-powers
-  cost.
-- Why `3'd7 - fcol` is needed at all.
-- Why a 32-byte ROM synthesised into LUTs instead of block RAM, and roughly
-  where that trade-off flips.
+**What you built.** A font ROM and the coordinate chain that turns a pixel position into a glyph row — 77 more LUT4 than lesson 06 and **no new flip-flops**.
 
-**Next:** [lesson 08 — memories](../08-memory/), where the table gets big
-enough that the answer changes.
+**What to keep.** Combinational work adds area, not state; and a 32-byte ROM becomes logic rather than memory.
+
+**What comes next.** Lesson 08 explains where that line sits, and what it costs to be on the wrong side of it.

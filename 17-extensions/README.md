@@ -10,6 +10,13 @@
 
 **Paths:** editor
 
+**By the end you can:**
+
+- Explain what a trap is and what hardware must save before taking one.
+- Distinguish an exception from an interrupt.
+- Write an interrupt handler in C and know what the hardware did first.
+- Decide when to spend a hardware multiplier and when to iterate.
+
 > **Status: planned.** Scope and ordering are settled; the code and the written
 > lesson are not here yet. Lessons are built in order, so this one is written
 > once lesson 16 is complete. See
