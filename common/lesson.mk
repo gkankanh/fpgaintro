@@ -15,6 +15,8 @@
 #    make lint    verilator --lint-only -Wall  (style/width/latch warnings)
 #    make graph   yosys + graphviz — render the design as a schematic (SVG)
 #    make synth   yosys synth_ecp5 + stat — resource usage, no bitstream
+#                 make synth M=mod        report one module, not the top
+#                 make synth M=mod P="W 4" with a parameter overridden
 #    make bit     yosys -> nextpnr-ecp5 -> ecppack — a flashable bitstream
 #    make prog    openFPGALoader — load the bitstream into SRAM (volatile)
 #    make flash   openFPGALoader -f — write it to SPI flash (survives power)
@@ -101,8 +103,21 @@ $(TOP).svg: $(SRCS)
 
 # ------------------------------------------------------------- synthesise ---
 # "How much fabric does this cost?" — read the stat block: LUT4s, DFFs, BRAM.
+# M names ONE module to report instead of the whole design, so that every
+# per-module number quoted in a lesson can be reproduced by the reader:
+#
+#     make synth              the lesson's top, as built
+#     make synth M=uart_rx    just the receiver
+#
+# Synthesis flattens, so a submodule's own cost is only visible by making it
+# the top. The lessons quote both, and always say which command produced which.
+# P overrides a parameter of that module, so the lessons' width comparisons
+# are reproducible too:  make synth M=adder_ripple P="W 4"
+SYNTH_TOP   = $(if $(M),$(M),$(TOP))
+SYNTH_PARAM = $(if $(P),chparam -set $(P) $(SYNTH_TOP);,)
+
 synth:
-	$(TOOLS)/yosys -p "read_verilog $(SRCS); synth_ecp5 -top $(TOP); stat"
+	$(TOOLS)/yosys -p "read_verilog $(SRCS); $(SYNTH_PARAM) synth_ecp5 -top $(SYNTH_TOP); stat"
 
 # ---------------------------------------------------------- place & route ---
 $(TOP).json: $(SRCS)

@@ -140,3 +140,63 @@
     actually measured. Nothing in this chapter is a measurement.
   ],
 )
+
+
+// ---------------------------------------------------------------- cost
+// Every lesson reports what it cost in the SAME shape, because a reader
+// comparing lesson 06 against lesson 13 should not have to compare two table
+// formats as well. One block per module: the exact command that produces the
+// numbers, then a two-column table of the chip's own primitives in a fixed
+// order. The primitives are glossed once, in "What an FPGA is", and never
+// again -- repeating the glossary in fourteen lessons would be noise.
+//
+//   #cost("uart_rx — the receiver", (LUT4: 53, TRELLIS_FF: 33, CCU2C: 4),
+//         cmd: "make synth M=uart_rx")[
+//     Optional commentary on the numbers.
+//   ]
+//
+// A row appears only if the design uses that primitive. The order never
+// changes, so two lessons' tables line up by eye.
+
+#let cell-order = (
+  "LUT4", "TRELLIS_FF", "CCU2C", "PFUMX", "L6MUX21",
+  "TRELLIS_DPR16X4", "DP16KD", "MULT18X18D", "EHXPLLL",
+)
+
+// 1765 -> "1,765"
+#let num(n) = {
+  let s = str(n)
+  if s.len() > 3 { s.slice(0, s.len() - 3) + "," + s.slice(s.len() - 3) } else { s }
+}
+
+// The 85F's capacity, for the share-of-the-part line.
+#let PART-LUT4 = 83640
+
+#let cost(title, counts, cmd: "make synth", share: false, body) = measured(title)[
+  #block(above: 11pt, below: 8pt)[#raw(cmd, block: false)]
+  #ttable(
+    columns: (1fr, auto),
+    [*resource*], [*count*],
+    ..{
+      let rows = ()
+      for key in cell-order {
+        if key in counts {
+          rows.push[#raw(key)]
+          rows.push(align(right)[#num(counts.at(key))])
+        }
+      }
+      rows
+    },
+  )
+  #if share and "LUT4" in counts [
+    #v(2pt)
+    #text(size: 9pt, fill: mute)[
+      #num(counts.at("LUT4")) of the 85F's #num(PART-LUT4) LUT4 —
+      #{
+        let pc = counts.at("LUT4") / PART-LUT4 * 100
+        if pc < 0.01 [less than 0.01%] else [#calc.round(pc, digits: 2)%]
+      } of the part.
+    ]
+  ]
+  #if body != none [#v(3pt) #body]
+]

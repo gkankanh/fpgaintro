@@ -14,6 +14,7 @@ From inside a lesson directory, or from the project root with `L=<number>`:
   [`lint`],  [Verilator `-Wall`], [width mismatches, inferred latches, multiple drivers],
   [`graph`], [yosys + graphviz], [render the design as an SVG schematic],
   [`synth`], [yosys `synth_ecp5`], [resource report: LUT4s, flip-flops, block RAM, carry],
+  [`synth M=mod`], [yosys `synth_ecp5 -top mod`], [the same report for one module instead of the top],
   [`bit`],   [yosys → nextpnr → ecppack], [a bitstream, with timing closure],
   [`prog`],  [openFPGALoader], [load into FPGA SRAM — volatile, for iterating],
   [`flash`], [openFPGALoader `-f`], [write to SPI flash — survives power-off],
