@@ -221,16 +221,31 @@ make sim
 Hello world from RV32I SoC on ULX3S
 deadbeef
 bss ok
+x+y 0000002a
+add2 00b50533 00008067
+op 00000033
 Waiting for a character from host
 K
 CYC 0000025e
 DONE
 
-PASS: 107 characters over the wire, both LED writes seen, one wild store caught, halt code 0
+PASS: 155 characters over the wire, both LED writes seen, one wild store caught, halt code 0
 ```
 
 That output is not printed by the testbench. It is printed by the *program*,
 and the testbench is reading it off a wire.
+
+`x+y 0000002a` is 17 + 25 in hex, computed by an `add` instruction. The line
+after it is that instruction, and the one following it: `00b50533` is
+`add a0,a0,a1` and `00008067` is `ret`, read back out of memory by the program
+itself. `op 00000033` is the low seven bits of the first word — RV32I's OP
+opcode, the same field [lesson 12's decoder](../12-datapath/) switches on.
+
+**The program can read its own code because this machine has one memory.**
+`add2` is an address, so a `uint32_t *` pointed at it loads the very words the
+fetch unit fetches. That is unified memory stated as a C expression, and it is
+the thing lesson 16 gives up when fetch and data move to separate block RAM
+ports.
 
 [`tb_soc.v`](./tb_soc.v) behaves like the host at the other end of the cable: it
 instantiates lesson 09's **receiver**, points it at the SoC's transmit pin, and

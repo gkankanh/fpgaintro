@@ -193,11 +193,14 @@ make sim
 Hello world from RV32I SoC on ULX3S
 deadbeef
 bss ok
+x+y 0000002a
+add2 00b50533 00008067
+op 00000033
 Waiting for a character from host
 K
 CYC 000004b7
 DONE
-  machine B: 107 characters, 12673 cycles, 6662 instructions retired
+  machine B: 155 characters, 17844 cycles, 9486 instructions retired
 
 PASS: lesson 13's program gives identical results (24 checks) and lesson 15's C runs unchanged
 ```

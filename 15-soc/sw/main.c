@@ -39,6 +39,21 @@ uint32_t marker = 0xdeadbeef;
  * reason this check passes. Comment that loop out and watch it fail. */
 uint32_t zeroed[4];
 
+/* Two integers to add, and a function to add them with.
+ *
+ * Both are global and the function is `noinline` for the same reason the
+ * marker above is not `static`: with everything visible, gcc folds 17 + 25 to
+ * 42 at compile time and emits no `add` instruction at all. There would be
+ * nothing left to look at, which is the opposite of the point. */
+int x = 17;
+int y = 25;
+
+__attribute__((noinline))
+int add2(int a, int b)
+{
+    return a + b;
+}
+
 int main(void)
 {
     puts("Hello world from RV32I SoC on ULX3S \n");
@@ -52,6 +67,35 @@ int main(void)
     for (int i = 0; i < 4; i++)
         sum += zeroed[i];
     puts(sum == 0 ? "bss ok\n" : "bss BAD\n");
+
+    /* x + y, and then the instructions that did it.
+     *
+     * A program on this machine can read its own code, because lesson 15's
+     * SoC has ONE memory: `add2` is an address like any other, so casting it
+     * to a uint32_t pointer and loading from it fetches the very words the
+     * fetch unit fetches. On a machine with separate instruction and data
+     * memories -- a Harvard machine, which lesson 16's two block RAM ports
+     * nearly make this one -- the same four lines would read nothing at all.
+     *
+     * What comes back is the encoding lesson 12's decoder takes apart, so
+     * the two lessons meet here: the low seven bits of the first word are
+     * the opcode field, and 0x33 is RV32I's OP -- register-register
+     * arithmetic. `make dis` shows the same bytes as mnemonics. */
+    int s = add2(x, y);
+    puts("x+y ");
+    puthex((uint32_t)s);
+    putchar('\n');
+
+    const uint32_t *code = (const uint32_t *)(void *)add2;
+    puts("add2 ");
+    puthex(code[0]);
+    putchar(' ');
+    puthex(code[1]);
+    putchar('\n');
+
+    puts("op ");
+    puthex(code[0] & 0x7Fu);
+    putchar('\n');
 
     /* A store to 0x80000010. One instruction, and eight pins change. */
     LEDS = 0xA5;

@@ -110,9 +110,17 @@ module tb_pipe;
     // did not change, so its output may not either. (It is literally the same
     // image -- this testbench reads ../15-soc/firmware.hex -- so editing
     // lesson 15's sw/main.c changes this expectation too.)
-    localparam EXPLEN = 107;
+    // The three lines in the middle are the encoding of `add2` read back out
+    // of the program's own memory, so they are a statement about what gcc
+    // emitted: `add a0,a0,a1` is 0x00b50533 and `ret` is 0x00008067. A
+    // different compiler may pick different registers and change them. If
+    // that happens the fix is to run `make dis` and copy the two words --
+    // the test is still asserting the right thing, which is that the machine
+    // can read its own instructions.
+    localparam EXPLEN = 155;
     localparam [8*EXPLEN-1:0] EXPECT =
         {"Hello world from RV32I SoC on ULX3S \ndeadbeef\nbss ok\n",
+         "x+y 0000002a\nadd2 00b50533 00008067\nop 00000033\n",
          "Waiting for a character from host\nK\nCYC ????????\nDONE\n"};
 
     function [7:0] expect_ch(input integer i);
