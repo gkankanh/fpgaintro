@@ -38,6 +38,14 @@ VCD     ?= $(TOP).vcd
 # lesson overrides these to name only the simulatable part, and verifies the
 # rest structurally with `make bit`. Lesson 04 is the first to need it.
 SIM_SRCS  ?= $(SRCS)
+
+# Memory images read by $readmemh. These are read at ELABORATION time, by
+# iverilog when it builds the .vvp and by yosys when it synthesises -- so they
+# are build inputs exactly like a .v file, and a lesson that leaves them out of
+# its dependencies will quietly simulate and flash a STALE program after you
+# recompile the software. Lesson 15 did precisely that: `make bit` reported
+# nothing to be done while firmware.hex was newer than the bitstream.
+DATA    ?=
 LINT_SRCS ?= $(SIM_SRCS)
 LINT_TOP  ?= $(TOP)
 
@@ -58,7 +66,7 @@ sim: $(TB).vvp
 	$(TOOLS)/vvp $(TB).vvp
 	@echo "---- waveform: make wave  (gtkwave $(VCD)) ----"
 
-$(TB).vvp: $(SIM_SRCS) $(TB_SRCS)
+$(TB).vvp: $(SIM_SRCS) $(TB_SRCS) $(DATA)
 	$(TOOLS)/iverilog -g2005 -Wall -o $@ $(SIM_SRCS) $(TB_SRCS)
 
 wave: $(VCD)
@@ -120,7 +128,7 @@ synth:
 	$(TOOLS)/yosys -p "read_verilog $(SRCS); $(SYNTH_PARAM) synth_ecp5 -top $(SYNTH_TOP); stat"
 
 # ---------------------------------------------------------- place & route ---
-$(TOP).json: $(SRCS)
+$(TOP).json: $(SRCS) $(DATA)
 	$(TOOLS)/yosys -p "read_verilog $(SRCS); synth_ecp5 -top $(TOP) -json $@"
 
 $(TOP).config: $(TOP).json $(LPF)

@@ -70,11 +70,33 @@ typedef unsigned char      uint8_t;
 
 /* ---- the same four I/O functions as lesson 15 -------------------------- */
 
-static inline void putchar(int c)
+/* One byte, with no interpretation at all. */
+static inline void uart_put(int c)
 {
     while (UART_STAT & TX_BUSY)
-        ;
+        ;                      /* the byte would be dropped; wait for the line */
     UART_TX = (uint32_t)c;
+}
+
+/* A newline on a serial line is TWO control characters, and a terminal does
+ * exactly what it is told: LF (0x0A) means "down one row", CR (0x0D) means
+ * "back to column one". Send LF on its own and the cursor drops a row but
+ * stays where it was, so every line starts where the last one ended and the
+ * output walks off the right-hand edge in a staircase:
+ *
+ *     Hello world from RV32I SoC on ULX3S
+ *                                        deadbeef
+ *                                                bss ok
+ *
+ * Text files on Unix get away with a bare LF because the kernel's tty line
+ * discipline expands it on the way out (ONLCR). There is no kernel here, and
+ * no line discipline -- there is this function and a shift register. So this
+ * is where the expansion has to happen. */
+static inline void putchar(int c)
+{
+    if (c == '\n')
+        uart_put('\r');
+    uart_put(c);
 }
 
 static inline void puts(const char *s)

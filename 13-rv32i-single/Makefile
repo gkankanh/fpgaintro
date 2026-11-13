@@ -14,6 +14,8 @@ SRCS = ../common/rtl/adder.v ../10-alu/alu.v ../11-regfile/regfile.v \
 TB   = tb_cpu
 VCD  = cpu.vcd
 
+DATA = test.hex
+
 include ../common/lesson.mk
 
 # Reassemble the test program.

@@ -33,4 +33,6 @@ TB   = tb_pipe
 VCD  = pipe.vcd
 FREQ = 40
 
+DATA = ../15-soc/firmware.hex ../13-rv32i-single/test.hex
+
 include ../common/lesson.mk

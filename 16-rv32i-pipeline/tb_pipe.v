@@ -117,11 +117,17 @@ module tb_pipe;
     // that happens the fix is to run `make dis` and copy the two words --
     // the test is still asserting the right thing, which is that the machine
     // can read its own instructions.
-    localparam EXPLEN = 155;
+    // EVERY LINE ENDS CR THEN LF, and the escape matters: Verilog has no
+    // \r, so iverilog reads "\r" as a plain letter r (0x72) and the
+    // backslash vanishes without a warning. \015 is the octal escape the
+    // standard does define, and it is a real 0x0D. The program sends both
+    // characters because a serial terminal has no line discipline to expand
+    // a bare LF for it -- see the comment on putchar in sw/soc.h.
+    localparam EXPLEN = 165;
     localparam [8*EXPLEN-1:0] EXPECT =
-        {"Hello world from RV32I SoC on ULX3S \ndeadbeef\nbss ok\n",
-         "x+y 0000002a\nadd2 00b50533 00008067\nop 00000033\n",
-         "Waiting for a character from host\nK\nCYC ????????\nDONE\n"};
+        {"Hello world from RV32I SoC on ULX3S \015\ndeadbeef\015\nbss ok\015\n",
+         "x+y 0000002a\015\nadd2 00b50533 00008067\015\nop 00000033\015\n",
+         "Waiting for a character from host\015\nK\015\nCYC ????????\015\nDONE\015\n"};
 
     function [7:0] expect_ch(input integer i);
         expect_ch = EXPECT[8*(EXPLEN-i)-1 -: 8];

@@ -200,7 +200,7 @@ Waiting for a character from host
 K
 CYC 000004b7
 DONE
-  machine B: 155 characters, 17844 cycles, 9486 instructions retired
+  machine B: 165 characters, 18942 cycles, 10691 instructions retired
 
 PASS: lesson 13's program gives identical results (24 checks) and lesson 15's C runs unchanged
 ```

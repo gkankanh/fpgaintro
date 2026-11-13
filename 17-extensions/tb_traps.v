@@ -56,9 +56,17 @@ module tb_traps;
         .clk(clk), .rx(tx_line),
         .data(got), .valid(got_valid), .frame_error(got_err));
 
-    localparam EXPLEN = 100;
+    // EVERY LINE ENDS CR THEN LF, and the escape matters: Verilog has no
+    // \r, so iverilog reads "\r" as a plain letter r (0x72) and the
+    // backslash vanishes without a warning. \015 is the octal escape the
+    // standard does define, and it is a real 0x0D. The program sends both
+    // characters because a serial terminal has no line discipline to expand
+    // a bare LF for it -- see the comment on putchar in sw/soc.h.
+    localparam EXPLEN = 112;
     localparam [8*EXPLEN-1:0] EXPECT =
-        "RV32IM\nE\nI\nT\nT\nT\nMUL be991a08\nDIV 0001e240\nREM 00000315\nSDV fffe1dc0\nCYC ???????? INS ????????\nDONE\n";
+        {"RV32IM\015\nE\015\nI\015\nT\015\nT\015\nT\015\n",
+         "MUL be991a08\015\nDIV 0001e240\015\nREM 00000315\015\nSDV fffe1dc0\015\n",
+         "CYC ???????? INS ????????\015\nDONE\015\n"};
 
     function [7:0] expect_ch(input integer i);
         expect_ch = EXPECT[8*(EXPLEN-i)-1 -: 8];

@@ -6,4 +6,6 @@ TOP  = mem_top
 SRCS = ram.v rom.v framebuffer.v mem_test.v ../common/rtl/debounce.v mem_top.v
 TB   = tb_mem
 VCD  = mem.vcd
+DATA = font.hex
+
 include ../common/lesson.mk

@@ -34,6 +34,8 @@ TB   = tb_traps
 VCD  = traps.vcd
 FREQ = 36
 
+DATA = firmware.hex ../13-rv32i-single/test.hex
+
 include ../common/lesson.mk
 
 # ---------------------------------------------------------------- software --

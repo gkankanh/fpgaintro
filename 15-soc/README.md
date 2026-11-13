@@ -229,11 +229,20 @@ K
 CYC 0000025e
 DONE
 
-PASS: 155 characters over the wire, both LED writes seen, one wild store caught, halt code 0
+PASS: 165 characters over the wire, both LED writes seen, one wild store caught, halt code 0
 ```
 
 That output is not printed by the testbench. It is printed by the *program*,
 and the testbench is reading it off a wire.
+
+**165 characters, for ten visible lines of text.** Count the letters and you
+get 155; the other ten are carriage returns. A newline on a serial line is two
+control characters — CR to return to column one, LF to drop a row — and a
+terminal does exactly what it is told. Send LF alone and every line starts
+where the last one ended, in a staircase off the right-hand edge. A text file
+on Unix gets away with a bare LF because the kernel's tty line discipline
+expands it; `putchar` in [`sw/soc.h`](./sw/soc.h) is the whole line discipline
+this machine has.
 
 `x+y 0000002a` is 17 + 25 in hex, computed by an `add` instruction. The line
 after it is that instruction, and the one following it: `00b50533` is

@@ -19,6 +19,8 @@ SRCS = ../common/rtl/adder.v ../10-alu/alu.v ../11-regfile/regfile.v \
 TB   = tb_soc
 VCD  = soc.vcd
 
+DATA = firmware.hex
+
 include ../common/lesson.mk
 
 # ---------------------------------------------------------------- software --

@@ -266,11 +266,11 @@ MUL be991a08
 DIV 0001e240
 REM 00000315
 SDV fffe1dc0
-CYC 00010845 INS 0000712e
+CYC 00010cf0 INS 00007502
 DONE
   RV32I conformance: 23 checks, 0 errors, 148 cycles, 109 instructions
 
-PASS: 100 characters, 5 traps taken (3 of them timer interrupts), every one returned from, and lesson 13's program still gives all 23 answers
+PASS: 112 characters, 5 traps taken (3 of them timer interrupts), every one returned from, and lesson 13's program still gives all 23 answers
 ```
 
 Every line of that output is a trap that was taken and returned from. `E` is an

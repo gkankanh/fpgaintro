@@ -265,8 +265,15 @@ is what the single-cycle decision costs once the machine is big enough to run C.
   DONE
   ```
   Seven consecutive runs, every one byte-identical to the string the testbench
-  expects — and `CYC 0000025e` is the same 606 cycles the simulation produced.
-  The delay loop takes exactly as long on real silicon as it does in Icarus.
+  expected at the time — and `CYC 0000025e` is the same 606 cycles the
+  simulation produced. The delay loop takes exactly as long on real silicon as
+  it does in Icarus.
+
+  The program has since gained a longer greeting, the `x+y` and opcode lines,
+  and a carriage return on every line; the capture above is left as it was
+  taken, because a measurement is a record of what happened and not a thing
+  to edit afterwards. The cycle count is the part that was being measured, and
+  it has not moved.
 ]
 
 The capture also contained two greetings cut off after a character or two,

@@ -252,6 +252,14 @@ screen /dev/cu.usbserial-*  115200       # macOS — ctrl-a k to quit
 picocom -b 115200 /dev/ttyUSB0           # Linux
 ```
 
+> **If output ever arrives in a staircase**, drifting right instead of
+> returning to the left margin, the device is sending LF without CR. A
+> terminal takes those as two separate instructions: LF drops a row, CR
+> returns to column one. The fix belongs in the firmware — lesson 15's
+> `putchar` expands `'\n'` for exactly this reason — but `picocom --imap
+> lfcrlf` will translate on the way in for a device you cannot change.
+> `screen` has no equivalent option.
+
 Type. Characters come back, and the LEDs show the byte you last sent — so
 pressing `A` lights `0x41` = `01000001`. Hold `btn[1]` to see framing-error and
 dropped-byte counts instead, which is how you tell a baud mismatch from a
