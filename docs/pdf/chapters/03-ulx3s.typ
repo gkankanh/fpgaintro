@@ -6,8 +6,8 @@
 
 The ULX3S is an open-hardware FPGA development board from
 #link("https://radiona.org")[Radiona], the makerspace in Zagreb. Schematics,
-PCB layout and a large body of example gateware are published openly at
-#link("https://github.com/emard/ulx3s")[github.com/emard/ulx3s].
+PCB layout and a large body of example gateware are published openly by the
+project itself.
 
 It was designed for teaching, and it shows: the peripherals are the ones you
 actually want when learning, placed where you can reach them, with no

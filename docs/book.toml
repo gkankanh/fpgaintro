@@ -12,9 +12,6 @@ create-missing = false
 [output.html]
 default-theme    = "light"
 preferred-dark-theme = "navy"
-# Readers will want the source of every lesson, so link straight to it.
-git-repository-url = "https://github.com/REPLACE_ME/ULX3S"
-edit-url-template  = "https://github.com/REPLACE_ME/ULX3S/edit/main/{path}"
 additional-css     = ["theme/course.css"]
 mathjax-support    = false
 copy-fonts         = true

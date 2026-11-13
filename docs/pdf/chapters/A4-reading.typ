@@ -69,7 +69,7 @@
     Ethernet, video and an SD card, without building all of them yourself.
   ],
   [#strong[The ULX3S examples]], [
-    `github.com/emard/ulx3s` — SDRAM controllers, video output, emulators of
+    The ULX3S project's own repository — SDRAM controllers, video output, emulators of
     older machines. Written for this exact board.
   ],
 )

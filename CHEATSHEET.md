@@ -131,7 +131,7 @@ Open the **folder**, not a file — `.vscode/tasks.json` only loads when its
 parent is the workspace root:
 
 ```bash
-cd path/to/ULX3S && tools/code.sh
+cd path/to/fpgaintro && tools/code.sh
 ```
 
 `tools/code.sh` also puts the toolchain on `PATH`, which the Verilog extension

@@ -9,7 +9,7 @@ names like `led[0]` to package balls like `B2`.
 
 | | |
 |---|---|
-| **Source** | the ULX3S project, <https://github.com/emard/ulx3s> |
+| **Source** | the ULX3S project, by EMARD |
 | **Copyright** | Copyright (c) 2016–2018 EMARD |
 | **Licence** | MIT-style; redistribution is expressly permitted |
 

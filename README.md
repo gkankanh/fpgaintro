@@ -259,7 +259,7 @@ top of them, giving credit.
 Both licences disclaim warranties and limit liability, in the standard terms.
 
 One file is not original to this project — `common/ulx3s_v20.lpf`, the board's
-pin constraints, from the [ULX3S project](https://github.com/emard/ulx3s),
+pin constraints, from the ULX3S project,
 MIT-licensed, Copyright (c) 2016–2018 EMARD. Its notice is reproduced in
 [THIRD-PARTY.md](THIRD-PARTY.md) as that licence requires. The toolchain is
 downloaded rather than vendored and carries its own licences.
