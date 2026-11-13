@@ -449,9 +449,14 @@ make console      # tells you which serial device to open
 Then, in a terminal at **115200 baud**:
 
 ```
-screen /dev/tty.usbserial-*  115200      # macOS, ctrl-a k to quit
+screen /dev/cu.usbserial-*  115200       # macOS, ctrl-a k to quit
 picocom -b 115200 /dev/ttyUSB0           # Linux
 ```
+
+`/dev/cu.*` and not `/dev/tty.*`: the tty device blocks on open until carrier
+detect is asserted, and an FTDI cable never asserts it. And **quit the console
+before the next `make prog`** — JTAG and this UART are the same FT231X, so
+openFPGALoader cannot claim the chip while a terminal holds the port.
 
 Press **btn[1]** to reset. The program prints its greeting, `deadbeef`, `bss
 ok`, then stops and waits — it is in `getchar()`, polling `rx_valid`. Type one

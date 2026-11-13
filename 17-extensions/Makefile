@@ -82,7 +82,24 @@ size:
 dis:
 	@$(RVPREFIX)objdump -d -M numeric,no-aliases sw/firmware.elf
 
+# Two things about this that cost an evening if you meet them the hard way.
+#
+# USE /dev/cu.*, NOT /dev/tty.*  On macOS the tty device blocks on open until
+# carrier detect is asserted, which an FTDI cable never does.
+#
+# QUIT THE CONSOLE BEFORE `make prog`.  The ULX3S puts JTAG and this UART on
+# one FT231X, so openFPGALoader cannot claim the chip while a terminal holds
+# the port: it fails with "unable to claim usb device".
 console:
-	@echo "115200 baud. macOS:  screen /dev/tty.usbserial-*  115200"
-	@echo "             Linux:  picocom -b 115200 /dev/ttyUSB0"
-	@ls /dev/tty.usbserial-* /dev/ttyUSB* 2>/dev/null || echo "(no serial port found)"
+	@echo "115200 baud, 8N1."
+	@echo "  macOS:  screen /dev/cu.usbserial-* 115200    (quit: ctrl-a k y)"
+	@echo "  Linux:  picocom -b 115200 /dev/ttyUSB0       (quit: ctrl-a ctrl-x)"
+	@echo ""
+	@echo "The program greets you once per reset and then blocks in getchar(),"
+	@echo "so with the console open press FIRE1 (btn[1]) to run it again, and"
+	@echo "type a character when it asks for one."
+	@echo ""
+	@echo "Serial ports present:"
+	@found=; for p in /dev/cu.usbserial-* /dev/ttyUSB*; do \
+	  [ -e "$$p" ] && { echo "  $$p"; found=1; }; \
+	done; [ -n "$$found" ] || echo "  (none -- is the board plugged in?)"

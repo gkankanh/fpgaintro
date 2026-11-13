@@ -248,7 +248,7 @@ make prog
 Then open a terminal on your computer:
 
 ```bash
-screen /dev/tty.usbserial-*  115200      # macOS — ctrl-a k to quit
+screen /dev/cu.usbserial-*  115200       # macOS — ctrl-a k to quit
 picocom -b 115200 /dev/ttyUSB0           # Linux
 ```
 
