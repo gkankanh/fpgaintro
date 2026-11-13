@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 320" role="img"
+     aria-label="Five pipeline stages with registers between them, the two forwarding paths into execute, the write-back to decode bypass, and the one-cycle stall a load-use hazard needs">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; --bad:#b42318; --warm:#9a6700; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; --bad:#ff7b72; --warm:#d29922; }
+    }
+    .box  { fill:none; stroke:var(--ink); stroke-width:1.6; }
+    .reg  { fill:var(--accent); opacity:.65; }
+    .w    { stroke:var(--ink); stroke-width:1.5; fill:none; }
+    .fwd  { stroke:var(--good); stroke-width:1.5; fill:none; }
+    .byp  { stroke:var(--warm); stroke-width:1.5; fill:none; }
+    .stl  { stroke:var(--bad); stroke-width:1.5; fill:none; stroke-dasharray:5 4; }
+    .l    { fill:var(--ink); font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .n    { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .gd   { fill:var(--good); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .wk   { fill:var(--warm); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .bd   { fill:var(--bad); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t    { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <defs>
+    <marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+    <marker id="a6g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--good)"/></marker>
+    <marker id="a6w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--warm)"/></marker>
+    <marker id="a6b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--bad)"/></marker>
+  </defs>
+
+  <!-- stages -->
+  <rect class="box" x="24"  y="44" width="92" height="52" rx="3"/>
+  <text class="l" x="52"  y="68">IF</text><text class="n" x="38"  y="86">fetch</text>
+  <rect class="box" x="148" y="44" width="92" height="52" rx="3"/>
+  <text class="l" x="176" y="68">ID</text><text class="n" x="154" y="86">decode + regs</text>
+  <rect class="box" x="272" y="44" width="92" height="52" rx="3"/>
+  <text class="l" x="300" y="68">EX</text><text class="n" x="280" y="86">ALU + branch</text>
+  <rect class="box" x="396" y="44" width="92" height="52" rx="3"/>
+  <text class="l" x="420" y="68">MEM</text><text class="n" x="412" y="86">memory</text>
+  <rect class="box" x="520" y="44" width="92" height="52" rx="3"/>
+  <text class="l" x="548" y="68">WB</text><text class="n" x="526" y="86">register write</text>
+
+  <!-- pipeline registers -->
+  <rect class="reg" x="120" y="40" width="10" height="60"/>
+  <rect class="reg" x="244" y="40" width="10" height="60"/>
+  <rect class="reg" x="368" y="40" width="10" height="60"/>
+  <rect class="reg" x="492" y="40" width="10" height="60"/>
+  <text class="n" x="104" y="32">IF/ID</text>
+  <text class="n" x="228" y="32">ID/EX</text>
+  <text class="n" x="350" y="32">EX/MEM</text>
+  <text class="n" x="476" y="32">MEM/WB</text>
+
+  <path class="w" d="M116 70 H118"/><path class="w" d="M130 70 H146" marker-end="url(#a6)"/>
+  <path class="w" d="M240 70 H242"/><path class="w" d="M254 70 H270" marker-end="url(#a6)"/>
+  <path class="w" d="M364 70 H366"/><path class="w" d="M378 70 H394" marker-end="url(#a6)"/>
+  <path class="w" d="M488 70 H490"/><path class="w" d="M502 70 H518" marker-end="url(#a6)"/>
+
+  <!-- forwarding: EX/MEM -> EX, wins when both match -->
+  <path class="fwd" d="M373 100 V126 H290 V100" marker-end="url(#a6g)"/>
+  <text class="gd" x="300" y="122">forward from EX/MEM — the nearer instruction wins</text>
+
+  <!-- forwarding: MEM/WB -> EX, including a loaded word -->
+  <path class="fwd" d="M497 100 V152 H276 V100" marker-end="url(#a6g)"/>
+  <text class="gd" x="300" y="148">forward from MEM/WB — including a loaded word</text>
+
+  <!-- WB -> ID bypass, the one lesson 11 predicted -->
+  <path class="byp" d="M566 96 V182 H200 V100" marker-end="url(#a6w)"/>
+  <text class="wk" x="236" y="178">WB→ID bypass: too far to forward, too close to have landed</text>
+
+  <!-- the stall -->
+  <path class="stl" d="M300 216 H125 V100" marker-end="url(#a6b)"/>
+  <text class="bd" x="306" y="212">load-use: the word does not EXIST until WB, so stall one cycle —</text>
+  <text class="bd" x="306" y="228">the IF/ID register's clock enable goes low and a bubble enters EX</text>
+
+  <!-- branch flush -->
+  <path class="stl" d="M318 244 H60 V100" marker-end="url(#a6b)"/>
+  <text class="bd" x="324" y="248">taken branch resolves in EX: two fetched instructions are squashed</text>
+
+  <text class="t" x="24" y="282">A bubble is not a special instruction: it is `valid` going low with every state-changing control signal forced off.</text>
+  <text class="t" x="24" y="302">And a squashed instruction raises nothing — the bug this lesson hit was an illegal-instruction latch that had not been told.</text>
+</svg>

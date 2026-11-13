@@ -2,17 +2,6 @@
 
 = Lesson 06 — SPI and the OLED
 
-#goals(
-  concept: [A state machine that talks to a real chip, on that chip's terms.],
-  build: [The SSD1331 colour OLED brought up from cold and filled with an animated gradient — with no framebuffer anywhere.],
-  needs: [Lesson 05. A board, to see it.],
-)[
-  - Read a datasheet's timing requirements and turn them into clock counts.
-  - Set up data before clocking it, and say why that ordering is universal.
-  - Use a `busy`/`start` handshake to separate timing from sequencing.
-  - Recognise when a design needs no frame buffer at all.
-]
-
 == The idea
 
 Everything so far was self-contained: your logic, your clock, your decisions.
@@ -116,11 +105,3 @@ pixel data keeps arriving with `D/C` high.
   hardware probably will not. When another chip's timing is involved,
   simulation is necessary and not sufficient.
 ]
-
-== Wrap-up
-
-#strong[What you built.] An SPI controller driving a colour OLED, built from a datasheet's timing requirements — 108 LUT4 and 72 flip-flops.
-
-#strong[What to keep.] A datasheet becomes clock counts, and clock counts become states.
-
-#strong[What comes next.] Lesson 07 puts readable text on that display, which needs a ROM and some coordinate arithmetic.

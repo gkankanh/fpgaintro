@@ -21,16 +21,15 @@ cp [0-9][0-9]-*/diagrams/*.svg "$OUT/diagrams/" 2>/dev/null || true
 
 cp CHEATSHEET.md docs/src/cheatsheet.md
 
+# The site mirrors the two PDFs: the lessons are grouped into the same five
+# parts the course book uses, and everything operational is collected at the
+# end under "Tools and workflow" rather than being front matter nobody reads
+# twice. The part headings below are mdBook's own `# Title` separators.
 SUMMARY="docs/src/SUMMARY.md"
 {
   echo "# Summary"
   echo ""
   echo "[Introduction](./introduction.md)"
-  echo "[Getting started](./getting-started.md)"
-  echo "[Choosing your path: editor or Icestudio](./paths.md)"
-  echo "[Cheat sheet](./cheatsheet.md)"
-  echo ""
-  echo "# Lessons"
   echo ""
 } > "$SUMMARY"
 
@@ -39,6 +38,13 @@ for d in [0-9][0-9]-*; do
   num="${d%%-*}"
   slug="${d#*-}"
   title="$(echo "$slug" | tr '-' ' ')"
+  # A part heading before the lesson that opens each part.
+  case "$num" in
+    00) printf '\n# Digital logic\n\n'             >> "$SUMMARY" ;;
+    06) printf '\n# Interfaces and memory\n\n'     >> "$SUMMARY" ;;
+    10) printf '\n# The processor\n\n'             >> "$SUMMARY" ;;
+    14) printf '\n# Verification and extension\n\n' >> "$SUMMARY" ;;
+  esac
   if [ -f "$d/README.md" ]; then
     # Three link fixups, because a lesson README is written to be read in the
     # repository and the site has a different shape:
@@ -60,10 +66,16 @@ done
 
 {
   echo ""
+  echo "# Tools and workflow"
+  echo ""
+  echo "- [Getting started](./getting-started.md)"
+  echo "- [Choosing your path: editor or Icestudio](./paths.md)"
+  echo "- [Cheat sheet](./cheatsheet.md)"
+  echo "- [Toolchain cheat sheet](./reference-toolchain.md)"
+  echo "- [ULX3S board pinout](./reference-pinout.md)"
+  echo ""
   echo "# Reference"
   echo ""
-  echo "- [ULX3S board pinout](./reference-pinout.md)"
-  echo "- [Toolchain cheat sheet](./reference-toolchain.md)"
   echo "- [Verilog style rules](./reference-style.md)"
 } >> "$SUMMARY"
 

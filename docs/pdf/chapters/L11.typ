@@ -2,18 +2,6 @@
 
 = Lesson 11 — The register file
 
-#goals(
-  concept: [Two reads and one write per cycle from one array, and the one register hardwired to zero.],
-  build: [RV32I's 32 × 32-bit register file, plus a block-RAM alternative, measured against each other at two very different sizes.],
-  needs: [Lesson 10.],
-)[
-  - Explain why RISC instructions have at most two source registers.
-  - Explain what `x0` buys, and count the instructions it eliminates.
-  - Justify a combinational read here, having been warned against one in lesson 08.
-  - Explain why read-during-write must return the old value.
-  - Distinguish a mutation that survives from a test that is weak.
-]
-
 == The shape is dictated by the instruction set
 
 ```
@@ -143,11 +131,3 @@ A register file has 32 addresses, not 2#super[32] values, so the thing that
 matters — #emph[which register] — can be swept completely. All 961 pairs of
 distinct registers are read simultaneously, which is what catches a second port
 quietly sharing the first one's address decoder.
-
-== Wrap-up
-
-#strong[What you built.] A register file with two read ports, one write port and an `x0` that reads as zero — 266 LUT4, 32 distributed RAMs, and no block RAM at all.
-
-#strong[What to keep.] Size decides how storage gets built, and a combinational read is the right answer here for the reason lesson 08 warned against it elsewhere.
-
-#strong[What comes next.] Lesson 12 produces the control signals that tell the ALU and the register file what to do.

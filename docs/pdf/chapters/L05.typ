@@ -2,18 +2,6 @@
 
 = Lesson 05 — Finite state machines
 
-#goals(
-  concept: [Encoding "where have I got to" as a register, with transitions as combinational logic.],
-  build: [A traffic light, two sequence detectors contrasting Moore with Mealy, and a combination lock.],
-  needs: [Lesson 04.],
-)[
-  - Write an FSM in the canonical three-part form, and say why it is three parts.
-  - Choose between Moore and Mealy on the basis of what the consumer needs.
-  - Measure state encoding rather than inheriting a rule about it.
-  - Handle a wrong symbol in a sequence detector without losing a valid prefix.
-  - Test by transition coverage, since there is no input space to sweep.
-]
-
 == The idea
 
 A state machine is a register holding #emph[where you are], and combinational
@@ -23,6 +11,11 @@ follows from it:
 + a #strong[state register] — one clocked block, containing nothing else
 + #strong[next-state logic] — one combinational block, a pure function
 + #strong[output logic] — from state (Moore), or state and inputs (Mealy)
+
+#fig("/figures/fsm-shape.svg",
+     [The canonical three parts, and where Moore and Mealy differ: one dashed
+      feedback path, and one coloured path that is the whole of the
+      distinction.])
 
 Splitting (1) from (2) is not stylistic. It makes the only sequential element
 trivially obvious, so the next-state block reads as a plain truth table and you
@@ -91,11 +84,8 @@ In Verilog the encoding is an attribute on the state register — not on the
 module, where it does nothing. Without it the synthesiser re-encodes as it sees
 fit, so the constants you wrote are a suggestion rather than an instruction.
 
-#why[
-  That is twice in two lessons that a received rule did not survive
-  measurement. The method is the content: `make synth` takes two seconds and
-  outranks anything anyone tells you about what #emph[usually] costs less.
-]
+`make synth` takes two seconds, and it outranks anything anyone tells you
+about what #emph[usually] costs less.
 
 == The mistake everyone makes
 
@@ -146,11 +136,3 @@ enable.
   world. That ratio is normal, and worth seeing once: the interesting logic is
   usually a small fraction of a real design.
 ]
-
-== Wrap-up
-
-#strong[What you built.] A traffic light, a Moore and a Mealy sequence detector, and a combination lock — 113 flip-flops, of which the state machines are eight.
-
-#strong[What to keep.] Encodings are measured, not inherited: one-hot cost four times binary here.
-
-#strong[What comes next.] Lesson 06 points an FSM at a real peripheral, whose datasheet decides what the states have to be.

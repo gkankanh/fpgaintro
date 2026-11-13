@@ -2,18 +2,6 @@
 
 = Lesson 13 — A single-cycle RV32I processor
 
-#goals(
-  concept: [Fetch, decode, execute, memory and writeback in one clock — the simplest thing that is genuinely a CPU.],
-  build: [A core that runs real RISC-V assembly, verified by the program's own output.],
-  needs: [Lesson 12. A board, and it is worth it.],
-)[
-  - See a CPU as a state machine whose state is a program counter.
-  - Explain why a single-cycle core needs separate instruction and data memories.
-  - Handle byte and halfword access, and sign versus zero extension.
-  - Test a processor through its architectural interface.
-  - Explain why the whole core runs at half the ALU's clock.
-]
-
 == Nothing here is new
 
 The ALU is lesson 10. The register file is lesson 11. The decoder and immediate
@@ -203,11 +191,3 @@ which must be #strong[9]. Had lesson 12's trap gone unfixed it would read 11.
 
 This is a RISC-V processor you built, running a program you wrote, on a chip
 you configured. Worth a moment.
-
-== Wrap-up
-
-#strong[What you built.] A single-cycle RV32I core running real assembled programs, tested through its architectural interface — 1,765 LUT4, 32 flip-flops, 61.24 MHz.
-
-#strong[What to keep.] One cycle for every instruction means every instruction pays for the slowest one.
-
-#strong[What comes next.] The short chapter after this one runs a single `add` through everything you have just built, slowly, and answers the questions the encoding always provokes. Then lesson 14 proves components correct rather than testing them, and lessons 15 to 17 take this core to a system that runs compiled C, to a five-stage pipeline, and to traps and interrupts.

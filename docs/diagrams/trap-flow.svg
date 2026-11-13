@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 340" role="img"
+     aria-label="Taking a precise trap: earlier instructions complete, the trapping instruction is squashed, four privileged registers are written, control jumps to mtvec, and mret returns to the boundary"
+     >
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; --bad:#b42318; --warm:#9a6700; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; --bad:#ff7b72; --warm:#d29922; }
+    }
+    .box   { fill:none; stroke:var(--ink); stroke-width:1.5; }
+    .done  { fill:var(--good); opacity:.18; }
+    .kill  { fill:var(--bad); opacity:.18; }
+    .flush { fill:var(--mute); opacity:.14; }
+    .w     { stroke:var(--ink); stroke-width:1.5; fill:none; }
+    .jmp   { stroke:var(--accent); stroke-width:1.6; fill:none; }
+    .ret    { stroke:var(--warm); stroke-width:1.6; fill:none; stroke-dasharray:5 4; }
+    .bnd   { stroke:var(--bad); stroke-width:1.6; fill:none; }
+    .l     { fill:var(--ink); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .m     { fill:var(--ink); font:10px ui-monospace,monospace; }
+    .n     { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .gd    { fill:var(--good); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .bd    { fill:var(--bad); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .ac    { fill:var(--accent); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .wk    { fill:var(--warm); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t     { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <defs>
+    <marker id="a8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+    <marker id="a8w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--warm)"/></marker>
+  </defs>
+
+  <!-- program order -->
+  <text class="n" x="20" y="28">program order</text>
+  <g>
+    <rect class="done" x="20"  y="38" width="70" height="30"/>
+    <rect class="box"  x="20"  y="38" width="70" height="30"/>
+    <rect class="done" x="94"  y="38" width="70" height="30"/>
+    <rect class="box"  x="94"  y="38" width="70" height="30"/>
+    <rect class="kill" x="168" y="38" width="86" height="30"/>
+    <rect class="box"  x="168" y="38" width="86" height="30"/>
+    <rect class="flush" x="258" y="38" width="70" height="30"/>
+    <rect class="box"  x="258" y="38" width="70" height="30"/>
+    <rect class="flush" x="332" y="38" width="70" height="30"/>
+    <rect class="box"  x="332" y="38" width="70" height="30"/>
+  </g>
+  <text class="m" x="36"  y="58">i−2</text>
+  <text class="m" x="110" y="58">i−1</text>
+  <text class="m" x="186" y="58">i (bad)</text>
+  <text class="m" x="276" y="58">i+1</text>
+  <text class="m" x="350" y="58">i+2</text>
+
+  <text class="gd" x="20"  y="86">complete: they are earlier</text>
+  <text class="bd" x="168" y="86">squashed,</text>
+  <text class="bd" x="168" y="100">having changed nothing</text>
+  <text class="n"  x="258" y="86">flushed by the redirect</text>
+
+  <!-- the exact boundary -->
+  <path class="bnd" d="M166 32 V112"/>
+  <text class="bd" x="296" y="126">the machine stops between two instructions, exactly</text>
+
+  <!-- what the hardware writes -->
+  <rect class="box" x="20" y="146" width="300" height="106" rx="3"/>
+  <text class="l" x="34" y="168">what the hardware does — all of it</text>
+  <text class="m" x="34" y="190">mepc   &lt;= pc of i</text>
+  <text class="n" x="186" y="190">where to come back to</text>
+  <text class="m" x="34" y="210">mcause &lt;= why</text>
+  <text class="n" x="186" y="210">illegal, misaligned, IRQ…</text>
+  <text class="m" x="34" y="230">MPIE &lt;= MIE ; MIE &lt;= 0</text>
+  <text class="n" x="186" y="230">handler not interrupted</text>
+  <text class="m" x="34" y="246">pc     &lt;= mtvec</text>
+
+  <!-- the handler -->
+  <path class="jmp" d="M320 196 H400" marker-end="url(#a8)"/>
+  <text class="ac" x="330" y="190">one jump</text>
+  <rect class="box" x="400" y="146" width="236" height="60" rx="3"/>
+  <text class="l" x="416" y="168">the handler — software you wrote</text>
+  <text class="n" x="416" y="186">reads mcause, decides, repairs or reports</text>
+
+  <path class="ret" d="M518 206 V276 H166 V118" marker-end="url(#a8w)"/>
+  <text class="wk" x="330" y="272">mret: restore MIE from MPIE, jump to mepc</text>
+
+  <text class="t" x="20" y="308">Four registers and a jump. System calls, page faults, debuggers, timer scheduling and every "something went wrong"</text>
+  <text class="t" x="20" y="326">message you have seen are this mechanism — the only way software gets control of a machine it is not running on.</text>
+</svg>

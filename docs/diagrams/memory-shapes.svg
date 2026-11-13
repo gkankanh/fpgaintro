@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 320" role="img"
+     aria-label="One line of Verilog decides the primitive: a registered read becomes a block RAM, a combinational read becomes distributed RAM plus a multiplexer tree, and the cost of the second grows with depth">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; --bad:#b42318; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; --bad:#ff7b72; }
+    }
+    .box  { fill:none; stroke:var(--ink); stroke-width:1.6; }
+    .blk  { fill:none; stroke:var(--good); stroke-width:1.8; }
+    .dst  { fill:none; stroke:var(--bad); stroke-width:1.6; }
+    .reg  { fill:none; stroke:var(--accent); stroke-width:1.8; }
+    .w    { stroke:var(--ink); stroke-width:1.4; fill:none; }
+    .thin { stroke:var(--mute); stroke-width:1; fill:none; }
+    .m    { fill:var(--ink); font:10px ui-monospace,monospace; }
+    .l    { fill:var(--ink); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .n    { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t    { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .gd   { fill:var(--good); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .bd   { fill:var(--bad); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <defs>
+    <marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/>
+    </marker>
+  </defs>
+
+  <!-- synchronous read -->
+  <text class="gd" x="20" y="28">read into a register</text>
+  <text class="m"  x="20" y="46">q &lt;= mem[addr];</text>
+  <rect class="blk" x="214" y="18" width="150" height="54" rx="3"/>
+  <text class="l" x="228" y="40">DP16KD</text>
+  <text class="n" x="228" y="58">18,432 bits, output registered</text>
+  <rect class="reg" x="364" y="30" width="14" height="30" rx="2"/>
+  <path class="w" d="M186 45 H210" marker-end="url(#a5)"/>
+  <path class="w" d="M378 45 H420" marker-end="url(#a5)"/>
+  <text class="n" x="392" y="38">q</text>
+  <text class="gd" x="440" y="40">0 LUT4 for the storage —</text>
+  <text class="gd" x="440" y="56">the block is already there</text>
+  <text class="n"  x="214" y="88">The register is INSIDE the block, physically. That is why the shape matters.</text>
+
+  <!-- combinational read -->
+  <text class="bd" x="20" y="130">read combinationally</text>
+  <text class="m"  x="20" y="148">q  = mem[addr];</text>
+  <g>
+    <rect class="dst" x="214" y="112" width="34" height="22"/>
+    <rect class="dst" x="252" y="112" width="34" height="22"/>
+    <rect class="dst" x="290" y="112" width="34" height="22"/>
+    <rect class="dst" x="214" y="138" width="34" height="22"/>
+    <rect class="dst" x="252" y="138" width="34" height="22"/>
+    <rect class="dst" x="290" y="138" width="34" height="22"/>
+  </g>
+  <text class="n" x="214" y="176">TRELLIS_DPR16X4 — 16 words × 4 bits, out of lookup tables</text>
+  <path class="w" d="M186 136 H210" marker-end="url(#a5)"/>
+  <!-- mux tree -->
+  <path class="thin" d="M330 123 H356 M330 149 H356"/>
+  <path class="dst" d="M356 112 L392 126 L392 146 L356 160 Z"/>
+  <text class="n" x="396" y="110">+ a multiplexer tree</text>
+  <path class="w" d="M392 136 H470" marker-end="url(#a5)"/>
+  <text class="bd" x="440" y="162">919 LUT4 at 256 × 32</text>
+
+  <!-- the depth axis -->
+  <path class="thin" d="M60 240 H600"/>
+  <g class="thin">
+    <path d="M110 234 V246"/><path d="M250 234 V246"/><path d="M390 234 V246"/><path d="M530 234 V246"/>
+  </g>
+  <g class="m">
+    <text x="96"  y="262">16</text><text x="236" y="262">64</text>
+    <text x="372" y="262">256</text><text x="516" y="262">1024</text>
+  </g>
+  <text class="n" x="60" y="232">depth, at 32 bits wide</text>
+
+  <text class="bd" x="86"  y="284">distributed,</text>
+  <text class="bd" x="86"  y="298">and CHEAPER</text>
+  <text class="gd" x="236" y="284">1 DP16KD</text>
+  <text class="gd" x="372" y="284">1 DP16KD</text>
+  <text class="gd" x="516" y="284">2 DP16KD</text>
+  <text class="bd" x="236" y="298">132 LUT4</text>
+  <text class="bd" x="372" y="298">919 LUT4</text>
+  <text class="bd" x="516" y="298">—</text>
+
+  <text class="t" x="60" y="316">Synchronous once it is big enough to want a block. A shape that cannot become one removes the decision for good.</text>
+</svg>

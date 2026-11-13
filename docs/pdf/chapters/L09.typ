@@ -2,17 +2,6 @@
 
 = Lesson 09 — UART
 
-#goals(
-  concept: [Agreeing about time with a device you share no clock with.],
-  build: [A transmitter, a receiver, and an echo server you can type into from a terminal.],
-  needs: [Lesson 05, and lesson 04 for the synchroniser. A board — this is where the FPGA talks to your computer.],
-)[
-  - Explain why a start bit exists when there is no clock on the wire.
-  - Compute a baud divisor and judge whether its error matters.
-  - Decide where in a bit to sample, and why.
-  - Explain why a framing error is not a reliable corruption detector.
-]
-
 == The idea
 
 There is #strong[no clock on the wire]. Two chips, two crystals, one signal
@@ -166,11 +155,3 @@ difficulty of a UART. The tolerance sweep is the test that does.
   transmits, so the FPGA reads it. `output ftdi_rxd` and `input ftdi_txd` are
   correct and look backwards. This is the classic place to lose an afternoon.
 ]
-
-== Wrap-up
-
-#strong[What you built.] A UART transmitter and receiver that talk to a terminal over the same cable that programs the board — 23 LUT4 against the receiver's 48.
-
-#strong[What to keep.] The receiver pays, in logic, for not knowing when the bits start.
-
-#strong[What comes next.] Lesson 10 begins the processor. The UART comes back in lesson 15 as its console.

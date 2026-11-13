@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 260" role="img"
+     aria-label="Three views of the same input space: random vectors sampling it, a solver searching all of it, and an over-strong assumption shrinking it to a line so that the proof passes vacuously">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; --bad:#b42318; --warm:#9a6700; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; --bad:#ff7b72; --warm:#d29922; }
+    }
+    .frame { fill:none; stroke:var(--ink); stroke-width:1.6; }
+    .swept { fill:var(--good); opacity:.18; }
+    .fail  { fill:var(--bad); opacity:.75; }
+    .dot   { fill:var(--accent); }
+    .line  { stroke:var(--warm); stroke-width:3; fill:none; }
+    .l     { fill:var(--ink); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .m     { fill:var(--ink); font:10px ui-monospace,monospace; }
+    .n     { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t     { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .bd    { fill:var(--bad); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .gd    { fill:var(--good); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .wk    { fill:var(--warm); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+
+  <!-- panel 1: sampling -->
+  <text class="l" x="20" y="26">a testbench samples</text>
+  <rect class="frame" x="20" y="36" width="180" height="140"/>
+  <g class="dot">
+    <circle cx="44" cy="62" r="2.6"/><circle cx="92" cy="54" r="2.6"/><circle cx="140" cy="70" r="2.6"/>
+    <circle cx="172" cy="58" r="2.6"/><circle cx="62" cy="96" r="2.6"/><circle cx="110" cy="104" r="2.6"/>
+    <circle cx="158" cy="92" r="2.6"/><circle cx="34" cy="130" r="2.6"/><circle cx="80" cy="140" r="2.6"/>
+    <circle cx="126" cy="128" r="2.6"/><circle cx="178" cy="146" r="2.6"/><circle cx="56" cy="166" r="2.6"/>
+    <circle cx="104" cy="158" r="2.6"/><circle cx="150" cy="168" r="2.6"/><circle cx="188" cy="118" r="2.6"/>
+  </g>
+  <rect class="fail" x="146" y="104" width="7" height="7"/>
+  <text class="bd" x="100" y="196">the failing region: a vanishing</text>
+  <text class="bd" x="100" y="210">fraction of 2^64 pairs</text>
+  <text class="n"  x="20"  y="196">20,000 random</text>
+  <text class="n"  x="20"  y="210">vectors, 1,440</text>
+  <text class="n"  x="20"  y="224">directed ones</text>
+
+  <!-- panel 2: searching -->
+  <text class="l" x="238" y="26">a solver searches</text>
+  <rect class="swept" x="238" y="36" width="180" height="140"/>
+  <rect class="frame" x="238" y="36" width="180" height="140"/>
+  <rect class="fail" x="364" y="104" width="7" height="7"/>
+  <text class="gd" x="238" y="196">Every point, depth 1, one second.</text>
+  <text class="n"  x="238" y="212">Exhausting it by test would take 1,460 years</text>
+  <text class="n"  x="238" y="226">at a billion vectors a second.</text>
+
+  <!-- panel 3: vacuous -->
+  <text class="l" x="456" y="26">an assumption too strong</text>
+  <rect class="frame" x="456" y="36" width="180" height="140"/>
+  <path class="line" d="M456 176 L636 36"/>
+  <text class="m" x="470" y="60">assume (a == b)</text>
+  <text class="wk" x="456" y="196">The proof passes. It is worth nothing:</text>
+  <text class="n"  x="456" y="212">`a &lt; b` is false everywhere the solver may look,</text>
+  <text class="n"  x="456" y="226">and both covers come back UNREACHED.</text>
+
+  <text class="t" x="20" y="252">What formal does that testing cannot is search rather than sample — and nothing in a passing result tells you the assumptions were right.</text>
+</svg>

@@ -1,6 +1,6 @@
 #import "../style.typ": *
 
-= Appendix A — Board pinout
+= The board, pin by pin
 
 The authoritative constraint file is `common/ulx3s_v20.lpf`. The names below
 are the port names to use in a top-level module; the constraint file binds them

@@ -2,17 +2,6 @@
 
 = Lesson 03 — Sequential logic
 
-#goals(
-  concept: [The flip-flop — the only component that makes time exist.],
-  build: [A debounced button that increments a counter exactly once per press.],
-  needs: [Lesson 02. A board makes the point far better.],
-)[
-  - Explain `<=` versus `=` as two different circuits, not as a style rule.
-  - Design a debouncer, and choose its time constant from first principles.
-  - Turn a level into a one-clock pulse, and know when you need to.
-  - Distinguish the missing `else` that is a latch from the one that is not.
-]
-
 == The idea
 
 Everything so far had no memory. A D flip-flop changes that: on each rising
@@ -25,7 +14,7 @@ flip-flops with combinational logic deciding what goes into them.
 #fig("/figures/register-ff.svg",
      [A register, drawn out: one flip-flop per bit, and a multiplexer in front
       of each deciding whether to take new data or reload the old value.],
-     width: 100%)
+     width: 82%)
 
 == Theory
 
@@ -117,14 +106,8 @@ inferred a latch, and that was a bug. Here the identical-looking omission is
 The difference is the clock. A flip-flop already holds its value between edges,
 so "assign nothing" is a real, cheap, well-defined behaviour — it is just the
 flop's enable input. In a combinational block there is no storage to fall back
-on, so the tool has to invent some.
-
-#why[
-  Same syntax, opposite meaning, decided entirely by whether the block is
-  sensitive to a clock edge or to its inputs. This is the one place the two
-  rules appear to conflict, and getting it straight here saves confusion in
-  every later lesson.
-]
+on, so the tool has to invent some. Same syntax, opposite meaning, decided
+entirely by whether the block is sensitive to a clock edge or to its inputs.
 
 == What it cost
 
@@ -144,11 +127,3 @@ on, so the tool has to invent some.
     [*total*],                                   [*29*],
   )
 ]
-
-== Wrap-up
-
-#strong[What you built.] A D flip-flop, two shift registers that differ only in one operator, a debouncer and an edge detector — 29 flip-flops, all accounted for.
-
-#strong[What to keep.] `<=` and `=` are two different circuits, not two styles.
-
-#strong[What comes next.] Lesson 04 asks whether the clock underneath all of this can be trusted, and what the tools check when they check timing.

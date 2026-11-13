@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # ===========================================================================
-#  tools/mkpdf.sh — build the course book.
+#  tools/mkpdf.sh — build the two course books.
+#
+#      docs/pdf/book.pdf    From Gates to a RISC-V CPU  — the concepts
+#      docs/pdf/tools.pdf   Tools and Workflow          — install, build, deploy
+#
+#  They are split because they are consulted differently: one is read front to
+#  back, the other is opened at the page you need. Both share style.typ, so
+#  they look like one pair.
 #
 #  Two steps, because they solve different problems:
 #
@@ -18,8 +25,9 @@
 #       sharp. That is why Typst rather than a Markdown-to-PDF converter, which
 #       would rasterise.
 #
-#      tools/mkpdf.sh            build docs/pdf/book.pdf
-#      tools/mkpdf.sh --watch    rebuild on every save, for writing
+#      tools/mkpdf.sh            build both PDFs
+#      tools/mkpdf.sh --watch    rebuild the course book on every save
+#      tools/mkpdf.sh --watch tools    …or the tools book
 # ===========================================================================
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -27,7 +35,7 @@ cd "$ROOT"
 
 if ! command -v typst >/dev/null 2>&1; then
   cat <<'MSG'
-mkpdf: typst is not installed, so the book cannot be typeset.
+mkpdf: typst is not installed, so the books cannot be typeset.
 
     macOS:  brew install typst
     Linux:  see https://github.com/typst/typst/releases  (a single binary)
@@ -50,14 +58,13 @@ python3 tools/svg-flatten.py --all
 echo ""
 echo "==> typesetting"
 cd docs/pdf
-if [ "${1:-}" = "--watch" ]; then
-  exec typst watch book.typ book.pdf
-fi
-typst compile book.typ book.pdf
 
-pages=$(typst compile --format png --ppi 1 book.typ /tmp/_pp{0p}.png 2>/dev/null \
-        && ls /tmp/_pp*.png 2>/dev/null | wc -l | tr -d ' ' || echo "?")
-rm -f /tmp/_pp*.png
-size=$(ls -lh book.pdf | awk '{print $5}')
-echo ""
-echo "    docs/pdf/book.pdf — ${pages} pages, ${size}"
+if [ "${1:-}" = "--watch" ]; then
+  exec typst watch "${2:-book}.typ" "${2:-book}.pdf"
+fi
+
+for doc in book tools; do
+  typst compile "$doc.typ" "$doc.pdf"
+  size=$(ls -lh "$doc.pdf" | awk '{print $5}')
+  printf '    docs/pdf/%-9s %s\n' "$doc.pdf" "$size"
+done

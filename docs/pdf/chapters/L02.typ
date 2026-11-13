@@ -2,17 +2,6 @@
 
 = Lesson 02 — Combinational logic
 
-#goals(
-  concept: [Muxes, decoders and adders — the three structures everything else is made of.],
-  build: [A 7-segment hex decoder and a parameterised adder, both verified exhaustively.],
-  needs: [Lesson 01.],
-)[
-  - Recognise the mux and the decoder as mirror images, and find them in a CPU.
-  - Explain why addition has a critical path at all.
-  - Avoid the two silent width traps: shift results and discarded carries.
-  - Measure why writing `+` beats building an adder from gates by 12×.
-]
-
 == The idea
 
 Real designs are not built from gates any more than prose is built from
@@ -140,11 +129,3 @@ carry logic goes unused.
   you can, and let the tool match it to the hardware.] Build the ripple adder
   once to understand what a carry is. Then write `+` forever.
 ]
-
-== Wrap-up
-
-#strong[What you built.] Multiplexers, decoders, a hex decoder written two ways, and an adder built twice — once from gates at 212 cells and once as `+` at 17.
-
-#strong[What to keep.] Write what you mean, at the highest level the tool can recognise.
-
-#strong[What comes next.] Lesson 03 adds a clock, so that a result can be kept rather than recomputed.

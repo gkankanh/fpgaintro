@@ -2,18 +2,6 @@
 
 = Lesson 17 — CSRs, traps and the M extension
 
-#goals(
-  concept: [Privileged state, traps, and the extensions that make a core usable rather than merely correct.],
-  build: [CSRs, a machine-timer interrupt, and hardware multiply and divide — with the handler written in C.],
-  needs: [Lesson 16, a board, and the GNU RISC-V toolchain.],
-)[
-  - Explain what a trap is and what hardware must save before taking one.
-  - Distinguish an exception from an interrupt.
-  - Write an interrupt handler in C and know what the hardware did first.
-  - Decide when to spend a hardware multiplier and when to iterate.
-  - Explain why a CSR write has to serialise a pipeline.
-]
-
 == What a core that halts cannot do
 
 Lesson 13's core, and lesson 16's, do the same thing with an instruction they
@@ -62,6 +50,11 @@ Nine registers hold the privileged state. Taking a trap is a redirect with
 bookkeeping: save the PC in `mepc`, say why in `mcause`, copy `MIE` into
 `MPIE` and clear `MIE` so the handler is not immediately interrupted, and jump
 to `mtvec`. #strong[Four registers and a jump] — that is all the hardware does.
+
+#fig("/figures/trap-flow.svg",
+     [A precise trap. Earlier instructions finish, the trapping one is
+      squashed, four registers are written, and `mret` comes back to the
+      boundary.])
 
 Traps are decided in ID, before the instruction has done anything. So
 everything ahead of it in the pipeline completes, because those instructions

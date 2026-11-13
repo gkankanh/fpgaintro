@@ -2,17 +2,6 @@
 
 = Lesson 08 — Memories
 
-#goals(
-  concept: [You do not instantiate a block RAM — you write a shape the synthesiser recognises, and the tidier-looking shapes cannot be recognised.],
-  build: [The four memory configurations the fabric offers, a ROM loaded from a file, a dual-port framebuffer, and a memory self-test that runs on the board.],
-  needs: [Lesson 07.],
-)[
-  - Write the coding pattern that infers block RAM, and spot the ones that cannot.
-  - Explain why a combinational read rules out block RAM at any size.
-  - Know roughly where the size threshold between logic and memory sits.
-  - Present address, write-enable and write-data in the same cycle.
-]
-
 == The idea
 
 The part has 208 `DP16KD` blocks — 18,432 bits each, about 3.7 Mbit in total,
@@ -39,6 +28,10 @@ permanently, at any size.
   almost no LUT4 go into the storage itself, because the storage is not built
   from logic at all.
 ]
+
+#fig("/figures/memory-shapes.svg",
+     [One line of Verilog chooses the primitive — and at 256 entries the two
+      lines are 919 LUT4 apart.])
 
 == The measurement
 
@@ -135,8 +128,7 @@ and lesson 15 uses for a program compiled by GCC.
     [`(wy<<6) + (wy<<5) + wx`], [1 DP16KD + 14 CCU2C + 24 LUT4],
   )
 
-  Third time in this course that the synthesiser did not do what the received
-  rule said. If you know the cheap form, write the cheap form — then check.
+  If you know the cheap form, write the cheap form — then check.
 ]
 
 #watch[
@@ -153,11 +145,3 @@ A display memory is written one way and read another, simultaneously: written
 by coordinate in whatever order the drawing code likes, and read in raster
 order relentlessly, because the display never stops. One port cannot serve both
 without one side waiting, which is largely why the `DP16KD` exists at all.
-
-== Wrap-up
-
-#strong[What you built.] Block RAM, distributed RAM and a dual-port framebuffer, with the synchronous and combinational forms measured against each other from 16 entries to 1024.
-
-#strong[What to keep.] Write the shape that #emph[can] become a block RAM and let size decide.
-
-#strong[What comes next.] Lesson 09 is the last peripheral before the processor — and lesson 11's register file is this lesson's threshold question asked again.

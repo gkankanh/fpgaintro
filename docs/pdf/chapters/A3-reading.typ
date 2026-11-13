@@ -1,6 +1,6 @@
 #import "../style.typ": *
 
-= Appendix D — Where to go next
+= Appendix C — Where to go next
 
 == Specifications worth having open
 

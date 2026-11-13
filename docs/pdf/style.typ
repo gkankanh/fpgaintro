@@ -1,7 +1,10 @@
 // ===========================================================================
-//  style.typ — typography and components for the course book.
+//  style.typ — typography and components, shared by both documents:
 //
-//  Typst renders SVG as VECTOR graphics, so every diagram in this book is
+//      book.typ    From Gates to a RISC-V CPU   — the concepts
+//      tools.typ   Tools and Workflow           — installing, building, deploying
+//
+//  Typst renders SVG as VECTOR graphics, so every diagram is
 //  resolution-independent: zoom to 1600% and the lines stay sharp. The
 //  figures are generated from the repository's theme-aware originals by
 //  tools/svg-flatten.py, which resolves the CSS custom properties that
@@ -17,72 +20,118 @@
 #let panel    = rgb("#f6f8fa")
 #let rule-col = rgb("#d0d7de")
 
-// ------------------------------------------------------------------ callouts
-// Four kinds, matching the lesson READMEs so the book and the repository read
-// as one thing. WATCH OUT is for a pitfall that will bite the reader at the
-// keyboard; STATUS is for what is built and what is not, which is a fact
-// about the course rather than a hazard, and must not borrow a warning's
-// voice.
+// ------------------------------------------------------------------ preamble
+// Both documents share one page and type setup, so they read as one pair.
+// `parts` switches on the part-divider machinery the book uses.
 
-#let callout(title, body, col: accent, sym: none) = block(
-  width: 100%,
-  inset: (x: 11pt, y: 9pt),
-  radius: 3pt,
-  fill: col.lighten(94%),
-  stroke: (left: 2.5pt + col),
-  [
-    #text(fill: col, weight: "bold", size: 9.5pt)[
-      #if sym != none [#sym ~] #title
+#let preamble(body) = {
+  set page(
+    paper: "a4",
+    margin: (inside: 26mm, outside: 20mm, top: 22mm, bottom: 22mm),
+    numbering: "1",
+    number-align: center,
+  )
+  set text(font: ("Libertinus Serif",), size: 10.5pt, lang: "en", fill: ink)
+  set par(justify: true, leading: 0.62em, first-line-indent: 0pt, spacing: 0.9em)
+
+  show raw: set text(font: ("JetBrainsMono NFM", "DejaVu Sans Mono"), size: 9pt)
+  show raw.where(block: true): it => block(
+    width: 100%, fill: panel, inset: (x: 9pt, y: 8pt), radius: 3pt,
+    stroke: 0.5pt + rule-col, breakable: true, it,
+  )
+  show link: it => text(fill: accent, it)
+
+  set heading(numbering: none)
+  show heading.where(level: 1): it => {
+    pagebreak(weak: true)
+    block(above: 18pt, below: 14pt)[
+      #set text(size: 21pt, weight: "bold")
+      #it.body
     ]
-    #v(-4pt)
-    #set text(size: 9.8pt)
-    #body
-  ],
-)
+  }
+  show heading.where(level: 2): it => block(above: 16pt, below: 7pt)[
+    #set text(size: 13.5pt, weight: "bold"); #it.body
+  ]
+  show heading.where(level: 3): it => block(above: 12pt, below: 5pt)[
+    #set text(size: 11pt, weight: "bold", fill: mute); #it.body
+  ]
+  show heading.where(level: 4): it => block(above: 10pt, below: 4pt)[
+    #set text(size: 10.5pt, weight: "bold", style: "italic"); #it.body
+  ]
+  show figure.caption: it => text(size: 9pt, fill: mute)[#it.body]
 
-#let why(body)    = callout("WHY THIS MATTERS", body, col: accent)
-#let watch(body)  = callout("WATCH OUT", body, col: warm)
-#let found(body)  = callout("A BUG THIS COURSE ACTUALLY HIT", body, col: bad)
-#let status(body) = callout("STATUS", body, col: mute)
+  body
+}
 
-// -------------------------------------------------------------------- goals
-// Every lesson chapter opens with these, so a reader can see at a glance
-// what the lesson is for before reading any of it.
+// --------------------------------------------------------------- part pages
+// The course is four stages long and the book is five parts long; a reader
+// who knows which part they are in needs the lesson number much less. One
+// page per part, deliberately sparse, so the structure is visible when
+// flicking through on paper as well as in the outline pane.
 
-#let goals(concept: "", build: "", board: "", needs: "", items) = block(
-  width: 100%,
-  inset: (x: 12pt, y: 11pt),
-  radius: 3pt,
-  fill: panel,
-  stroke: 0.5pt + rule-col,
-  [
-    #grid(
+// A part page carries the part's own contents, one line per chapter with a
+// gloss, because a divider holding nothing but a title is a page the reader
+// turns past. `items` is a list of (chapter, what it is about) pairs.
+#let part(label, title, items, blurb) = {
+  pagebreak(weak: true)
+  // Part pages are not headings, so the book's contents stays one line per
+  // chapter; the label below carries the grouping instead.
+  v(20mm)
+  block[
+    #text(size: 10pt, fill: mute, weight: "bold", tracking: 1.2pt)[#upper(label)]
+    #v(2mm)
+    #text(size: 26pt, weight: "bold")[#title]
+    #v(4mm)
+    #line(length: 46mm, stroke: 1.5pt + accent)
+    #v(5mm)
+    #block(width: 90%)[#set text(size: 11pt, fill: mute); #blurb]
+  ]
+  v(10mm)
+  block(width: 100%)[
+    #set text(size: 9.5pt)
+    #table(
+      stroke: (x, y) => (top: if y == 0 { 0pt } else { 0.5pt + rule-col },
+                         bottom: 0pt, left: 0pt, right: 0pt),
+      inset: (x: 0pt, y: 7pt),
       columns: (auto, 1fr),
-      row-gutter: 5pt,
-      column-gutter: 9pt,
-      text(size: 9pt, fill: mute, weight: "bold")[CONCEPT],
-      text(size: 10pt)[#concept],
-      text(size: 9pt, fill: mute, weight: "bold")[YOU BUILD],
-      text(size: 10pt)[#build],
-      text(size: 9pt, fill: mute, weight: "bold")[NEEDS],
-      text(size: 10pt)[#needs],
+      column-gutter: 10pt,
+      ..items.map(((name, gloss)) => (
+        text(weight: "bold")[#name],
+        text(fill: mute)[#gloss],
+      )).flatten(),
     )
-    #v(3pt)
-    #line(length: 100%, stroke: 0.5pt + rule-col)
-    #v(1pt)
-    #text(size: 9pt, fill: mute, weight: "bold")[LEARNING GOALS]
-    #v(-3pt)
-    #set text(size: 9.8pt)
-    #items
-  ],
-)
+  ]
+  pagebreak(weak: true)
+}
+
+// ------------------------------------------------------------------ asides
+// Earlier drafts set these off as boxed callouts -- eighty of them, each a
+// mini-essay, and a reader learns to skip a box they have seen eighty times.
+// So a warning now reads as part of the paragraph it belongs to, with a bold
+// lead-in to make it findable, and an explanation of why something matters is
+// simply prose. Nothing is lost but the frame.
+
+#let watch(body)  = block(above: 10pt, below: 10pt)[
+  #text(weight: "bold")[Watch out.] #body
+]
+#let why(body)    = block(above: 10pt, below: 10pt)[#body]
+#let found(body)  = block(above: 10pt, below: 10pt)[
+  #text(weight: "bold", fill: bad)[A bug this course hit.] #body
+]
 
 // --------------------------------------------------------------- measurement
-// The course's method is to measure rather than assert, so measured results
-// get their own visual treatment.
+// Measured results keep their box. They are the one thing in the book that is
+// not argument, and the reason the course is worth doing rather than reading.
 
-#let measured(title, body) = block(
+// `breakable: false` for the same reason `ttable` sets it: the box holds a
+// label, a command and a table, and when it splits the label is stranded at
+// the bottom of one page with the numbers alone at the top of the next --
+// which is what put lesson 03's `seq_top` header on page 16 and its table on
+// page 17. A box taller than a page must opt back in, or it overflows the
+// bottom margin.
+#let measured(title, body, breakable: false) = block(
   width: 100%,
+  breakable: breakable,
   inset: (x: 11pt, y: 9pt),
   radius: 3pt,
   fill: good.lighten(95%),

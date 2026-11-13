@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 250" role="img"
+     aria-label="One clock period as a budget: clock-to-output delay, combinational logic and routing, setup time, and the slack left over">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; --warm:#9a6700; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; --warm:#d29922; }
+    }
+    .box  { fill:none; stroke:var(--ink); stroke-width:1.6; }
+    .w    { stroke:var(--ink); stroke-width:1.4; fill:none; }
+    .ck   { stroke:var(--accent); stroke-width:1.4; fill:none; }
+    .seg  { stroke:var(--ink); stroke-width:1.1; fill:none; }
+    .fill-a { fill:var(--mute); opacity:.18; }
+    .fill-l { fill:var(--accent); opacity:.16; }
+    .fill-s { fill:var(--warm); opacity:.20; }
+    .fill-k { fill:var(--good); opacity:.18; }
+    .l    { fill:var(--ink); font:12px ui-monospace,monospace; }
+    .n    { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t    { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .em   { fill:var(--ink); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/>
+    </marker>
+  </defs>
+
+  <!-- the path: flop -> logic -> flop -->
+  <rect class="box" x="40" y="30" width="74" height="56" rx="3"/>
+  <text class="l" x="63" y="54">FF</text>
+  <text class="n" x="52" y="72">launch</text>
+
+  <rect class="box" x="214" y="26" width="212" height="64" rx="28"/>
+  <text class="em" x="240" y="53">combinational logic</text>
+  <text class="n" x="240" y="71">+ routing between them</text>
+
+  <rect class="box" x="526" y="30" width="74" height="56" rx="3"/>
+  <text class="l" x="549" y="54">FF</text>
+  <text class="n" x="534" y="72">capture</text>
+
+  <path class="w" d="M114 58 H210" marker-end="url(#a)"/>
+  <path class="w" d="M426 58 H522" marker-end="url(#a)"/>
+
+  <!-- one clock, reaching both flops at the same instant -->
+  <path class="ck" d="M20 118 h40 v-14 h18 v14 h444 v-14 h18 v14 h40"/>
+  <text class="n" x="20" y="136">clk — one global network, both edges together</text>
+  <path class="ck" d="M69 104 V86" marker-end="url(#a)"/>
+  <path class="ck" d="M549 104 V86" marker-end="url(#a)"/>
+
+  <!-- the budget bar -->
+  <text class="t" x="40" y="166">one clock period, 40 ns at 25 MHz</text>
+  <rect class="fill-a" x="40" y="174" width="56"  height="30"/>
+  <rect class="fill-l" x="96" y="174" width="330" height="30"/>
+  <rect class="fill-s" x="426" y="174" width="60" height="30"/>
+  <rect class="fill-k" x="486" y="174" width="114" height="30"/>
+  <path class="seg" d="M40 174 H600 M40 204 H600 M40 174 V204 M96 174 V204
+                       M426 174 V204 M486 174 V204 M600 174 V204"/>
+
+  <text class="n" x="44"  y="220">t_co</text>
+  <text class="n" x="196" y="220">logic + routing — the critical path</text>
+  <text class="n" x="430" y="220">t_setup</text>
+  <text class="n" x="516" y="220">slack</text>
+
+  <text class="t" x="40" y="242">The longest path sets the maximum frequency. Slack below zero is not a slow design — it is a broken one.</text>
+</svg>

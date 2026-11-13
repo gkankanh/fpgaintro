@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" role="img"
+     aria-label="A raster coordinate turned into a font ROM address: bit slices choose the character cell, the glyph row and the pixel column, with no arithmetic hardware">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; }
+    }
+    .box  { fill:none; stroke:var(--ink); stroke-width:1.6; }
+    .bit  { fill:none; stroke:var(--mute); stroke-width:1; }
+    .sel  { fill:var(--accent); opacity:.18; }
+    .sel2 { fill:var(--good); opacity:.20; }
+    .w    { stroke:var(--ink); stroke-width:1.4; fill:none; }
+    .thin { stroke:var(--mute); stroke-width:1; fill:none; }
+    .m    { fill:var(--ink); font:11px ui-monospace,monospace; }
+    .ms   { fill:var(--ink); font:9px ui-monospace,monospace; }
+    .l    { fill:var(--ink); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .n    { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t    { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .on   { fill:var(--ink); }
+    .off  { fill:none; stroke:var(--mute); stroke-width:.5; }
+  </style>
+  <defs>
+    <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/>
+    </marker>
+  </defs>
+
+  <!-- the x coordinate, bit by bit -->
+  <text class="m" x="20" y="36">tx[7:0]</text>
+  <g>
+    <rect class="bit" x="84"  y="22" width="26" height="22"/>
+    <rect class="sel" x="110" y="22" width="78" height="22"/>
+    <rect class="bit" x="110" y="22" width="26" height="22"/>
+    <rect class="bit" x="136" y="22" width="26" height="22"/>
+    <rect class="bit" x="162" y="22" width="26" height="22"/>
+    <rect class="sel2" x="188" y="22" width="78" height="22"/>
+    <rect class="bit" x="188" y="22" width="26" height="22"/>
+    <rect class="bit" x="214" y="22" width="26" height="22"/>
+    <rect class="bit" x="240" y="22" width="26" height="22"/>
+    <rect class="bit" x="266" y="22" width="26" height="22"/>
+  </g>
+  <g class="ms">
+    <text x="93"  y="38">7</text><text x="119" y="38">6</text><text x="145" y="38">5</text>
+    <text x="171" y="38">4</text><text x="197" y="38">3</text><text x="223" y="38">2</text>
+    <text x="249" y="38">1</text><text x="275" y="38">0</text>
+  </g>
+  <text class="n" x="110" y="58">tx[6:4] — which cell</text>
+  <text class="n" x="240" y="58">tx[3:1] — which column</text>
+
+  <!-- the y coordinate -->
+  <text class="m" x="20" y="92">y[7:0]</text>
+  <g>
+    <rect class="bit" x="84"  y="78" width="26" height="22"/>
+    <rect class="bit" x="110" y="78" width="26" height="22"/>
+    <rect class="bit" x="136" y="78" width="26" height="22"/>
+    <rect class="bit" x="162" y="78" width="26" height="22"/>
+    <rect class="sel" x="188" y="78" width="78" height="22"/>
+    <rect class="bit" x="188" y="78" width="26" height="22"/>
+    <rect class="bit" x="214" y="78" width="26" height="22"/>
+    <rect class="bit" x="240" y="78" width="26" height="22"/>
+    <rect class="bit" x="266" y="78" width="26" height="22"/>
+  </g>
+  <text class="n" x="188" y="114">y[3:1] − 4 — which glyph row</text>
+
+  <!-- address formation -->
+  <path class="w" d="M300 33 H372" marker-end="url(#a4)"/>
+  <path class="w" d="M300 89 H360 V46" marker-end="url(#a4)"/>
+
+  <rect class="box" x="372" y="22" width="120" height="48" rx="3"/>
+  <text class="m" x="384" y="42">{glyph, frow}</text>
+  <text class="n" x="384" y="60">2 + 3 bits, concatenated</text>
+
+  <path class="w" d="M492 46 H540" marker-end="url(#a4)"/>
+  <rect class="box" x="540" y="22" width="92" height="48" rx="3"/>
+  <text class="l" x="552" y="42">font ROM</text>
+  <text class="n" x="552" y="60">32 × 8 bits</text>
+
+  <!-- the byte, and the bit select -->
+  <path class="thin" d="M586 70 V108" marker-end="url(#a4)"/>
+  <g>
+    <rect class="bit" x="440" y="110" width="24" height="24"/>
+    <rect class="bit" x="464" y="110" width="24" height="24"/>
+    <rect class="bit" x="488" y="110" width="24" height="24"/>
+    <rect class="sel2" x="512" y="110" width="24" height="24"/>
+    <rect class="bit" x="512" y="110" width="24" height="24"/>
+    <rect class="bit" x="536" y="110" width="24" height="24"/>
+    <rect class="bit" x="560" y="110" width="24" height="24"/>
+    <rect class="bit" x="584" y="110" width="24" height="24"/>
+    <rect class="bit" x="608" y="110" width="24" height="24"/>
+  </g>
+  <text class="ms" x="446" y="126">7</text>
+  <text class="ms" x="614" y="126">0</text>
+  <text class="n" x="440" y="150">one row of the glyph — bit 7 is the LEFTMOST pixel,</text>
+  <text class="n" x="440" y="164">so the column select is 7 − fcol</text>
+
+  <!-- the glyph, to ground it -->
+  <text class="l" x="20" y="150">the cell on screen</text>
+  <g>
+    <rect class="off" x="20" y="162" width="16" height="16"/><rect class="off" x="36" y="162" width="16" height="16"/>
+    <rect class="on"  x="52" y="162" width="16" height="16"/><rect class="on"  x="68" y="162" width="16" height="16"/>
+    <rect class="off" x="84" y="162" width="16" height="16"/><rect class="off" x="100" y="162" width="16" height="16"/>
+    <rect class="off" x="20" y="178" width="16" height="16"/><rect class="on"  x="36" y="178" width="16" height="16"/>
+    <rect class="off" x="52" y="178" width="16" height="16"/><rect class="off" x="68" y="178" width="16" height="16"/>
+    <rect class="on"  x="84" y="178" width="16" height="16"/><rect class="off" x="100" y="178" width="16" height="16"/>
+    <rect class="off" x="20" y="194" width="16" height="16"/><rect class="on"  x="36" y="194" width="16" height="16"/>
+    <rect class="on"  x="52" y="194" width="16" height="16"/><rect class="on"  x="68" y="194" width="16" height="16"/>
+    <rect class="on"  x="84" y="194" width="16" height="16"/><rect class="off" x="100" y="194" width="16" height="16"/>
+    <rect class="off" x="20" y="210" width="16" height="16"/><rect class="on"  x="36" y="210" width="16" height="16"/>
+    <rect class="off" x="52" y="210" width="16" height="16"/><rect class="off" x="68" y="210" width="16" height="16"/>
+    <rect class="on"  x="84" y="210" width="16" height="16"/><rect class="off" x="100" y="210" width="16" height="16"/>
+  </g>
+  <text class="n" x="134" y="186">each source pixel covers two screen pixels,</text>
+  <text class="n" x="134" y="200">which is all "drop the low bit" means</text>
+
+  <text class="t" x="20" y="256">Every step is a bit slice, a concatenation or a subtraction of a constant: no divider, no multiplier, no logic worth the name.</text>
+  <text class="t" x="20" y="276">A 16-pixel cell and a 2× scale are chosen so the arithmetic disappears. Ten pixels and 3× would be identical in behaviour, and expensive.</text>
+</svg>

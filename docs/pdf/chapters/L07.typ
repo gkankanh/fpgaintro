@@ -2,17 +2,6 @@
 
 = Lesson 07 — Font ROM and coordinate maths
 
-#goals(
-  concept: [A lookup table plus arithmetic on coordinates, instead of stored pixels.],
-  build: ["HELLO" in white, scaled 2×, over the lesson 06 gradient — still with no framebuffer.],
-  needs: [Lesson 06.],
-)[
-  - Turn a raster coordinate into a ROM address and a bit select.
-  - Choose constants so that the arithmetic disappears.
-  - Recognise a hidden coupling between two distant constants.
-  - Explain why a 32-byte ROM becomes logic rather than memory.
-]
-
 == The idea
 
 Lesson 06 established that you can drive a display without storing a frame, as
@@ -39,6 +28,11 @@ wire [2:0] frow  = y[3:1] - 3'd4;  // which glyph row: divide by 2
 wire [2:0] fcol  = tx[3:1];        // which column: divide by 2
 wire font_bit = font[{glyph, frow}][3'd7 - fcol];
 ```
+
+#fig("/figures/font-address.svg",
+     [A raster coordinate becoming a ROM address and a bit select. Every arrow
+      is a bit slice or a concatenation, which is why none of it costs
+      anything.])
 
 Every one of those is #strong[free], and that is the point:
 
@@ -103,11 +97,3 @@ comparing against a reference.
   mutation that survives for a good reason, lesson 12 finds a hole in its own
   vectors, and lesson 13 finds a bug that 161 passing checks had missed.
 ]
-
-== Wrap-up
-
-#strong[What you built.] A font ROM and the coordinate chain that turns a pixel position into a glyph row — 77 more LUT4 than lesson 06 and #strong[no new flip-flops].
-
-#strong[What to keep.] Combinational work adds area, not state; and a 32-byte ROM becomes logic rather than memory.
-
-#strong[What comes next.] Lesson 08 explains where that line sits, and what it costs to be on the wrong side of it.

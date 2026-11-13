@@ -1,50 +1,8 @@
 #import "../style.typ": *
 
-= Appendix B — Command reference
+= Driving the tools directly
 
-== Per-lesson verbs
-
-From inside a lesson directory, or from the project root with `L=<number>`:
-
-#ttable(
-  columns: (auto, auto, 1fr),
-  [*verb*], [*tool*], [*what it does*],
-  [`sim`],   [iverilog + vvp], [compile source and testbench, run it, print PASS or FAIL],
-  [`wave`],  [GTKWave], [open the VCD this lesson produced],
-  [`lint`],  [Verilator `-Wall`], [width mismatches, inferred latches, multiple drivers],
-  [`graph`], [yosys + graphviz], [render the design as an SVG schematic],
-  [`synth`], [yosys `synth_ecp5`], [resource report: LUT4s, flip-flops, block RAM, carry],
-  [`synth M=mod`], [yosys `synth_ecp5 -top mod`], [the same report for one module instead of the top],
-  [`bit`],   [yosys → nextpnr → ecppack], [a bitstream, with timing closure],
-  [`prog`],  [openFPGALoader], [load into FPGA SRAM — volatile, for iterating],
-  [`flash`], [openFPGALoader `-f`], [write to SPI flash — survives power-off],
-  [`clean`], [], [delete build products],
-)
-
-== From the project root
-
-```bash
-make list              # which lesson is which number
-make deploy L=0        # build lesson 00 and load it onto the board
-make sim    L=5        # simulate lesson 05
-make wave   L=3        # open lesson 03's waveform
-```
-
-#ttable(
-  columns: (auto, 1fr),
-  [`make check`],    [verify the toolchain and smoke-test lesson 00],
-  [`make sim-all`],  [every lesson's testbench — the regression suite],
-  [`make lint-all`], [Verilator across every lesson],
-  [`make graph-all`],[render every lesson as a schematic],
-  [`make ice`],      [regenerate the Icestudio projects from their specs],
-  [`make icecheck`], [compile-check every Icestudio project, without the GUI],
-  [`make tasks`],    [regenerate the editor's per-lesson task list],
-  [`make docs`],     [build the HTML version of the lessons],
-  [`make pdf`],      [build this book],
-  [`make clean-all`],[remove build products everywhere],
-)
-
-== Driving the tools directly
+The `make` verbs are thin wrappers. When you want the tools themselves:
 
 ```bash
 # simulate
@@ -93,8 +51,8 @@ ecppll -i 25 -o 100 --clkout1 40 -f pll.v
 
 The 85F has 83,640 LUTs, 83,640 flip-flops and 208 block RAMs, so a design
 using 34 cells is using about 0.04% of the part. Knowing roughly what things
-cost is the point: a 32-bit adder is 17 carry cells, a 32-bit barrel shifter is
-about 667 LUTs, and a whole RISC-V CPU is about 1,765.
+cost is the point: a 32-bit adder is 17 carry cells, a 32-bit barrel shifter
+about 667 LUTs, and a whole RISC-V CPU about 1,765.
 
 == Which simulator when
 
@@ -117,11 +75,46 @@ about 667 LUTs, and a whole RISC-V CPU is about 1,765.
   [`tools/code.sh`],       [launch VS Code with the toolchain on `PATH`],
   [`tools/rvasm.py`],      [an RV32I assembler — labels, pseudo-instructions, `--list`],
   [`tools/check-asm.sh`],  [cross-validate that assembler against GNU `as`],
+  [`tools/bin2hex.py`],    [an ELF's `.bin` into the `$readmemh` image a lesson's memory loads],
   [`tools/mkice.py`],      [generate Icestudio projects from lesson Verilog],
   [`tools/icecheck.py`],   [rebuild and compile-check a generated .ice project],
   [`tools/mktasks.py`],    [regenerate the editor's per-lesson tasks],
   [`tools/mkwave.sh`],     [render WaveDrom timing diagrams to SVG],
   [`tools/svg-flatten.py`],[resolve CSS variables so diagrams print],
   [`tools/mkdocs.sh`],     [build the HTML lessons],
-  [`tools/mkpdf.sh`],      [build this book],
+  [`tools/mkpdf.sh`],      [build both books],
 )
+
+== Reproducing the numbers in the course book
+
+Every resource count and every frequency in the course book was produced by the
+commands printed beside it, on the setup below. Synthesis results are not
+universal constants: a different toolchain release can move a LUT4 count by a
+few percent, and a different device or speed grade moves the frequencies.
+
+#ttable(
+  columns: (auto, 1fr),
+  [*board*],        [Radiona ULX3S, `ulx3s_v20.lpf` — the constraint file for
+                     board revisions v2.x.x and v3.0.x],
+  [*device*],       [Lattice ECP5 `LFE5U-85F-6BG381C` — 85F size grade,
+                     #strong[speed grade 6], 381-ball caBGA, commercial],
+  [*clock*],        [25 MHz, from the board crystal, constrained in the `.lpf`
+                     with `FREQUENCY PORT "clk_25mhz" 25 MHZ`],
+  [*place & route*], [`nextpnr-ecp5 --85k --package CABGA381 --freq 25`],
+  [*toolchain*],    [OSS CAD Suite release `2026-11-10`],
+  [*synthesis*],    [Yosys 0.70+368 (`7cf88aca6`), `synth_ecp5`],
+  [*p\&r*],         [nextpnr 0.11.1-89 (`445e2a65`)],
+  [*bitstream*],    [Project Trellis `ecppack` 1.4-88],
+  [*simulation*],   [Icarus Verilog 14.0 (devel)],
+  [*linting*],      [Verilator 5.055 devel],
+)
+
+Resource numbers come from `make synth`, which runs `synth_ecp5` and `stat` —
+not from a placed design, so they do not include board wiring unless the quoted
+module is the lesson's top. Frequencies come from `make bit`, where nextpnr
+reports the routed design's maximum frequency for each clock.
+
+A measured number without its conditions is an anecdote. If your own
+`make synth` disagrees with the book by a cell or two, the likely reason is a
+newer OSS CAD Suite — which is the right thing to trust, since it is the one
+that built your bitstream.

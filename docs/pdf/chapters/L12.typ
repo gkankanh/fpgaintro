@@ -2,17 +2,6 @@
 
 = Lesson 12 — Decode and control
 
-#goals(
-  concept: [Turning a 32-bit instruction word into control signals — and why the immediate encoding looks deranged and is not.],
-  build: [A decoder for all of RV32I plus the immediate generator, tested against 52 real instruction encodings.],
-  needs: [Lesson 11.],
-)[
-  - Explain why the opcode and register fields sit at fixed positions.
-  - Explain the immediate layout in terms of multiplexer inputs.
-  - Avoid the trap that makes every negative `addi` subtract.
-  - Test a decoder with legal cases adjacent to its illegal ones.
-]
-
 == Fixed fields, decoded in parallel
 
 Every other field's #emph[meaning] depends on the opcode, so the opcode must be
@@ -149,11 +138,3 @@ flagged.
   lesson 10's ALU at 885 LUT4, and both vanish inside the board demo above,
   which only has to show a few of their outputs on LEDs.
 ]
-
-== Wrap-up
-
-#strong[What you built.] An instruction decoder and an immediate generator, tested on legal encodings and the illegal ones next door — and the immediate generator costs more than the decoder.
-
-#strong[What to keep.] Fixed field positions are what let every field be decoded in parallel.
-
-#strong[What comes next.] Lesson 13 wires the ALU, the register file and this decoder into a processor — and the chapter after it follows one instruction through the result, field by field, including why `funct7` is seven bits wide when the hardware reads one of them.

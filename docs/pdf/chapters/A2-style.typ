@@ -1,6 +1,6 @@
 #import "../style.typ": *
 
-= Appendix C — Verilog style rules
+= Appendix B — Verilog style rules
 
 Conventions every lesson follows. Each exists because it corresponds to a
 mistake that is easy to make and annoying to debug.

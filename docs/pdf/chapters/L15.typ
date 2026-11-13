@@ -2,18 +2,6 @@
 
 = Lesson 15 — A system on chip
 
-#goals(
-  concept: [A memory map: making peripherals look like addresses, so software can reach them.],
-  build: [Your CPU running C compiled by `riscv-gcc`, printing over the UART and reporting its own cycle count.],
-  needs: [Lessons 13 and 09, a board, and the GNU RISC-V toolchain.],
-)[
-  - Decode an address space into memory and peripherals.
-  - Explain what `volatile` in C corresponds to in hardware.
-  - Build the toolchain path from C source to a hex file in memory.
-  - Explain what must happen before `main`, when there is no operating system.
-  - Say what a bus without a `ready` signal can never be connected to.
-]
-
 == Where a CPU becomes a computer
 
 Lesson 13's memories ignored the high address bits entirely, so `0x0000_0100`
@@ -39,6 +27,11 @@ comparator. Real memory maps are laid out with exactly this in mind: the reason
 a peripheral block sits at `0x4000_0000` or `0xE000_0000` and never at
 `0x1234_5678` is that the decoder is in series with every memory access the
 machine will ever make.
+
+#fig("/figures/soc-map.svg",
+     [The whole machine: lesson 13's core, one array with two read ports, a
+      decoder that is one address bit wide, and a fault for everything
+      unmapped.])
 
 A peripheral is then just an address that does something when written. There is
 no I/O instruction in RV32I — no `IN`, no `OUT` — so the UART of lesson 09

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 340" role="img"
+     aria-label="Crossing clock domains: a two-flop synchroniser for one bit, why one synchroniser per bit corrupts a bus, and the handshake that fixes it">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; --bad:#b42318; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; --bad:#ff7b72; }
+    }
+    .box  { fill:none; stroke:var(--ink); stroke-width:1.6; }
+    .dom  { fill:none; stroke:var(--mute); stroke-width:1; stroke-dasharray:4 4; }
+    .w    { stroke:var(--ink); stroke-width:1.4; fill:none; }
+    .ck   { stroke:var(--accent); stroke-width:1.5; fill:none; }
+    .bad  { stroke:var(--bad); stroke-width:1.5; fill:none; }
+    .good { stroke:var(--good); stroke-width:1.5; fill:none; }
+    .l    { fill:var(--ink); font:12px ui-monospace,monospace; }
+    .n    { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t    { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .em   { fill:var(--ink); font:11px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .er   { fill:var(--bad); font:11px ui-sans-serif,system-ui,sans-serif; }
+    .ok   { fill:var(--good); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+    <marker id="a2b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--bad)"/></marker>
+    <marker id="a2g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--good)"/></marker>
+    <marker id="a2c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+  </defs>
+
+  <!-- domain boundary, in segments so it never crosses a caption -->
+  <path class="dom" d="M262 30 V118 M262 150 V250 M262 272 V330"/>
+  <text class="n" x="150" y="24">domain A — clk_25mhz</text>
+  <text class="n" x="272" y="24">domain B — clk_100mhz, no fixed phase relationship</text>
+
+  <!-- ONE BIT: the two-flop synchroniser -->
+  <text class="em" x="20" y="60">one bit</text>
+  <rect class="box" x="120" y="44" width="58" height="44" rx="3"/>
+  <text class="l" x="138" y="71">FF</text>
+  <path class="w" d="M178 66 H326" marker-end="url(#a2)"/>
+  <rect class="box" x="326" y="44" width="58" height="44" rx="3"/>
+  <text class="l" x="344" y="71">FF</text>
+  <path class="w" d="M384 66 H428" marker-end="url(#a2)"/>
+  <rect class="box" x="428" y="44" width="58" height="44" rx="3"/>
+  <text class="l" x="446" y="71">FF</text>
+  <path class="w" d="M486 66 H560" marker-end="url(#a2)"/>
+  <text class="ok" x="512" y="62">safe</text>
+  <text class="n" x="300" y="106">may go metastable</text>
+  <text class="n" x="424" y="106">has resolved — almost certainly</text>
+  <text class="t" x="20"  y="136">The second flop samples a full period later; "almost certainly" is the honest phrasing.</text>
+
+  <!-- A BUS: one synchroniser per bit is a bug -->
+  <text class="er" x="20" y="186">a bus, done wrong</text>
+  <path class="bad" d="M120 180 H256"/>
+  <path class="bad" d="M120 208 H256"/>
+  <path class="bad" d="M120 236 H256"/>
+  <rect class="box" x="268" y="168" width="52" height="24" rx="3"/>
+  <rect class="box" x="268" y="196" width="52" height="24" rx="3"/>
+  <rect class="box" x="268" y="224" width="52" height="24" rx="3"/>
+  <path class="bad" d="M320 180 H352" marker-end="url(#a2b)"/>
+  <path class="bad" d="M320 208 H352" marker-end="url(#a2b)"/>
+  <path class="bad" d="M320 236 H352" marker-end="url(#a2b)"/>
+  <text class="n"  x="364" y="184">a synchroniser per bit — each resolves independently…</text>
+  <text class="er" x="364" y="212">0x0F → 0x10 arrives as 0x1F, or as 0x00:</text>
+  <text class="er" x="364" y="230">a value that was never sent</text>
+
+  <!-- the fix -->
+  <text class="ok" x="20" y="296">done right</text>
+  <path class="good" d="M120 288 H352" marker-end="url(#a2g)"/>
+  <text class="n" x="126" y="282">the data itself — no synchroniser at all</text>
+  <path class="ck" d="M120 320 H326" marker-end="url(#a2c)"/>
+  <text class="n" x="126" y="314">one bit, synchronised: "the rest are ready"</text>
+  <text class="t" x="364" y="292">By the time the toggle is noticed, the data</text>
+  <text class="t" x="364" y="308">has been stable for two destination periods.</text>
+</svg>

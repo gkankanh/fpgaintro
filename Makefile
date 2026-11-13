@@ -24,7 +24,7 @@ help:
 	@echo "  make icecheck    compile-check every .ice project (no GUI needed)"
 	@echo "  make tasks       regenerate VS Code's per-lesson task list"
 	@echo "  make docs        build the lesson book into docs/book/"
-	@echo "  make pdf         build the course book (docs/pdf/book.pdf)"
+	@echo "  make pdf         build both books (docs/pdf/book.pdf, tools.pdf)"
 	@echo "  make docs-serve  serve the book at http://localhost:3000"
 	@echo "  make check       verify the toolchain is present and working"
 	@echo "  make clean-all   remove build products everywhere"
@@ -76,8 +76,10 @@ tasks:
 docs:
 	@tools/mkdocs.sh build
 
-# Build the course book: a single PDF with the theory and learning goals of
-# every lesson, the ULX3S background, credits, installation and reference.
+# Build the two books: book.pdf is the concepts -- the fabric, every lesson,
+# and the measured numbers. tools.pdf is everything operational: installing,
+# the make verbs, deploying to the board, the pinout and the command
+# reference. Split so the first can be read and the second consulted.
 pdf:
 	@tools/mkpdf.sh
 

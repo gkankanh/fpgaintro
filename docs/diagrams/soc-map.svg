@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" role="img"
+     aria-label="The system on chip: a CPU with a fetch port and a data port, an address decoder that separates memory from input-output on one address bit, the peripheral registers, and a fault for everything unmapped">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --good:#1a7f37; --bad:#b42318; --warm:#9a6700; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --good:#3fb950; --bad:#ff7b72; --warm:#d29922; }
+    }
+    .box  { fill:none; stroke:var(--ink); stroke-width:1.6; }
+    .dec  { fill:none; stroke:var(--accent); stroke-width:1.8; }
+    .w    { stroke:var(--ink); stroke-width:1.5; fill:none; }
+    .thin { stroke:var(--mute); stroke-width:1; fill:none; }
+    .bad  { stroke:var(--bad); stroke-width:1.5; fill:none; }
+    .l    { fill:var(--ink); font:12px ui-sans-serif,system-ui,sans-serif; font-weight:600; }
+    .m    { fill:var(--ink); font:10px ui-monospace,monospace; }
+    .n    { fill:var(--mute); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .bd   { fill:var(--bad); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .ac   { fill:var(--accent); font:10px ui-sans-serif,system-ui,sans-serif; }
+    .t    { fill:var(--mute); font:11px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+  <defs>
+    <marker id="a7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+    <marker id="a7b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--bad)"/></marker>
+  </defs>
+
+  <!-- the core -->
+  <rect class="box" x="20" y="60" width="104" height="110" rx="3"/>
+  <text class="l" x="36" y="88">cpu</text>
+  <text class="n" x="36" y="106">lesson 13's,</text>
+  <text class="n" x="36" y="120">unchanged</text>
+  <text class="n" x="30" y="146">fetch port</text>
+  <text class="n" x="30" y="162">data port</text>
+
+  <path class="w" d="M124 140 H196" marker-end="url(#a7)"/>
+  <path class="w" d="M124 122 H160 V82 H196" marker-end="url(#a7)"/>
+  <text class="n" x="170" y="100">one array, two read ports —</text>
+  <text class="n" x="170" y="114">so .rodata works at all</text>
+
+  <!-- the decoder -->
+  <rect class="dec" x="196" y="118" width="112" height="46" rx="3"/>
+  <text class="l" x="210" y="140">busdec</text>
+  <text class="m" x="210" y="157">addr[31]</text>
+  <text class="ac" x="196" y="182">one LUT input, not a 32-bit comparator —</text>
+  <text class="ac" x="196" y="196">and it is in series with every access the machine makes</text>
+
+  <!-- targets -->
+  <rect class="box" x="372" y="46" width="150" height="48" rx="3"/>
+  <text class="l" x="386" y="68">memory — 2 KB</text>
+  <text class="n" x="386" y="86">program, data and stack</text>
+
+  <rect class="box" x="372" y="110" width="150" height="62" rx="3"/>
+  <text class="l" x="386" y="132">mmio</text>
+  <text class="n" x="386" y="150">UART, LEDs, buttons,</text>
+  <text class="n" x="386" y="164">a stopwatch</text>
+
+  <path class="w" d="M308 132 H368 V74" marker-end="url(#a7)"/>
+  <path class="w" d="M308 146 H368 V140" marker-end="url(#a7)"/>
+  <path class="bad" d="M252 164 V222 H372" marker-end="url(#a7b)"/>
+  <text class="bd" x="380" y="226">a STORE to nothing is a fault…</text>
+  <text class="n"  x="380" y="240">…a load from nothing cannot be: the core reads unconditionally</text>
+
+  <!-- the map -->
+  <path class="thin" d="M556 46 V172"/>
+  <g class="thin">
+    <path d="M550 46 H562"/><path d="M550 94 H562"/><path d="M550 110 H562"/><path d="M550 172 H562"/>
+  </g>
+  <text class="m" x="568" y="50">0x0000_0000</text>
+  <text class="m" x="568" y="98">0x0000_07FF</text>
+  <text class="m" x="568" y="114">0x8000_0000</text>
+  <text class="m" x="568" y="176">0x8000_00FF</text>
+
+  <text class="t" x="20" y="268">No `ready` anywhere: a single-cycle core cannot wait, so every target must answer combinationally — which is why</text>
+  <text class="t" x="20" y="288">this memory is 2,756 LUT4 and not one block RAM. The missing handshake is lesson 13's decision, arriving as a constraint.</text>
+</svg>

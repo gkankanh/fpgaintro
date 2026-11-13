@@ -2,17 +2,6 @@
 
 = Lesson 14 — Formal verification
 
-#goals(
-  concept: [Proving a property holds for all inputs up to a bound, instead of testing the cases you thought of.],
-  build: [A `riscv-formal` proof that the lesson 13 core really implements RV32I.],
-  needs: [Lesson 13.],
-)[
-  - Explain what a bounded model checker does, and what "bounded" excludes.
-  - Write assertions, assumptions and covers — and recognise when an assumption has made a proof vacuous.
-  - Read a counterexample trace as a minimal failing program.
-  - Judge when testing is enough and when it is not.
-]
-
 == Why this lesson exists here
 
 Lesson 13 ended with twenty-four passing checks and a CPU that ran. It also
@@ -36,6 +25,10 @@ that one is low" — and either proves it holds for every reachable state within
 The word #strong[bounded] is doing real work. A proof to depth 20 says nothing
 about a bug that needs 21 cycles to manifest. Depth is traded against solver
 time, and choosing it is part of the craft.
+
+#fig("/figures/formal-search.svg",
+     [The same input space three times: sampled, searched, and shrunk to a line
+      by an assumption that was slightly too strong.])
 
 Three kinds of statement:
 
@@ -173,11 +166,3 @@ to the two components the CPU is mostly built from.
 Formal verification is not a replacement for testing. It is bounded, and
 writing a property that is both true and useful is a skill. What it does that
 testing cannot is #strong[search] rather than sample.
-
-== Wrap-up
-
-#strong[What you built.] Proofs: the ALU correct for all 2#super[64] input combinations, a planted bug caught as a minimal counterexample, and a vacuous proof exposed by its own cover statement.
-
-#strong[What to keep.] A proof is only as strong as its assumptions, and a passing proof that covers nothing is worse than no proof.
-
-#strong[What comes next.] Lesson 15 puts a memory map and peripherals around this core so that it can run C, and discovers that its memory does not fit in the board's clock.

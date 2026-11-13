@@ -1,9 +1,9 @@
 #import "../style.typ": *
 
-= One instruction, end to end
+== One instruction, end to end
 
 Lessons 10 to 13 built an ALU, a register file, a decoder and a processor to
-hold them. This chapter builds nothing. It takes a #emph[single] instruction
+hold them. This section builds nothing. It takes a #emph[single] instruction
 and walks it through the machine you now have, naming every file it touches on
 the way — and then answers the four questions that always follow.
 
@@ -19,12 +19,12 @@ whole of what the instruction set promises; everything below is how the promise
 is kept.
 
 #why[
-  If the previous four chapters worked, nothing here will be new — and that is
+  If the previous four lessons worked, nothing here will be new — and that is
   the point of reading it. A processor is not a thing you understand all at
   once; it is four things you already understand, arriving in order.
 ]
 
-== Thirty-two bits that mean "add"
+=== Thirty-two bits that mean "add"
 
 The instruction is not text and is never parsed. It is one 32-bit number, and
 the hardware reads fields out of it by position. R-type, from bit 31 down:
@@ -59,12 +59,12 @@ $ python3 tools/rvasm.py add.s --list
   assembler accepts are the same five bits.
 ]
 
-== Why the fields are where they are
+=== Why the fields are where they are
 
 Three questions that the layout above always provokes, and they have better
 answers than "because the specification says so".
 
-=== Why is the opcode at the bottom?
+==== Why is the opcode at the bottom?
 
 Because every other field's #emph[meaning] depends on it, so it must be
 readable first — and a field at a fixed position is readable immediately rather
@@ -73,7 +73,7 @@ concrete: the register fields never move either, so lesson 13's core addresses
 the register file #emph[before the instruction has been understood at all].
 Decode and register read happen at the same time, not one after the other.
 
-=== Why five bits for a register number?
+==== Why five bits for a register number?
 
 Because #strong[2#super[5] = 32], and RV32I has 32 registers. Five bits span
 `00000` (x0) through `11111` (x31) and there is nothing left over.
@@ -86,7 +86,7 @@ Because #strong[2#super[5] = 32], and RV32I has 32 registers. Five bits span
   whole thing at 266 LUT4 and 32 distributed-RAM cells.
 ]
 
-=== Why seven bits for `funct7`?
+==== Why seven bits for `funct7`?
 
 Not because anything needs seven. #strong[Because seven is what is left.]
 
@@ -115,15 +115,15 @@ So: the encoding spends seven bits, the hardware reads one, and the gap between
 those two numbers is encoding space held in reserve. That is a design choice
 about the future, not a requirement of arithmetic.
 
-== The journey
+=== The journey
 
-=== 1. Fetch
+==== 1. Fetch
 
 The program counter — 32 flip-flops, and in a single-cycle core the only state
 the processor has — addresses instruction memory. `imem_addr = pc`, the memory
 answers combinationally, and `inst` is the 32-bit number above.
 
-=== 2. Decode, and register read, together
+==== 2. Decode, and register read, together
 
 `decode.v` splits the instruction into control signals; `immgen.v` extracts an
 immediate that this instruction will not use. Simultaneously, because the
@@ -133,26 +133,26 @@ register fields are at fixed positions, `rs1 = inst[19:15]` and
 
 The decoder does not add. It identifies, and it asserts `reg_we`.
 
-=== 3. Execute
+==== 3. Execute
 
 The ALU of lesson 10 receives `a = 10`, `b = 20` and `alu_op = {0, 000}`, and
 produces 30. Underneath, a 32-bit adder — which lesson 02 built out of gates at
 212 cells and lesson 10 got for 17 `CCU2C` and #emph[no LUT4 at all] by writing
 `+` and letting the fabric's carry chain do it.
 
-=== 4. Write-back
+==== 4. Write-back
 
 `wb_src` selects the ALU result over the memory and PC+4 paths, `rd = x5`, and
 at the clock edge the register file takes the write. Had `rd` been `x0`, the
 register file would have discarded it — which is lesson 11's one-line mechanism
 and the reason `jal x0, label` needs no special case anywhere.
 
-=== 5. The next instruction
+==== 5. The next instruction
 
 Not a branch, not a jump: `pc <= pc + 4`. The same clock edge that writes `x5`
 advances the program counter, which is what makes this a single-cycle machine.
 
-== What it looks like in the simulator
+=== What it looks like in the simulator
 
 Running those five steps on the lesson 13 core, printing the core's own signals
 at each negative edge:
@@ -167,7 +167,7 @@ at each negative edge:
   ```
 ]
 
-The middle line is the instruction. `inst` is the number this chapter opened
+The middle line is the instruction. `inst` is the number this section opened
 with, `rs1` and `rs2` carry 10 and 20, the ALU produces 30, `rd` is x5 and
 `reg_we` is high. The line below it is the store that proves it: `rs2=x5(30)`
 — the register really does hold 30 on the next cycle.
@@ -182,7 +182,7 @@ with, `rs1` and `rs2` carry 10 and 20, the ALU produces 30, `rd` is x5 and
   cheap.
 ]
 
-== The control signals, and what they are called here
+=== The control signals, and what they are called here
 
 Textbooks name these after the classic MIPS datapath. This course names them
 after what they select, and they are the same signals:
@@ -199,7 +199,7 @@ after what they select, and they are the same signals:
   [`Branch`],     [`branch`],     [0 — the next PC is `pc + 4`],
 )
 
-== The ten operations that share this opcode
+=== The ten operations that share this opcode
 
 `0110011` is not "add". It is "register-register integer operation", and
 `funct3` with one bit of `funct7` picks which:
@@ -207,7 +207,7 @@ after what they select, and they are the same signals:
 #ttable(
   columns: (auto, auto, auto, 1fr),
   [*instruction*], [*`funct7`*], [*`funct3`*], [],
-  [`ADD`],  [`0000000`], [`000`], [the one in this chapter],
+  [`ADD`],  [`0000000`], [`000`], [the one above],
   [`SUB`],  [`0100000`], [`000`], [same `funct3`; `inst[30]` is the difference],
   [`SLL`],  [`0000000`], [`001`], [],
   [`SLT`],  [`0000000`], [`010`], [signed],
@@ -224,7 +224,7 @@ Note how little of the ALU's cost this table represents: lesson 10 measured the
 whole ALU at 885 LUT4, of which the barrel shifter — `SLL`, `SRL`, `SRA`, three
 rows — is about 80%.
 
-== How many instructions does RISC-V have?
+=== How many instructions does RISC-V have?
 
 There is no single answer, and the reason is the architecture's main idea.
 
@@ -245,7 +245,7 @@ There is no single answer, and the reason is the architecture's main idea.
 A RISC-V processor implements the base plus whichever extensions it chooses,
 and says so in the `misa` register. #strong[This course's core implements RV32I
 less `FENCE`, `ECALL` and `EBREAK` at lesson 13], adds `Zicsr` and `M` at
-lesson 17, and is honest in both chapters about what it has not been tested
+lesson 17, and is honest in both lessons about what it has not been tested
 against.
 
 #why[
@@ -258,13 +258,9 @@ against.
   writing before there was anything to reject.
 ]
 
-== What this chapter is not
-
-It is one instruction, on one implementation, explained completely. It is not a
-specification: instruction legality, privileged behaviour and extension
+This is one instruction, on one implementation, explained completely — not a
+specification. Instruction legality, privileged behaviour and extension
 encodings are defined by the official RISC-V ISA manuals, and anything built to
-interoperate should be checked against those rather than against this. The
-reading list at the end of this book says where they are.
-
-What it #emph[is] is the answer to "but what actually happens?" — and the answer
-turns out to be four modules you built, in order, inside one clock period.
+interoperate should be checked against those. What it answers is "but what
+actually happens?", and the answer is four modules you built, in order, inside
+one clock period.

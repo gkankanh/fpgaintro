@@ -2,18 +2,6 @@
 
 = Lesson 04 — Clocks and timing
 
-#goals(
-  concept: [What a clock actually is inside an FPGA, and what the tools check when they check timing.],
-  build: [A PLL generating 100 and 40 MHz, a safe crossing between two clock domains, and a design pushed until it fails timing.],
-  needs: [Lesson 03. A board, for the PLL — it cannot be simulated at all.],
-)[
-  - Explain why a design is correct #emph[at a frequency] rather than correct.
-  - Divide a clock to make an #emph[enable], never a clock, and say why.
-  - Explain why a PLL's output frequencies are not freely chosen.
-  - Cross a bus between clock domains without corrupting it.
-  - Explain why no simulation can validate a clock-domain crossing.
-]
-
 == The idea
 
 Three lessons used `clk_25mhz` as if it were simply given. It is not.
@@ -28,6 +16,11 @@ time. Everything else is available for logic and routing.
 The longest such path in the design sets the maximum frequency:
 
 $ "max frequency" = 1 / "critical path delay" $
+
+#fig("/figures/timing-budget.svg",
+     [One clock period, as a budget. Everything the data must do between two
+      flip-flops has to fit inside it, and what is left over is the slack
+      nextpnr reports.])
 
 #why[
   So #strong[a design is not correct or incorrect in isolation — it is correct
@@ -85,6 +78,10 @@ Three consequences:
 + #strong[PLLs are finite.] Four on this part, not one per module.
 
 == Crossing between domains
+
+#fig("/figures/cdc-sync.svg",
+     [Two domains, three cases: a two-flop synchroniser for one bit, a
+      synchroniser per bit corrupting a bus, and the handshake that fixes it.])
 
 Two clocks not derived from one another have #strong[no fixed phase
 relationship]. Sooner or later a signal from domain A changes at exactly the
@@ -178,11 +175,3 @@ something slower:
   design. What changes is whether it is enough. That is what timing closure
   #emph[is].
 ]
-
-== Wrap-up
-
-#strong[What you built.] A PLL, a safe crossing between two clock domains, and a design pushed until it failed timing — 342 MHz achieved where 25 was required.
-
-#strong[What to keep.] A design is correct #emph[at a frequency], and the critical path is the tool's answer rather than yours.
-
-#strong[What comes next.] Lesson 05 builds the first designs complex enough for that budget to matter.

@@ -48,19 +48,24 @@ works this way: `make sim L=5`, `make wave L=3`, `make synth L=2`.
 Nothing is installed system-wide and nothing needs `sudo`. Deleting
 `toolchain/` undoes the entire install.
 
-## The book
+## The books
 
-A single PDF covering the theory and learning goals of every lesson, the ULX3S
-and what is inside it, credits to the projects this stands on, installation,
-and how to run the exercises:
+Two PDFs, split by how they are used — one is read, the other is opened at the
+page you need:
 
-    docs/pdf/book.pdf          63 pages
+    docs/pdf/book.pdf    82 pages   From Gates to a RISC-V CPU
+                                    the concepts: the fabric, every lesson,
+                                    and every measured number
+    docs/pdf/tools.pdf   16 pages   Tools and Workflow
+                                    installing, the make verbs and their
+                                    options, deploying to the board, the
+                                    pinout, the command reference
 
-Rebuild it with `make pdf` (needs [Typst](https://typst.app), one binary:
-`tools/install.sh --with-pdf`). Every diagram in it is vector, not rasterised.
+Rebuild both with `make pdf` (needs [Typst](https://typst.app), one binary:
+`tools/install.sh --with-pdf`). Every diagram in them is vector, not rasterised.
 
-The book is the theory companion; the per-lesson `README.md` files are the
-hands-on instructions. Neither repeats the other.
+The books are the companions; the per-lesson `README.md` files are the hands-on
+instructions. None of the three repeats the others.
 
 ## Curriculum
 
@@ -199,7 +204,7 @@ make sim-all     # every lesson's testbench — the regression suite
 make lint-all    # verilator across every lesson
 make graph-all   # render every lesson as a schematic
 make ice         # regenerate Icestudio projects from their specs
-make pdf         # build the course book -> docs/pdf/book.pdf
+make pdf         # build both books -> docs/pdf/{book,tools}.pdf
 make docs        # build the HTML lessons into docs/book/
 make docs-serve  # read them at http://localhost:3000
 ```

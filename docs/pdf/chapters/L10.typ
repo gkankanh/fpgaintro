@@ -2,18 +2,6 @@
 
 = Lesson 10 — The ALU
 
-#goals(
-  concept: [32-bit arithmetic and logic as one combinational block — and the point where exhaustive testing becomes impossible.],
-  build: [The complete RV32I ALU, verified against a reference model and an independent second implementation.],
-  needs: [Lesson 08.],
-)[
-  - Explain why RV32I has exactly ten integer operations.
-  - Derive subtraction, signed and unsigned comparison from one adder.
-  - Get signed less-than right, including where the difference overflows.
-  - Replace exhaustive testing with directed cases, randomisation and an independent model.
-  - Verify that a testbench has teeth, by mutating the design.
-]
-
 == The idea
 
 From here the modules are not illustrations. They are the processor's parts.
@@ -170,11 +158,3 @@ A registered 32-bit ALU closes at #strong[115.94 MHz], with the critical path
 running through the adder's carry chain #emph[and] the ten-way result
 multiplexer. Both on one path — which is precisely the argument lesson 16 makes
 for splitting them across pipeline stages.
-
-== Wrap-up
-
-#strong[What you built.] The complete RV32I ALU, verified against a reference model and an independent second implementation — 885 LUT4, of which the shifter is about 80%.
-
-#strong[What to keep.] Which operations are expensive is a property of the fabric, not of arithmetic.
-
-#strong[What comes next.] Lesson 11 builds the thing that feeds it: the register file.

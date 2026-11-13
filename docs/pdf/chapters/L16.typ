@@ -2,26 +2,11 @@
 
 = Lesson 16 — Pipelining
 
-#goals(
-  concept: [Overlapping instructions, and the hazard logic that makes overlap safe.],
-  build: [A 5-stage version of the same core, running the same programs, at nearly twice the clock.],
-  needs: [Lesson 15, and lesson 04's PLL. A board.],
-)[
-  - Explain why pipelining raises the clock without making any stage faster.
-  - Identify data, control and structural hazards.
-  - Explain which hazard forwarding can fix and which it cannot.
-  - Measure cycles-per-instruction and say where every extra cycle went.
-  - Say when pipelining makes a program #emph[slower], and prove it.
-]
-
 == The same work, cut into five pieces
 
-```
-IF  ──>  ID  ──>  EX  ──>  MEM  ──>  WB
-fetch   decode    ALU     memory   register
-        + read    +       access    write
-        regs    branch
-```
+#fig("/figures/pipeline-hazards.svg",
+     [Five stages, four pipeline registers, and everything that goes wrong
+      between them: two forwarding paths, one bypass, one stall, one flush.])
 
 Registers between the pieces, so five instructions can be in the machine at
 once and the clock period only has to cover the longest #strong[piece] instead

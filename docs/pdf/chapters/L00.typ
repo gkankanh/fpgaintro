@@ -2,17 +2,6 @@
 
 = Lesson 00 — Blinky
 
-#goals(
-  concept: [A counter is a frequency divider.],
-  build: [The 8 LEDs counting up as a binary odometer.],
-  needs: [Nothing. This is the start.],
-)[
-  - Explain why bit #emph[n] of a counter toggles every 2#super[n] clocks.
-  - Use non-blocking assignment in a clocked block, and say why.
-  - Make a design's time constant a parameter, so it can be simulated.
-  - Read a resource report and account for what is in it.
-]
-
 == The idea
 
 The board's crystal runs at 25 MHz. An LED toggling at that rate looks like an
@@ -75,17 +64,6 @@ out of range.
   logic contributes a single LUT4.
 ]
 
-#why[
-  This is the first appearance of the course's central method. The number is
-  not "about thirty cells"; it is 26 flip-flops and 13 carry cells, and both
-  are explainable. When a resource report contains something you cannot
-  explain, you have inferred something you did not intend.
-]
-
-== Wrap-up
-
-#strong[What you built.] A 26-bit counter dividing the board's 25 MHz down to something an eye can follow, simulated at a smaller width and accounted for down to the last flip-flop.
-
-#strong[What to keep.] A counter is a frequency divider, and a resource report is something you read rather than glance at.
-
-#strong[What comes next.] Lesson 01 goes underneath it, to what the fabric actually builds when you write a logic expression.
+The number is not "about thirty cells"; it is 26 flip-flops and 13 carry
+cells, and both are explainable. When a resource report contains something you
+cannot explain, you have inferred something you did not intend.
