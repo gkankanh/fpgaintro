@@ -24,7 +24,7 @@
 - [Lesson 14 — formal verification](./lessons/14-formal.md)
 - [Lesson 15 — a system on chip](./lessons/15-soc.md)
 - [Lesson 16 — pipelining](./lessons/16-rv32i-pipeline.md)
-- [Lesson 17 — extensions](./lessons/17-extensions.md)
+- [Lesson 17 — CSRs, traps and the M extension](./lessons/17-extensions.md)
 
 # Reference
 
