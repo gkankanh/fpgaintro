@@ -247,6 +247,45 @@ fetch unit fetches. That is unified memory stated as a C expression, and it is
 the thing lesson 16 gives up when fetch and data move to separate block RAM
 ports.
 
+### Hand the word back to your own decoder
+
+Those two hex numbers are not decoration. Feed `00b50533` to
+[lesson 12's `decode`](../12-datapath/decode.v) and it reports:
+
+| | `00b50533` | `00008067` |
+|---|---|---|
+| opcode — `inst[6:0]` | `0x33`, OP | `0x67`, JALR |
+| `rd` / `rs1` / `rs2` | x10 / x10 / x11 | x0 / x1 |
+| control | `reg_we`=1, `alu_op`=0000 (ADD), `alu_b_imm`=0 | `jalr`=1, `jump`=1 |
+| `illegal` | 0 | 0 |
+
+x10 and x11 are `a0` and `a1`; x1 is `ra`. So the decoder reads the first word
+as `add a0, a0, a1` and the second as `jalr x0, 0(ra)` — which is exactly what
+`ret` is, there being no return instruction in RV32I.
+
+Now ask objdump the same question:
+
+```bash
+make dis        # objdump -d -M numeric,no-aliases
+```
+
+```
+00000100 <add2>:
+ 100:	00b50533          	add	x10,x10,x11
+ 104:	00008067          	jalr	x0,0(x1)
+```
+
+`numeric,no-aliases` is there so objdump answers in the same terms the
+hardware does: register numbers rather than ABI names, and `jalr x0,0(x1)`
+rather than the `ret` pseudo-instruction that hides it. Register for register,
+the decoder you built and the disassembler agree.
+
+**Four things had to agree for that to happen** and it is worth listing them,
+because each one is a different part of the course: gcc chose the encoding, the
+memory held it, a load fetched it back, and a decoder you built from gates took
+it apart. The testbenches assert the words exactly, so the agreement is checked
+on every `make sim` rather than admired once.
+
 [`tb_soc.v`](./tb_soc.v) behaves like the host at the other end of the cable: it
 instantiates lesson 09's **receiver**, points it at the SoC's transmit pin, and
 decodes bytes at the agreed baud rate; and it instantiates lesson 09's
