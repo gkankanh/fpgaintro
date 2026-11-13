@@ -82,7 +82,11 @@
 #set page(numbering: "i")
 #counter(page).update(1)
 
-#outline(depth: 2, indent: auto)
+// Depth 1: one line per chapter, so the contents is a list of lessons you can
+// run your finger down rather than four pages of subsections. Every heading is
+// still a PDF bookmark, so a reader who wants "What it cost" in lesson 11 can
+// jump straight to it from the viewer's outline pane.
+#outline(depth: 1, indent: auto)
 
 #set page(numbering: "1")
 #counter(page).update(1)

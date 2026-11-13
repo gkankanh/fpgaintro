@@ -111,7 +111,15 @@
 )
 
 // ------------------------------------------------------------------- tables
-#let ttable(..args) = {
+// `breakable: false` by default, because a table that splits across a page
+// boundary tends to strand its last row at the top of an otherwise empty page
+// -- which is what it looked like, in an earlier build, when the glossary left
+// one definition alone on page 7 and the command reference left
+// `tools/mkpdf.sh` alone on page 86. Typst has no widow control for table
+// rows, so the fix is to move the whole table rather than break it badly.
+// A table too tall for one page must opt back in with `breakable: true`,
+// or it will overflow the bottom margin.
+#let ttable(breakable: false, ..args) = block(breakable: breakable, {
   set text(size: 9.5pt)
   table(
     stroke: (x, y) => (
@@ -121,7 +129,7 @@
     inset: (x: 7pt, y: 5pt),
     ..args,
   )
-}
+})
 
 
 // ---------------------------------------------------------------- cost
