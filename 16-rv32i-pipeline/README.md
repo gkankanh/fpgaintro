@@ -374,6 +374,45 @@ Load lesson 15's bitstream, reset, read the cycle count. Load this one, reset,
 read it again: **it is larger**, on a machine that is faster. That is the whole
 lesson in two numbers you can see on a screen.
 
+### Measured on the board
+
+The clock argument above is a `nextpnr` report until you put it on hardware, so
+here it is on hardware. The same binary — a program that prints a line, then
+waits a fixed number of **cycles** — was run on both machines and the serial
+output captured for six seconds each:
+
+```c
+LEDS = n++;
+uint32_t t0 = CYCLES;
+while (CYCLES - t0 < 8000000u)       /* 8 million cycles, not 8 million
+    ;                                 * instructions. That distinction is
+                                      * the whole experiment. */
+```
+
+| | lesson 15 | lesson 16 |
+|---|---|---|
+| clock | 25 MHz, the oscillator | 40 MHz, the PLL |
+| closes at | 29.05 MHz | 48.55 MHz |
+| predicted s/line | 0.326 | 0.206 |
+| **measured s/line** | **0.333** | **0.206** |
+| lines in a 6 s window | 18.0 | **29.1** |
+
+**Measured speedup 1.617 against a clock ratio of 1.600** — agreement to 1%.
+
+The delay is counted in cycles read from the `CYCLES` register, so both
+machines wait exactly 8,000,000 of them and **CPI cancels out entirely**;
+what is left is the clock period. The 1% residual is the 6.4 ms of actual
+printing per line, which the 115200 baud rate fixes in *time* rather than in
+cycles, so it does not scale — which is why the measured ratio comes out
+slightly above 1.60 rather than below it.
+
+> **Watch out** — be clear about what this does *not* show. It is not evidence
+> that the pipeline runs programs in fewer cycles. It does not; it runs them in
+> more. A version of this program that counted *instructions* instead of cycles
+> would have come out **slower** on the faster machine, for the reasons in the
+> CPI section above. This measures the clock, which is the thing pipelining
+> actually buys, in the one unit that matters — seconds.
+
 ## Exercises
 
 1. **Delete `&& !redirect`** from the illegal-instruction latch in `cpu5.v` and
