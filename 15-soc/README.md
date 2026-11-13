@@ -404,6 +404,29 @@ character; it comes back, followed by the cycle count and `DONE`. The LEDs show
 `0x5A` at the end (`01011010`), and the whole thing takes a few milliseconds,
 so it is over before you release the button.
 
+**It will probably run more than once per press**, and that is worth watching
+for. `soc_top.v` wires `btn[1]` straight to `rst` with nothing in between, so
+every bounce of the contact is another reset. Captured from the board, one
+press gave seven complete runs and two greetings cut off after a character or
+two:
+
+```
+...DONE
+RRV32I SoC          <- a reset landed 87 microseconds into the previous greeting
+deadbeef
+```
+
+At 115200 baud a character takes 87 µs, so a greeting that managed one `R`
+before restarting is two resets about that far apart. **That is contact bounce,
+and it is the thing lesson 03 built a debouncer for** — left out here because a
+repeated reset is harmless, which is exactly the judgement lesson 03 asks you to
+make. Put `debounce.v` in front of `btn[1]` and the fragments disappear.
+
+> **Measured on the board.** The six lines above are what the hardware actually
+> sent: seven runs, every one byte-identical to the string `tb_soc.v` expects,
+> `CYC 0000025e` included. The cycle count on real silicon is the same 606 the
+> simulation produced.
+
 With **sw[3] up** the LEDs show the machine instead of the program:
 
 | LED | |

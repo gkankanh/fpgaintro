@@ -253,6 +253,36 @@ is what the single-cycle decision costs once the machine is big enough to run C.
   the memory becomes two block RAMs, and the clock nearly doubles.
 ]
 
+== On the board
+
+#measured("what the hardware actually sent")[
+  ```
+  RV32I SoC
+  deadbeef
+  bss ok
+  K
+  CYC 0000025e
+  DONE
+  ```
+  Seven consecutive runs, every one byte-identical to the string the testbench
+  expects — and `CYC 0000025e` is the same 606 cycles the simulation produced.
+  The delay loop takes exactly as long on real silicon as it does in Icarus.
+]
+
+The capture also contained two greetings cut off after a character or two,
+which is worth more than it looks. At 115,200 baud a character takes 87
+microseconds, so a greeting that managed one `R` before restarting means two
+resets about that far apart — from one press of the button.
+
+#why[
+  That is contact bounce, and it is the thing lesson 03 built a debouncer for.
+  The board demo wires the reset button straight to `rst` with nothing in
+  between, because a repeated reset is harmless — which is exactly the
+  judgement lesson 03 asks you to make rather than debouncing everything by
+  reflex. The evidence that it was the right call, and the evidence that the
+  bouncing is real, are the same six lines of serial output.
+]
+
 == What this machine does not do
 
 #ttable(
