@@ -11,7 +11,7 @@ BUILT   := $(foreach d,$(LESSONS),$(if $(wildcard $(d)/Makefile),$(d),))
 
 TOOLS   := toolchain/oss-cad-suite/bin
 
-.PHONY: help sim-all lint-all graph-all clean-all ice docs docs-serve toolchain check pdf pdf-watch
+.PHONY: help sim-all lint-all graph-all clean-all ice icecheck docs docs-serve toolchain check pdf pdf-watch
 .PHONY: sim bit prog flash lint synth graph wave clean deploy list tasks
 
 help:
@@ -21,6 +21,7 @@ help:
 	@echo "  make lint-all    verilator --lint-only across every lesson"
 	@echo "  make graph-all   render every lesson as an SVG schematic"
 	@echo "  make ice         regenerate all Icestudio .ice projects from specs"
+	@echo "  make icecheck    compile-check every .ice project (no GUI needed)"
 	@echo "  make tasks       regenerate VS Code's per-lesson task list"
 	@echo "  make docs        build the lesson book into docs/book/"
 	@echo "  make pdf         build the course book (docs/pdf/book.pdf)"
@@ -60,6 +61,12 @@ graph-all:
 # Regenerate every Icestudio project from its JSON spec (see tools/mkice.py).
 ice:
 	@python3 tools/mkice.py --all
+
+# Compile-check every generated project the way Icestudio would build it.
+# There is no headless Icestudio, so this reconstructs the module its compiler
+# emits and runs iverilog and yosys over it (see tools/icecheck.py).
+icecheck:
+	@python3 tools/icecheck.py --all
 
 # Regenerate .vscode/tasks.json so each lesson appears by name in VS Code's
 # Run Task list. Run after adding a lesson.

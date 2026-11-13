@@ -1,0 +1,27 @@
+{
+  "name": "regfile",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 11 - a register file with two read ports, one write port, and an x0 that absorbs writes.",
+  "from": { "file": "../regfile.v", "module": "regfile" },
+  "params": [
+    { "name": "W", "value": 8 },
+    { "name": "N", "value": 8 }
+  ],
+  "inputs": [
+    { "port": "clk", "pin": "clk", "label": "clk_25mhz" },
+    { "port": "rs1", "label": "rs1 (read address)", "pins": ["sw_2", "sw_1", "sw_0"] },
+    { "port": "rs2", "tie": "{$clog2(N){1'b0}}" },
+    { "port": "we",  "pin": "btn_2", "label": "we (press FIRE2 to write)" },
+    { "port": "rd",  "label": "rd (write address: LEFT/DOWN/UP)",
+      "pins": ["btn_5", "btn_4", "btn_3"] },
+    { "port": "wdata", "const": "8'hA5" }
+  ],
+  "outputs": [
+    { "port": "rd1", "label": "rd1 (port 1 read data)",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] },
+    { "port": "rd2", "internal": true }
+  ],
+  "info": "## Lesson 11 - write a register, read it back\n\n`wdata` is the constant `0xA5`. To store it:\n\n1. pick a destination with **UP / DOWN / LEFT** held as the three bits of `rd`\n2. press **FIRE2** while holding them - that is `we`\n3. set `sw2..sw0` to the same number to read it back on `rd1`\n\n`0xA5` is `10100101`, which is easy to recognise on eight LEDs and not symmetric, so you can also see that nothing got reversed on the way.\n\n### Now try register 0\n\nWrite `0xA5` to `rd` = 0, then read `rs1` = 0. The LEDs stay dark. Two lines make that true:\n\n```verilog\nif (we && rd != 0) regs[rd] <= wdata;          // x0 absorbs writes\nassign rd1 = (rs1 == 0) ? 0 : regs[rs1];        // x0 reads as zero\n```\n\nThe second line is the one that matters, and it is a mux on the *output*, not a zero stored in `regs[0]`. Storing a zero would work right up until something managed to write there; a mux cannot be wrong.\n\n### What is tied off\n\nThe real module has two read ports. There are only eight LEDs, so `rs2` is tied to zero and `rd2` is declared but left unconnected - yosys trims the logic that fed it. Both ports are exercised together in the editor path's testbench, which is also where the 32x32 version runs: `cd 11-regfile && make sim`."
+}

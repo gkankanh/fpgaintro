@@ -26,8 +26,8 @@
             "virtual": false
           },
           "position": {
-            "x": 48,
-            "y": 48
+            "x": -520,
+            "y": 32
           }
         },
         {
@@ -45,34 +45,28 @@
             "virtual": false
           },
           "position": {
-            "x": 48,
-            "y": 168
+            "x": -472,
+            "y": 184
           }
         },
         {
-          "id": "ec0dd259-6b72-5da1-ac1c-ffc1c085d6b0",
-          "type": "basic.output",
+          "id": "e1e90db0-b645-5eba-bb5c-39c9831b86bc",
+          "type": "basic.constant",
           "data": {
-            "name": "clean",
-            "pins": [
-              {
-                "index": "0",
-                "name": "led_7",
-                "value": "H3"
-              }
-            ],
-            "virtual": false
+            "name": "COUNT",
+            "value": "250000",
+            "local": false
           },
           "position": {
-            "x": 816,
-            "y": 48
+            "x": 1064,
+            "y": -512
           }
         },
         {
           "id": "5961e6d6-e2f2-595d-8183-47a471e6b9d7",
           "type": "basic.code",
           "data": {
-            "code": "// $clog2 sizes the counter to exactly fit COUNT \u2014 one of the few places a\n// system function is allowed in synthesisable code.\nlocalparam CW = $clog2(COUNT + 1);\nreg [CW-1:0] cnt = 0;\n\nalways @(posedge clk) begin\n    if (noisy == clean) begin\n        // They agree: nothing is happening. Hold the timer at zero so a\n        // later disagreement has to wait the full COUNT.\n        cnt <= 0;\n    end else if (cnt == COUNT[CW-1:0]) begin\n        // Disagreed for long enough: accept the new level.\n        clean <= noisy;\n        cnt   <= 0;\n    end else begin\n        cnt <= cnt + 1'b1;\n    end\nend\n",
+            "code": "// ---------------------------------------------------------------\n// Added by tools/mkice.py, not present in the lesson's .v:\n// Icestudio declares a code block's outputs as wires, and the\n// board has fewer pins than this module has port bits. See\n// icestudio/README.md. The module's own text below is verbatim.\n// ---------------------------------------------------------------\nreg clean = 0;\n\n// $clog2 sizes the counter to exactly fit COUNT — one of the few places a\n// system function is allowed in synthesisable code.\nlocalparam CW = $clog2(COUNT + 1);\nreg [CW-1:0] cnt = 0;\n\nalways @(posedge clk) begin\n    if (noisy == clean) begin\n        // They agree: nothing is happening. Hold the timer at zero so a\n        // later disagreement has to wait the full COUNT.\n        cnt <= 0;\n    end else if (cnt == COUNT[CW-1:0]) begin\n        // Disagreed for long enough: accept the new level.\n        clean <= noisy;\n        cnt   <= 0;\n    end else begin\n        cnt <= cnt + 1'b1;\n    end\nend\n\n// ---- added by tools/mkice.py: port aliases and probes ----\nassign clean_o = clean;\n",
             "params": [
               {
                 "name": "COUNT"
@@ -89,27 +83,18 @@
               ],
               "out": [
                 {
-                  "name": "clean"
+                  "name": "clean_o"
                 }
               ]
             }
           },
           "position": {
-            "x": 384,
-            "y": 48
-          }
-        },
-        {
-          "id": "e1e90db0-b645-5eba-bb5c-39c9831b86bc",
-          "type": "basic.constant",
-          "data": {
-            "name": "COUNT",
-            "value": "250000",
-            "local": false
+            "x": 16,
+            "y": -128
           },
-          "position": {
-            "x": 416,
-            "y": -112
+          "size": {
+            "width": 1272,
+            "height": 792
           }
         },
         {
@@ -120,26 +105,20 @@
             "readonly": true
           },
           "position": {
-            "x": 48,
-            "y": 352
+            "x": -512,
+            "y": -608
+          },
+          "size": {
+            "width": 400,
+            "height": 256
           }
         }
       ],
       "wires": [
         {
           "source": {
-            "block": "e1e90db0-b645-5eba-bb5c-39c9831b86bc",
-            "port": "constant-out"
-          },
-          "target": {
             "block": "5961e6d6-e2f2-595d-8183-47a471e6b9d7",
-            "port": "COUNT"
-          }
-        },
-        {
-          "source": {
-            "block": "21ef2853-859e-502c-9c8a-1046b5e9921d",
-            "port": "out"
+            "port": "clean_o"
           },
           "target": {
             "block": "5961e6d6-e2f2-595d-8183-47a471e6b9d7",
@@ -158,16 +137,46 @@
         },
         {
           "source": {
-            "block": "5961e6d6-e2f2-595d-8183-47a471e6b9d7",
-            "port": "clean"
+            "block": "21ef2853-859e-502c-9c8a-1046b5e9921d",
+            "port": "out"
           },
           "target": {
-            "block": "ec0dd259-6b72-5da1-ac1c-ffc1c085d6b0",
-            "port": "in"
+            "block": "5961e6d6-e2f2-595d-8183-47a471e6b9d7",
+            "port": "clk"
+          }
+        },
+        {
+          "source": {
+            "block": "e1e90db0-b645-5eba-bb5c-39c9831b86bc",
+            "port": "constant-out"
+          },
+          "target": {
+            "block": "5961e6d6-e2f2-595d-8183-47a471e6b9d7",
+            "port": "COUNT"
           }
         }
       ]
     }
   },
-  "dependencies": {}
+  "dependencies": {},
+  "settings": {
+    "version": 1,
+    "tools": {
+      "verify": {
+        "override": false,
+        "relaxRealToInt": false,
+        "relaxIoPrimitives": false,
+        "allowLogicLoops": false,
+        "verilatorFlags": ""
+      },
+      "build": {
+        "override": false,
+        "yosysFlags": "",
+        "nextpnrFlags": ""
+      },
+      "upload": {
+        "override": false
+      }
+    }
+  }
 }

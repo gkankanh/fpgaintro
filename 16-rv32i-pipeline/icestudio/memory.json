@@ -1,0 +1,33 @@
+{
+  "name": "memory",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 16 - the dual-port synchronous memory: write a word with a button, read it back on the other port.",
+  "from": { "file": "../memory_sync.v", "module": "memory_sync" },
+  "params": [
+    { "name": "WORDS", "value": 16 },
+    { "name": "FILE",  "value": "\"\"" }
+  ],
+  "inputs": [
+    { "port": "clk",   "pin": "clk", "label": "clk_25mhz" },
+    { "port": "a_addr", "label": "a_addr (sw3..sw0)",
+      "pins": ["sw_3", "sw_2", "sw_1", "sw_0"] },
+    { "port": "a_en",   "tie": "1'b1" },
+    { "port": "b_en",   "tie": "1'b0" },
+    { "port": "b_addr", "tie": "a_addr" },
+    { "port": "b_we",   "pin": "btn_2", "label": "b_we (press FIRE2 to store)" },
+    { "port": "b_be",   "tie": "4'hF" },
+    { "port": "b_wdata", "const": "32'h000000A5" }
+  ],
+  "outputs": [
+    { "port": "a_data", "internal": true },
+    { "port": "b_data", "internal": true }
+  ],
+  "probes": [
+    { "name": "a_lo", "label": "a_data[7:0]",
+      "expr": "a_data[7:0]",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 16 - two ports, one memory\n\nPick an address on the switches. Port A reads it every cycle and the LEDs show the low byte. Press **FIRE2** and port B writes `0xA5` to the same address - so the LEDs go from garbage to `10100101` and stay there.\n\nThen move the switches and come back. The byte is still where you left it, and the addresses you never wrote still read as whatever the block RAM powered up with.\n\n### What this is really showing\n\n`FILE` is empty, so the memory starts **uninitialised**. In simulation that is X, and lesson 08's point was that X is the correct answer: a memory you read before writing is a bug, and X is the only value that says so out loud. On real hardware there is no X - the block RAM comes up with something, usually zero, and the bug becomes invisible. That gap between simulation and silicon is worth feeling once.\n\n### Why two ports at all\n\nA 5-stage pipeline has an instruction fetch in IF and a load or store in MEM **in the same cycle**. One port cannot serve both, and the ECP5's DP16KD block RAM has exactly two - which is why the pipeline is affordable at all.\n\nNote what each port does **not** do: a port reads or writes in a cycle, never both. Here `b_en` is tied low while `b_we` is on a button, so port B only ever stores. Asking a DP16KD port for a read and a write in one cycle is how you lose the block RAM and get the whole array built out of flip-flops instead.\n\nThe four byte-enables are tied to `4'hF` - a full 32-bit word. They are what make `sb` and `sh` possible without a read-modify-write, and the editor path's testbench exercises them properly: `cd 16-rv32i-pipeline && make sim`."
+}

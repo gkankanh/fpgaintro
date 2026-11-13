@@ -15,7 +15,7 @@ written lesson:
   test.s           an assembly program, where the lesson needs one
   Makefile         four lines; the rules live in common/lesson.mk
   diagrams/        timing diagram sources
-  icestudio/       the visual path, where the lesson has one
+  icestudio/       the visual path: a spec and the project built from it
 ```
 
 Each one follows the same arc: the idea, the design, simulate it, look at the
@@ -59,6 +59,7 @@ And across the whole course:
   [`make sim-all`],  [every lesson's testbench — the regression suite],
   [`make lint-all`], [Verilator across every lesson],
   [`make ice`],      [regenerate the Icestudio projects from their specs],
+  [`make icecheck`], [compile-check every Icestudio project, without the GUI],
   [`make docs`],     [build the HTML version of the lessons],
   [`make pdf`],      [build this book],
 )

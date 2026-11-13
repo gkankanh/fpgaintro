@@ -12,12 +12,12 @@
   "inputs": [
     { "port": "clk",  "pin": "clk",   "label": "clk_25mhz" },
     { "port": "start", "pin": "btn_1", "label": "start (press)" },
-    { "port": "data", "label": "data (slide switches)",
-      "pins": ["sw_3", "sw_2", "sw_1", "sw_0", "sw_3", "sw_2", "sw_1", "sw_0"] }
+    { "port": "data", "label": "data (buttons = high nibble, switches = low)",
+      "pins": ["btn_6", "btn_5", "btn_4", "btn_3", "sw_3", "sw_2", "sw_1", "sw_0"] }
   ],
   "outputs": [
     { "port": "tx",   "pin": "ftdi_rxd", "label": "tx -> host" },
     { "port": "busy", "pin": "led_0",    "label": "busy" }
   ],
-  "info": "## Lesson 09 - the UART transmitter\n\nThe whole 8N1 frame lives in one 10-bit shift register, loaded as `{stop, data, start}`, and the output is simply its low bit. Ones trail in from the top, so when the frame finishes the register is all ones again and the line returns to idle with **no special case for idle at all**.\n\n### Baud rate is a counter modulus\n\n```\n25,000,000 / 115,200 = 217.0139\n```\n\nSo DIV = 217, giving 115,207 baud - 0.0064% fast, which over 9.5 bit periods is 0.06% of a bit. Nothing.\n\n### Try it\n\nChange `BAUD` on the constant block to 9600 and rebuild, then open your terminal at 9600. Same design, different modulus.\n\nThe slide switches are wired to the data byte twice (high nibble and low nibble), so four switches set a repeating byte - enough to see something arrive."
+  "info": "## Lesson 09 - the UART transmitter\n\nThe whole 8N1 frame lives in one 10-bit shift register, loaded as `{stop, data, start}`, and the output is simply its low bit. Ones trail in from the top, so when the frame finishes the register is all ones again and the line returns to idle with **no special case for idle at all**.\n\n### Baud rate is a counter modulus\n\n```\n25,000,000 / 115,200 = 217.0139\n```\n\nSo DIV = 217, giving 115,207 baud - 0.0064% fast, which over 9.5 bit periods is 0.06% of a bit. Nothing.\n\n### Try it\n\nChange `BAUD` on the constant block to 9600 and rebuild, then open your terminal at 9600. Same design, different modulus.\n\nThe data byte is split across the board: the four direction buttons are the high nibble, the four slide switches the low nibble. So holding UP with switch 0 on sends 0x11.\n\nAn earlier version of this spec bound the same four switches to *both* nibbles. That cannot work, and it is worth knowing why: Icestudio writes one `LOCATE COMP` per port bit, so a repeated pin names the same FPGA ball twice in the .lpf, and nextpnr stops with `cannot be bound to bel ... already bound`. `tools/mkice.py` now refuses it at generation time."
 }

@@ -7,7 +7,7 @@ ends onto one toolchain, not two different worlds.
 
 ## Opening a lesson
 
-Each dual-path lesson keeps its project in its own folder:
+Every lesson but 14 keeps its project in its own folder:
 
 ```bash
 open 00-blinky/icestudio/blink.ice
@@ -32,11 +32,13 @@ The spec names the Verilog file and binds each port to a board pin;
 resolves the pin names to real ECP5 balls. So the diagram cannot drift from the
 Verilog — it *is* the Verilog, laid out on a canvas.
 
-After editing a lesson's `.v`, regenerate:
+After editing a lesson's `.v`, regenerate and re-check:
 
 ```bash
 make ice          # all lessons
+make icecheck     # compile-check every project, no GUI needed
 python3 tools/mkice.py 00-blinky/icestudio/blink.json    # just one
+python3 tools/icecheck.py 00-blinky/icestudio/blink.ice  # check just one
 ```
 
 If you edit a project inside Icestudio and want to keep the change, copy it
@@ -65,6 +67,74 @@ To make Icestudio see them, set *Edit → Preferences → External collections* 
 this directory. (If you already have it pointed somewhere else, your previous
 setting is saved in `~/.icestudio/profile.json.bak` by this repository's setup.)
 
+## What Icestudio's compiler does to your ports
+
+Worth knowing, because it decides what a project can contain. Icestudio turns
+a code block into one Verilog module, and the header it writes declares an
+output like this:
+
+```verilog
+module main_v740f41 #(
+ parameter WIDTH = 0
+) (
+ input clk_25mhz,
+ output [7:0] led        // <- no `reg`, ever
+);
+```
+
+That is from `ice-build/blink/main.v` — Icestudio's own output, not a
+reconstruction. Note what is missing: **an output is never declared `reg`**. So
+a module whose body drives its output from inside an `always` block cannot be
+lifted verbatim; that is a procedural assignment to a wire, and it is illegal
+Verilog.
+
+Four of this repository's projects were quietly broken by exactly that, and
+nobody noticed because the error only appears when the GUI builds them.
+`tools/mkice.py` now handles it: where the lesson's `.v` says `output reg`, the
+generator declares the reg inside the body, names the block's port `<name>_o`,
+and joins them with a continuous assignment. The lesson's own text is never
+edited — the declaration is added above it, under a comment saying so.
+
+## When the board runs out of pins
+
+From lesson 10 the modules are wider than the board. Lesson 12's decoder has
+32 bits in and 27 bits of control out; the ULX3S offers 4 slide switches, 7
+buttons and 8 LEDs. There is no honest way to bind 59 port bits to 19 pins, and
+two port bits cannot share one ball — Icestudio writes one `LOCATE COMP` per
+bit, so a repeated pin names the same FPGA site twice and nextpnr stops with
+`cannot be bound to bel ... already bound`. (One shipped project did exactly
+this; `mkice.py` now refuses it at generation time.)
+
+So a spec has three other ways to handle a port:
+
+| in the spec | what the generator does | use it for |
+|---|---|---|
+| `"const": "32'h00500093"` | the port becomes a code-block **parameter** fed by a constant block, editable on the canvas | a wide input the board cannot drive |
+| `"tie": "{{28{sw[3]}}, sw}"` | the port becomes a local wire assigned that expression | widening switches into an operand, tying off an unused port |
+| `"internal": true` | the port is declared as a local signal and left unconnected | an output with no LEDs to spare |
+
+A part-select of a parameter — `inst[31:20]` — is legal Verilog, which is what
+makes `const` work without touching the body.
+
+Two further keys add ports the Verilog does not have:
+
+```json
+"drives": [{ "name": "sw", "pins": ["sw_3","sw_2","sw_1","sw_0"] }],
+"probes": [{ "name": "ctrl", "expr": "{illegal, jump, branch, reg_we}",
+             "pins": ["led_3","led_2","led_1","led_0"] }]
+```
+
+A **drive** is an input block whose name a `tie` expression can use, which is
+how four switches step lesson 12 through eight real instructions. A **probe**
+is an output block driven by an expression over the module's internals, which
+is how the interesting control bits reach the LEDs. Both append one `assign` to
+the body; neither changes the module's own text.
+
+The generator also insists the spec account for **every** port and **every**
+parameter the module declares. An unmentioned port would silently vanish from
+the block, and Icestudio gives an unwired parameter the value 0 — which builds,
+and is wrong.
+
 ## Leaf modules only
 
 A `basic.code` block holds a bare module body, so it cannot instantiate other
@@ -77,29 +147,60 @@ Composing blocks is the canvas's own job, and the better way round: simulate
 and verify a module as Verilog, then drop it into `collections/` as a reusable
 block and wire it visually.
 
+**Lesson 14 has no project for this reason.** Every file in it — `alu_props.v`,
+`regfile_props.v`, `vacuous.v` — is a property wrapper that instantiates the
+design under proof. There is no leaf module to ship, and a proof is not a
+bitstream.
+
 ## Verification status
 
-Verified by opening in the GUI on an actual ULX3S 85F:
+Two separate questions, and it is worth keeping them apart.
+
+### Does it compile?
+
+```bash
+make icecheck
+```
+
+Every project, checked without the GUI: **17/17 pass.** `tools/icecheck.py`
+reconstructs the module Icestudio's compiler would emit, runs `iverilog
+-g2005 -Wall` and `yosys synth_ecp5` over it, verifies every bound pin exists
+on the board, and rejects two port bits sharing one ball.
+
+It is a strong check because it is the same two tools the editor path uses, so
+a project that passes can fail in the GUI only for reasons that live in the
+GUI. It is not a claim about hardware.
+
+When this check was first written it found **four of the seven projects then
+shipped could not have built at all**:
+
+| project | what was wrong |
+|---|---|
+| `02-combinational/seg7.ice` | `output reg [6:0] seg` driven in an `always` block |
+| `03-sequential/debounce.ice` | same, on `clean` |
+| `06-spi-oled/oled.ice` | same, on `oled_clk`, `oled_mosi`, `oled_resn`, `oled_dc` |
+| `09-uart/uart_tx.ice` | same on `busy`, **and** the data byte bound four switches twice, so two port bits claimed one ball |
+
+All four are fixed, the first three by the generator alone and the fourth by
+also rebinding the data byte to eight distinct pins.
+
+### Does it build in the GUI, on a board?
+
+There is no headless Icestudio, so this can only be answered by pressing
+Build. The evidence is a bitstream left behind in `ice-build/`:
 
 | project | status |
 |---|---|
-| `00-blinky/icestudio/blink.ice` | opens, builds, runs on hardware |
-| `01-gates/icestudio/gates.ice` | opens, builds |
-| `03-sequential/icestudio/debounce.ice` | opens, builds |
-| `02-combinational/icestudio/seg7.ice` | not yet opened |
-| `05-fsm/icestudio/traffic.ice` | not yet opened |
-| `06-spi-oled/icestudio/oled.ice` | not yet opened |
+| `00-blinky/icestudio/blink.ice` | opens, builds, runs on hardware — `hardware.bit` on disk |
+| `01-gates/icestudio/gates.ice` | opens, builds — `hardware.bit` on disk |
+| everything else | **not yet opened in the GUI** |
 
-(The three confirmed ones left `ice-build/` directories behind, which is how
-their builds are known to have run. That directory is generated output and is
-gitignored.)
+An earlier version of this table said `03-sequential/debounce.ice` opened and
+built, on the strength of an `ice-build/debounce/` directory existing. That
+directory is empty — no bitstream, no `main.v`, nothing — and the project was
+one of the four that could not compile. A directory is evidence that something
+was *attempted*. The claim has been withdrawn rather than repaired.
 
-All are generated by the same code path from the same schema, and the two
-verified ones between them cover every feature the generator emits: scalar and
-bus ports, parameter constants, info panels and extracted module bodies. There
-is no headless Icestudio, so the rest are unverified rather than suspect. If
-one misbehaves, the spec and `tools/mkice.py` are both short and readable.
-
-`06-spi-oled/icestudio/oled.ice` is the one most likely to complain: it binds
-outputs to pins the board file types as `inout`, and Icestudio's default
-preference has `allowInoutPorts: false`.
+That is the honest state: every project is machine-checked, two are confirmed
+on hardware, and the remaining fifteen are unverified in the GUI rather than
+suspect. If one misbehaves, the spec and both tools are short and readable.

@@ -333,6 +333,22 @@ If `led[6]` lights and `led[7]` does not, the error count on `led[4:0]` tells
 you how many locations failed. On working hardware that should never happen,
 which is rather the point of running it.
 
+## Icestudio
+
+```bash
+open 08-memory/icestudio/font.ice
+```
+
+`font_small` with its address on your fingers. `sw2..sw0` picks the row, FIRE2
+and `sw3` pick the glyph, and the eight LEDs are the byte that comes back — so
+you can read H, E, L and O out of the lights one row at a time.
+
+The info panel carries the numbers this lesson is about: 32 x 8 = 256 bits
+synthesises to 9 LUT4, 4 PFUMX and 5 flip-flops with **no** block RAM, while
+lesson 07's 8 Kbit `font_full` becomes exactly 1 DP16KD from the same five
+lines of Verilog. The registered-read shape gives yosys the choice; the size
+decides which way it jumps.
+
 ## Exercises
 
 1. **Watch the shape matter.** Synthesise `ram_sp` and `ram_async` at

@@ -278,6 +278,30 @@ wants:
 Position 15 is deliberately malformed, so `led[7]` lights. Positions 5 (`sw`)
 and 6 (`beq`) are the two that write no register — `led[6]` goes dark.
 
+## Icestudio
+
+```bash
+open 12-datapath/icestudio/decode.ice
+```
+
+The decoder, one instruction at a time. The four switches step through eight
+real instructions — assembled by `tools/rvasm.py`, so the encodings are the
+genuine article — and the LEDs show `illegal`, `jump`, `branch`, `mem_write`,
+`mem_read`, `reg_we`, `alu_b_imm` and `alu_a_pc`.
+
+Two things are worth doing with it. Compare `add` with `sub`: they light
+exactly the same lamps, because the difference between them is `inst[30]`
+riding into `alu_op`, not a control line. Then switch to any `1xxx`, which is
+`0xffffffff`: `illegal` lights and every signal that *commits* something goes
+dark.
+
+**This is the lesson where the board runs out.** `decode` has 32 bits in and
+27 bits of control out; the ULX3S offers 4 switches, 7 buttons and 8 LEDs. So
+the switches pick from a table instead of driving `inst` directly, and the
+other outputs are declared inside the block and left unconnected. That is a
+working view of the decoder, not the decoder as a picture — see
+[choosing your path](../docs/src/paths.md).
+
 ## Exercises
 
 1. **Reproduce the mux count.** Write out the immediate table and count the

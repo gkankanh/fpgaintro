@@ -312,6 +312,26 @@ make prog
 
 If the top nibble never moves, the PLL did not lock.
 
+## Icestudio
+
+```bash
+open 04-clocks/icestudio/slowpath.ice
+```
+
+`slow_path` at `W` = 8: eight dependent adds between two registers, with the
+switches and buttons driving `a` and the LEDs showing `y`.
+
+Build it and nextpnr will report **no Fmax at all** — `No Fmax available; no
+interior timing paths found`. That is not a broken project, it is the
+definition doing its work: a critical path runs from one flip-flop to another,
+and here `a` arrives from pins and `y` leaves for pins. To measure the chain
+you need a register feeding it, which is what `slow_top.v` adds above.
+
+The lesson's other two halves stay on the editor path for structural reasons.
+`pll` instantiates `EHXPLLL`, an ECP5 hard block, and an Icestudio code block
+cannot instantiate anything; `cdc_bus` needs a second clock that the board's
+pin list does not offer.
+
 ## Exercises
 
 1. **Watch the global clock networks.** Run `make bit` and find the

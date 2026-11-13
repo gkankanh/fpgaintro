@@ -177,12 +177,19 @@ drifting behind it.
 
 ## Icestudio
 
-This lesson is editor-only. The coordinate chain is six wires of bit-slicing
-arithmetic, which is about where a block diagram stops helping: `tx[6:4]` as a
-picture is a box labelled `tx[6:4]`. See
-[choosing your path](../docs/src/paths.md).
+```bash
+open 07-font-rom/icestudio/text.ice
+```
 
-You can still see the structure:
+The whole lesson as one block: a clock in, five OLED pins and eight LEDs out.
+
+It is also an honest demonstration of where a block diagram stops helping. The
+coordinate chain is six wires of bit-slicing arithmetic, and `tx[6:4]` as a
+picture is a box labelled `tx[6:4]`. The canvas shows you the module's
+interface; the arithmetic is in the code block, because that is where
+arithmetic belongs. See [choosing your path](../docs/src/paths.md).
+
+The other direction is worth a look on this lesson in particular:
 
 ```bash
 make graph      # -> text_top.svg

@@ -1,0 +1,22 @@
+{
+  "name": "branch",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 13 - the branch unit: six conditions from three comparisons, and why signed is not unsigned.",
+  "from": { "file": "../branch_unit.v", "module": "branch_unit" },
+  "drives": [
+    { "name": "sw", "label": "rs1 (4-bit, sign-extended)",
+      "pins": ["sw_3", "sw_2", "sw_1", "sw_0"] }
+  ],
+  "inputs": [
+    { "port": "a", "tie": "{{28{sw[3]}}, sw}" },
+    { "port": "b", "const": "32'd7" },
+    { "port": "funct3", "label": "funct3: LEFT DOWN UP",
+      "pins": ["btn_5", "btn_4", "btn_3"] }
+  ],
+  "outputs": [
+    { "port": "taken", "pin": "led_0", "label": "taken" }
+  ],
+  "info": "## Lesson 13 - would this branch be taken?\n\nThe branch unit answers one question about two registers: `a` is rs1, `b` is rs2, and `taken` says whether the PC should move. Here `b` is fixed at 7 and `a` is the four slide switches **sign-extended** to 32 bits, so `0000`..`0111` are 0..7 and `1000`..`1111` are -8..-1.\n\nThe three buttons are `funct3`, held together:\n\n| hold | funct3 | branch | taken when | lights for |\n|---|---|---|---|---|\n| nothing | 000 | BEQ | a = 7 | `0111` only |\n| UP | 001 | BNE | a != 7 | everything but `0111` |\n| LEFT | 100 | BLT | a < 7, signed | `0000`..`0110` and all of `1xxx` |\n| LEFT+UP | 101 | BGE | a >= 7, signed | `0111` only |\n| LEFT+DOWN | 110 | BLTU | a < 7, unsigned | `0000`..`0110` only |\n| LEFT+DOWN+UP | 111 | BGEU | a >= 7, unsigned | `0111` and all of `1xxx` |\n\n### The experiment worth doing\n\nSet the switches to `1111`, which is -1.\n\n- Hold **LEFT** (BLT): the LED **lights**. -1 is less than 7.\n- Hold **LEFT+DOWN** (BLTU): it **goes out**. The same bit pattern read as unsigned is 4,294,967,295, which is not less than 7.\n\nThe bits did not change. The comparison did. That is why RV32I spends separate opcodes on signed and unsigned compare, and why the module computes one with `$signed()` and one without:\n\n```verilog\nwire ltu = (a < b);\nwire lt  = ($signed(a) < $signed(b));\n```\n\nSix branch conditions come out of three comparisons and some inversions - `BGE` is just `!lt`, `BNE` is just `!eq`. Six comparators would be four too many, and on a 32-bit datapath a comparator is not cheap.\n\n### Not on pins\n\nBoth operands are 32 bits wide, so one is a canvas constant and the other is four switches widened in the wire that feeds it. The `default` arm of the case - which is what stops `funct3` 010 and 011 from inferring a latch - is in the body where you can read it."
+}

@@ -1,0 +1,29 @@
+{
+  "name": "timer",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 17 - the machine timer: a 64-bit counter, a comparator, and the interrupt that comes out of it.",
+  "from": { "file": "../timer.v", "module": "timer" },
+  "drives": [
+    { "name": "asel", "pin": "sw_0",
+      "label": "register: down = mtime, up = mtimecmp" }
+  ],
+  "inputs": [
+    { "port": "clk",  "pin": "clk",   "label": "clk_25mhz" },
+    { "port": "rst",  "pin": "btn_3", "label": "rst (press UP)" },
+    { "port": "we",   "pin": "btn_2", "label": "we (press FIRE2 to arm)" },
+    { "port": "addr", "tie": "asel ? 8'h08 : 8'h00" },
+    { "port": "wdata", "const": "32'h40000000" }
+  ],
+  "outputs": [
+    { "port": "rdata", "internal": true },
+    { "port": "mtip",  "pin": "led_0", "label": "mtip" }
+  ],
+  "probes": [
+    { "name": "rd_hi", "label": "rdata[31:25]",
+      "expr": "rdata[31:25]",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1"] }
+  ],
+  "info": "## Lesson 17 - watch an interrupt become due\n\n`mtime` counts up once per clock and never stops. `mtimecmp` is a value you write. `mtip` is one comparison between them:\n\n```verilog\nassign mtip = (mtime >= mtimecmp);\n```\n\nThat is the entire timer interrupt. There is no edge, no latch, no pending bit to clear - just a comparator whose output happens to be wired into the trap logic.\n\n### Do this\n\n`mtimecmp` resets to all ones, which at 25 MHz is about 23,000 years away, so `mtip` starts dark.\n\n1. **sw0 down** - the port addresses `mtime`. LEDs 7..1 show `rdata[31:25]`, climbing: bit 25 flips every 1.34 s.\n2. **sw0 up, press FIRE2** - writes `0x40000000` into `mtimecmp`.\n3. **sw0 down** again and wait. `0x40000000` at 25 MHz is **43 seconds**; when `mtime` reaches it, **led0 lights** and stays lit.\n4. **Press UP** to reset. `mtime` goes back to 0, `mtimecmp` returns to all ones, and led0 goes out.\n\n### Why it stays lit\n\n`mtip` is `>=`, not `==`, and that is deliberate. An equality would be true for exactly one clock out of 2^64, so a core that happened to have interrupts disabled that cycle would miss the interrupt forever. With `>=` the condition is **level-triggered**: it stays asserted until software moves `mtimecmp` forward, which is exactly what a timer handler does as its last act. Missing it is not possible; ignoring it is a choice.\n\nThat is also why `rst` restores `mtimecmp` to all ones rather than zero. Reset to zero would mean `mtime >= mtimecmp` from the very first cycle, and the core would take a timer trap before it ever ran an instruction."
+}

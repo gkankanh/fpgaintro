@@ -1,0 +1,22 @@
+{
+  "name": "shifter",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 10 - the barrel shifter: one expression, three instructions, no clock.",
+  "from": { "file": "../shifter.v", "module": "shift_barrel" },
+  "params": [
+    { "name": "W", "value": 8 }
+  ],
+  "inputs": [
+    { "port": "a", "const": "8'b10110010" },
+    { "port": "sh",    "label": "sh (shift amount)", "pins": ["sw_2", "sw_1", "sw_0"] },
+    { "port": "right", "pin": "sw_3", "label": "right (sw3)" },
+    { "port": "arith", "pin": "btn_2", "label": "arith (hold FIRE2)" }
+  ],
+  "outputs": [
+    { "port": "y", "label": "y = a shifted",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 10 - a barrel shifter you can turn by hand\n\nThe whole module is one expression:\n\n```verilog\nassign y = right ? (arith ? ($signed(a) >>> sh) : (a >> sh))\n                 : (a << sh);\n```\n\nThree of RV32I's shifts - SLL, SRL and SRA - are that one line plus two control bits, and there is no clock anywhere in it. A barrel shifter is pure combinational logic: a tree of muxes, one level per bit of `sh`, which is why its cost grows as W log W and not W squared.\n\n### Turn it\n\n`a` is the constant `10110010`, editable on the canvas. Set `sw2..sw0` to the shift amount and watch the LEDs:\n\n- **sw3 down** - shift left. Zeros come in at the right.\n- **sw3 up** - shift right, zeros in at the left (SRL).\n- **sw3 up, holding FIRE2** - shift right *arithmetic* (SRA). Now the sign bit comes in instead, so `10110010` stays negative however far you shift it, and `11111111` is where it ends up.\n\nThat difference is the entire reason `$signed()` is in the expression, and the reason RV32I spends an instruction bit (`inst[30]`) distinguishing SRL from SRA.\n\n### Why the width is 8\n\nThe lesson's ALU is 32 bits wide; 32 inputs and 32 outputs is 64 pins the board does not have. At `W` = 8 the logic is identical and `sh` needs 3 bits instead of 5. The 32-bit version is verified in the editor path, where a testbench can drive all 32 bits at once: `cd 10-alu && make sim`."
+}

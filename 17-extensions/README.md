@@ -417,6 +417,27 @@ The illegal instruction is the one to appreciate. On lesson 13's machine the
 same word stopped the processor; here the machine reports it, the handler steps
 over it, and the program carries on and finishes normally.
 
+## Icestudio
+
+```bash
+open 17-extensions/icestudio/timer.ice
+```
+
+The machine timer, and `mtip` as the single comparison it actually is. With
+`sw0` down the LEDs show `mtime` climbing — bit 25 flips every 1.34 s at
+25 MHz. Put `sw0` up and press FIRE2 to write `0x40000000` into `mtimecmp`,
+then put it back down and wait. `0x40000000` at 25 MHz is 43 seconds; when
+`mtime` passes it, led0 lights and stays lit. UP resets both.
+
+**Stays** lit, because `mtip` is `mtime >= mtimecmp` and not `==`. An equality
+would be true for exactly one clock in 2^64, so a core that happened to have
+interrupts disabled that cycle would miss the interrupt forever. Level-
+triggered means ignoring it is a choice and missing it is not possible — and
+it is why `rst` restores `mtimecmp` to all ones rather than zero.
+
+`csr` and the multiplier stay on the editor path, since `cpu5t` wires them
+together.
+
 ## Exercises
 
 1. **Comment out `csr_write(mtvec, ...)`** in `main.c`. Predict where the

@@ -1,0 +1,22 @@
+{
+  "name": "slowpath",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 04 - eight dependent adds between two registers: a critical path you can measure.",
+  "from": { "file": "../slow_path.v", "module": "slow_path" },
+  "params": [
+    { "name": "W",     "value": 8 },
+    { "name": "DEPTH", "value": 8 }
+  ],
+  "inputs": [
+    { "port": "clk", "pin": "clk", "label": "clk_25mhz" },
+    { "port": "a", "label": "a (buttons = high nibble, switches = low)",
+      "pins": ["btn_6", "btn_5", "btn_4", "btn_3", "sw_3", "sw_2", "sw_1", "sw_0"] }
+  ],
+  "outputs": [
+    { "port": "y", "label": "y (8 adds later)",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 04 - the critical path, on the canvas\n\n`DEPTH` dependent adds sit between the input register and the output register. Each stage needs the previous stage's result, so the adders cannot be done in parallel: the delays add up, and their sum is the **critical path** that decides the clock this design can run at.\n\n### What to do with it\n\nBuild it and read the Icestudio console. You will find **no maximum frequency reported at all** — nextpnr says `No Fmax available; no interior timing paths found`. That is not a broken project, it is the definition doing its job: a critical path runs from one flip-flop to another, and here `a` arrives from the switches and `y` leaves for the LEDs, so the only paths are pad-to-register ones. Pads are not registers.\n\nTo *measure* the chain you need a register feeding it, which is what `slow_top.v` adds on the editor path — and that is where lesson 04's real surprise is waiting. Raising `DEPTH` does **not** reliably lower the achieved frequency: yosys works out what the chain computes and builds that instead of what was written, so the number can go *up* as you ask for more adds. The lesson README records both ways the experiment defeated itself, and the measurements.\n\nWhich is the thing to take away: you cannot read your critical path off your source code. Read the tool's report.\n\n### What this project cannot show you\n\nThe lesson's other two halves need a **PLL** to raise the clock until timing genuinely fails, and a two-clock crossing to make metastability visible. The PLL is an ECP5 hard block (`EHXPLLL`) and `cdc_bus` needs a second clock the board's pin list does not offer, so both stay on the editor path: `cd 04-clocks && make bit` is where you watch the deliberate failure happen."
+}

@@ -266,6 +266,24 @@ propagating all the way up, *then* the result multiplexer selecting between ten
 candidates. Both are on the critical path, which is exactly the argument lesson
 16 makes for splitting them across pipeline stages.
 
+## Icestudio
+
+```bash
+open 10-alu/icestudio/shifter.ice
+```
+
+`shift_barrel` at `W` = 8 — SLL, SRL and SRA in one expression, with no clock
+anywhere in it. `a` is a constant on the canvas, `sw2..sw0` set the shift
+amount, `sw3` picks the direction and FIRE2 makes a right shift arithmetic.
+
+Load `10110010`, shift right, then hold FIRE2: the sign bit fills in instead
+of zeros, and keeps filling until the whole byte is ones. That one bit of
+difference is what RV32I spends `inst[30]` on, and why the expression needs
+`$signed()`.
+
+The 32-bit ALU itself stays on the editor path. 32 bits in and 32 out is 64
+pins; the board has 19 usable. A testbench can drive all of them at once.
+
 ## Exercises
 
 1. **Mutate it yourself.** Change `ltu = ~carry` to `ltu = carry` and run

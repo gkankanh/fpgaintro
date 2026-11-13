@@ -98,6 +98,7 @@ From the **course root** instead:
 | `make sim-all` | every lesson's testbench — the regression suite |
 | `make lint-all` | verilator across every lesson |
 | `make ice` | regenerate the Icestudio projects |
+| `make icecheck` | compile-check every Icestudio project, no GUI |
 | `make docs` | build the lesson book |
 | `make help` | list these |
 

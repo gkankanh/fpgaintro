@@ -245,6 +245,23 @@ The demo synthesises to almost nothing (4 LUT4) because only one byte is ever
 observed and only sixteen registers are reachable, so yosys prunes the rest.
 The standalone module measurements above are the real numbers.
 
+## Icestudio
+
+```bash
+open 11-regfile/icestudio/regfile.ice
+```
+
+Eight registers of eight bits. Hold UP/DOWN/LEFT as the write address, press
+FIRE2 to store `0xA5`, then set `sw2..sw0` to read it back on the LEDs.
+
+Then write to register 0 and read it back. Nothing happens, and the reason is
+the line worth remembering: `rd1 = (rs1 == 0) ? 0 : regs[rs1]` is a mux on the
+*output*, not a zero stored in `regs[0]`. A stored zero works until something
+writes there; a mux cannot be wrong.
+
+`rs2` is tied off and `rd2` declared but unconnected, because eight LEDs is
+one read port's worth. Both ports are exercised together in the testbench.
+
 ## Exercises
 
 1. **Add a third read port.** How does the cost change — linearly, or worse?

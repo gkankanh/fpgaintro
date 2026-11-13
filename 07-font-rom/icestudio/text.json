@@ -1,0 +1,21 @@
+{
+  "name": "text",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 07 - HELLO on the OLED: a font ROM and per-pixel coordinate math, with no framebuffer.",
+  "from": { "file": "../text_top.v", "module": "text_top" },
+  "inputs": [
+    { "port": "clk_25mhz", "pin": "clk", "label": "clk_25mhz" }
+  ],
+  "outputs": [
+    { "port": "oled_csn",  "pin": "oled_csn",  "label": "oled_csn" },
+    { "port": "oled_resn", "pin": "oled_resn", "label": "oled_resn" },
+    { "port": "oled_dc",   "pin": "oled_dc",   "label": "oled_dc" },
+    { "port": "oled_clk",  "pin": "oled_clk",  "label": "oled_clk" },
+    { "port": "oled_mosi", "pin": "oled_mosi", "label": "oled_mosi" },
+    { "port": "led", "label": "led",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 07 - a font ROM, and no framebuffer\n\nLesson 06 computed each pixel from its coordinate. This does the same thing, but the function now includes a **lookup**: given (x, y), work out which glyph covers that pixel, which of its 8 rows, and which of its 8 columns, then read the row out of the font ROM and test one bit.\n\n```\nglyph = (x - X0) >> 4        two-times scaling, so 16 px per glyph\ncol   = ((x - X0) >> 1) & 7\nrow   = ((y - Y0) >> 1) & 7\npixel = font[{glyph, row}][7 - col]\n```\n\nA 96x64 framebuffer would be 6144 bits of block RAM. The ROM is 32 bytes. That is the whole argument for computing pixels instead of storing them, and it is why this fits in a lesson rather than a chapter.\n\n### What to look for\n\nThe `basic.code` block has one input and six outputs, and all the structure is in the body — because at this size the structure *is* arithmetic, and arithmetic is the one thing a schematic shows worse than text. Lesson 08 is where the memory arrives and the picture gets interesting again."
+}

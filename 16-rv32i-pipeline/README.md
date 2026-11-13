@@ -417,6 +417,27 @@ slightly above 1.60 rather than below it.
 > CPI section above. This measures the clock, which is the thing pipelining
 > actually buys, in the one unit that matters — seconds.
 
+## Icestudio
+
+```bash
+open 16-rv32i-pipeline/icestudio/memory.ice
+```
+
+`memory_sync` — the dual-port memory that makes the pipeline affordable. The
+switches are the address, port A reads it every cycle onto the LEDs, and FIRE2
+makes port B store `0xA5` there. Move the switches and come back: the byte is
+still where you left it, and the addresses you never wrote read as whatever
+the block RAM powered up with.
+
+`FILE` is empty, so this memory starts uninitialised. In simulation that is X,
+which is the correct answer — a memory you read before writing is a bug, and X
+is the only value that says so. On hardware there is no X: the block RAM comes
+up with something and the bug becomes invisible. Worth feeling once.
+
+`b_en` is tied low while `b_we` sits on a button, which makes the DP16KD's
+rule visible: a port reads or writes in a cycle, never both. Ask for both and
+you lose the block RAM and get the array in flip-flops instead.
+
 ## Exercises
 
 1. **Delete `&& !redirect`** from the illegal-instruction latch in `cpu5.v` and

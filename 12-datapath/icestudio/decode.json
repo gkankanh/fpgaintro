@@ -1,0 +1,40 @@
+{
+  "name": "decode",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 12 - the RV32I decoder: switch between eight real instructions and watch the control lines.",
+  "from": { "file": "../decode.v", "module": "decode" },
+  "drives": [
+    { "name": "sw", "label": "instruction select (sw3..sw0)",
+      "pins": ["sw_3", "sw_2", "sw_1", "sw_0"] }
+  ],
+  "inputs": [
+    { "port": "inst",
+      "tie": "sw == 4'd0 ? 32'h00500093 : sw == 4'd1 ? 32'h003100b3 : sw == 4'd2 ? 32'h403100b3 : sw == 4'd3 ? 32'h00012083 : sw == 4'd4 ? 32'h00112023 : sw == 4'd5 ? 32'hfe2086e3 : sw == 4'd6 ? 32'hfe9ff0ef : sw == 4'd7 ? 32'h123450b7 : 32'hffffffff" }
+  ],
+  "outputs": [
+    { "port": "rs1",        "internal": true },
+    { "port": "rs2",        "internal": true },
+    { "port": "rd",         "internal": true },
+    { "port": "reg_we",     "internal": true },
+    { "port": "alu_op",     "internal": true },
+    { "port": "alu_a_pc",   "internal": true },
+    { "port": "alu_a_zero", "internal": true },
+    { "port": "alu_b_imm",  "internal": true },
+    { "port": "mem_read",   "internal": true },
+    { "port": "mem_write",  "internal": true },
+    { "port": "mem_op",     "internal": true },
+    { "port": "branch",     "internal": true },
+    { "port": "jump",       "internal": true },
+    { "port": "jalr",       "internal": true },
+    { "port": "wb_src",     "internal": true },
+    { "port": "illegal",    "internal": true }
+  ],
+  "probes": [
+    { "name": "ctrl", "label": "illegal jump branch sw ld we imm pc",
+      "expr": "{illegal, jump, branch, mem_write, mem_read, reg_we, alu_b_imm, alu_a_pc}",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 12 - the decoder, one instruction at a time\n\nThe slide switches select a real instruction, assembled by `tools/rvasm.py`, and the LEDs show eight of the control lines it produces. Nothing here is clocked: a decoder is a function of the instruction word and nothing else.\n\n| sw3..sw0 | instruction | LEDs that light |\n|---|---|---|\n| 0000 | `addi x1, x0, 5` | we, imm |\n| 0001 | `add x1, x2, x3` | we |\n| 0010 | `sub x1, x2, x3` | we |\n| 0011 | `lw x1, 0(x2)` | ld, we, imm |\n| 0100 | `sw x1, 0(x2)` | sw, imm |\n| 0101 | `beq x1, x2, -20` | branch |\n| 0110 | `jal x1, -24` | jump, we, imm, pc |\n| 0111 | `lui x1, 0x12345` | we, imm |\n| 1xxx | `0xffffffff` | **illegal**, imm |\n\nThe LEDs, left to right, are `illegal`, `jump`, `branch`, `mem_write`, `mem_read`, `reg_we`, `alu_b_imm`, `alu_a_pc`.\n\n### What to notice\n\n`add` and `sub` light exactly the same lamps - verified in simulation, not by reading the source. The difference between them is not a control line at all - it is `inst[30]`, which rides into `alu_op` and changes what the ALU does, not what the datapath does. That is the decoder's whole design: say as little as possible, as early as possible.\n\nSwitch to any `1xxx` and `illegal` lights. Look at which lamps go out with it: `reg_we`, `mem_write`, `mem_read`, `branch` and `jump` - every line that **commits** something. An instruction the decoder does not recognise must not write a register, store a byte or move the PC, and that is exactly what you see.\n\n`alu_b_imm` stays lit, which is worth understanding rather than worrying about: with nothing committing, whether operand B comes from the immediate or from rs2 changes no state at all. It is a don't-care, and the decoder spends no logic forcing don't-cares to zero.\n\n### Why `inst` is not on pins\n\nThe decoder takes 32 bits in and produces 27 bits of control out. The board has 4 switches, 7 buttons and 8 LEDs, so the full interface is impossible by a factor of eight. The switches pick from a table instead, and the other 19 outputs are declared inside the block and left unconnected. This is the point at which schematic entry stops being the better view - which is why lessons 10 and up are editor-first, and why the lesson's own testbench drives all 32 bits: `cd 12-datapath && make sim`."
+}

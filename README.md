@@ -70,20 +70,20 @@ hands-on instructions. Neither repeats the other.
 | 01 | [gates](01-gates/) | AND/OR/NOT/NAND/NOR/XOR — and why an FPGA has none of them | every gate, exhaustively verified, plus NAND-only equivalents | editor + visual |
 | 02 | [combinational](02-combinational/) | muxes, decoders, adders; truth tables as tests | 7-segment hex decoder + 4-bit adder | editor + visual |
 | 03 | [sequential](03-sequential/) | D-flip-flops, registers, shift registers, debounce | a button that reliably counts once · **board** | editor + visual |
-| 04 | [clocks](04-clocks/) | setup/hold, critical paths, PLLs, clock domains, metastability | a PLL, a deliberate timing failure, a safe domain crossing · **board** | editor |
+| 04 | [clocks](04-clocks/) | setup/hold, critical paths, PLLs, clock domains, metastability | a PLL, a deliberate timing failure, a safe domain crossing · **board** | editor + visual |
 | 05 | [fsm](05-fsm/) | Moore vs Mealy, state encoding, one-hot | traffic light + button-sequence lock · **board** | editor + visual |
 | 06 | [spi-oled](06-spi-oled/) | an FSM that talks to a real chip on its terms | SSD1331 brought up, gradient drawn · **board** | editor + visual |
-| 07 | [font-rom](07-font-rom/) | ROM lookup and coordinate math, with no framebuffer | "HELLO" on the OLED · **board** | editor |
-| 08 | [memory](08-memory/) | BRAM inference, `$readmemh`, dual-port, framebuffers | the memory the CPU will use · **board** | editor |
+| 07 | [font-rom](07-font-rom/) | ROM lookup and coordinate math, with no framebuffer | "HELLO" on the OLED · **board** | editor + visual |
+| 08 | [memory](08-memory/) | BRAM inference, `$readmemh`, dual-port, framebuffers | the memory the CPU will use · **board** | editor + visual |
 | 09 | [uart](09-uart/) | serial framing, oversampling, baud generation | TX, RX, loopback, echo to your terminal · **board** | editor + visual |
-| 10 | [alu](10-alu/) | 32-bit arithmetic, overflow, signed compare, shifts | the RV32I ALU, randomised against a model | editor |
-| 11 | [regfile](11-regfile/) | 2-read/1-write arrays, x0, write-read bypass | 32×32 register file | editor |
-| 12 | [datapath](12-datapath/) | instruction formats, immediate generation, control | a decoder for all of RV32I | editor |
-| 13 | [rv32i-single](13-rv32i-single/) | fetch-decode-execute in one cycle | a CPU running hand-written assembly · **board** | editor |
+| 10 | [alu](10-alu/) | 32-bit arithmetic, overflow, signed compare, shifts | the RV32I ALU, randomised against a model | editor + visual |
+| 11 | [regfile](11-regfile/) | 2-read/1-write arrays, x0, write-read bypass | 32×32 register file | editor + visual |
+| 12 | [datapath](12-datapath/) | instruction formats, immediate generation, control | a decoder for all of RV32I | editor + visual |
+| 13 | [rv32i-single](13-rv32i-single/) | fetch-decode-execute in one cycle | a CPU running hand-written assembly · **board** | editor + visual |
 | 14 | [formal](14-formal/) | bounded model checking, `riscv-formal` | a *proof* the core implements RV32I | editor |
-| 15 | [soc](15-soc/) | memory maps, peripherals, linker scripts, crt0 | your CPU running compiled C · **board** | editor |
-| 16 | [rv32i-pipeline](16-rv32i-pipeline/) | pipelining, hazards, forwarding, stalls | 5-stage core, same programs, faster clock · **board** | editor |
-| 17 | [extensions](17-extensions/) | CSRs, traps, timer interrupts, the M extension | interrupts and hardware multiply · **board** | editor |
+| 15 | [soc](15-soc/) | memory maps, peripherals, linker scripts, crt0 | your CPU running compiled C · **board** | editor + visual |
+| 16 | [rv32i-pipeline](16-rv32i-pipeline/) | pipelining, hazards, forwarding, stalls | 5-stage core, same programs, faster clock · **board** | editor + visual |
+| 17 | [extensions](17-extensions/) | CSRs, traps, timer interrupts, the M extension | interrupts and hardware multiply · **board** | editor + visual |
 
 Lessons marked **board** want hardware to be satisfying; everything is still
 verified in simulation first. Every lesson can be completed with no board at
@@ -119,8 +119,8 @@ provide it. Recommended extensions are in `.vscode/extensions.json` and
 `Cmd+Shift+B` runs the current lesson's simulation.
 
 **Visual path — Icestudio.** You drag blocks onto a canvas and wire them up.
-This is the better way to *see* structure — a mux really does look like a mux —
-and it is excellent through lesson 09. Each dual-path lesson ships a project:
+This is the better way to *see* structure — a mux really does look like a mux.
+Every lesson but 14 ships a project:
 
 ```bash
 open 00-blinky/icestudio/blink.ice      # or File > Open in Icestudio
@@ -137,9 +137,24 @@ drifting copies. Going the other way, `make graph` renders your Verilog as a
 schematic — the picture and the text are two views of one thing, which is the
 single most useful idea in this whole course.
 
-Beyond lesson 09 the lessons are editor-only, and that is itself a lesson:
-schematic entry stops scaling somewhere around a 32-bit datapath. Icestudio
-stays useful at the top level, for wiring a finished core to pins.
+From lesson 10 the board runs out of pins before the design runs out of ports
+— a 32-bit decoder has 59 port bits and the board offers 4 switches, 7 buttons
+and 8 LEDs — so those projects feed the wide inputs from a constant you edit on
+the canvas, or from the switches through one expression, and bring the
+interesting bits of the output to the LEDs. That is honest about what it is: a
+working, buildable view of one leaf module, not the whole datapath. The
+editor-only verdict was the right one for *schematic entry* and the wrong one
+for *seeing the module*, and these lessons say which of the two they are
+offering.
+
+Lesson 14 has no project, for a reason worth knowing: every file in it is a
+property wrapper that instantiates the design under proof, and a code block
+cannot instantiate anything. A proof is not a bitstream.
+
+Every project is checked by `make icecheck`, which rebuilds the module
+Icestudio would generate and puts it through iverilog and yosys. That is how
+four silently broken projects were found — see
+[`icestudio/README.md`](icestudio/README.md).
 
 ## Repository layout
 
@@ -150,7 +165,7 @@ stays useful at the top level, for wiring a finished core to pins.
   tb_*.v                      testbench — always prints PASS or FAIL
   Makefile                    4 lines; the rules live in common/lesson.mk
   solutions/                  worked answers, where an exercise needs one
-  icestudio/                  .json spec + generated .ice (dual-path lessons)
+  icestudio/                  .json spec + generated .ice (all but lesson 14)
   diagrams/                   *.wave.json timing diagram sources
 
 common/
@@ -167,6 +182,7 @@ tools/
   check.sh                    verify the toolchain, smoke-test lesson 00
   code.sh                     launch VS Code with the toolchain on PATH
   mkice.py                    generate Icestudio projects from Verilog
+  icecheck.py                 compile-check them without opening the GUI
   mkwave.sh                   render WaveDrom timing diagrams to SVG
   mkdocs.sh                   build the HTML lessons
   mkpdf.sh                    build the course book (PDF)

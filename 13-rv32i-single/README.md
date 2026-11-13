@@ -291,6 +291,24 @@ you release the button.
 **This is a RISC-V processor you built, running a program you wrote, on a chip
 you configured.** Worth a moment.
 
+## Icestudio
+
+```bash
+open 13-rv32i-single/icestudio/branch.ice
+```
+
+`branch_unit` on its own, which is the corner of this core you can genuinely
+test by hand. `b` is fixed at 7, the switches are `a` sign-extended to 32
+bits, and the three buttons are `funct3`.
+
+Set the switches to `1111`, which is -1. Hold LEFT for BLT and the LED lights,
+because -1 is less than 7. Add DOWN for BLTU and it goes out, because the same
+bit pattern read as unsigned is 4,294,967,295. The bits did not change; the
+comparison did, and that is why RV32I spends separate opcodes on it.
+
+Six conditions come out of three comparisons and some inversions. The core
+itself stays on the editor path — `cpu.v` wires six modules together.
+
 ## Exercises
 
 1. **Reach the loop result.** `sw` only addresses `0x100`–`0x13C`. Change

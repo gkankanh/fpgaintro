@@ -100,7 +100,7 @@
           "id": "f2fda925-a440-572f-85e3-9bfc201f6f34",
           "type": "basic.code",
           "data": {
-            "code": "                           // always @(*) \u2014 it is not a register\nalways @(*) begin\n    case (hex)\n        //                   abcdefg\n        4'h0: seg = 7'b1111110;\n        4'h1: seg = 7'b0110000;\n        4'h2: seg = 7'b1101101;\n        4'h3: seg = 7'b1111001;\n        4'h4: seg = 7'b0110011;\n        4'h5: seg = 7'b1011011;\n        4'h6: seg = 7'b1011111;\n        4'h7: seg = 7'b1110000;\n        4'h8: seg = 7'b1111111;\n        4'h9: seg = 7'b1111011;\n        4'hA: seg = 7'b1110111;\n        4'hB: seg = 7'b0011111;   // lowercase b: 8 and B would be identical\n        4'hC: seg = 7'b1001110;\n        4'hD: seg = 7'b0111101;   // lowercase d, for the same reason\n        4'hE: seg = 7'b1001111;\n        4'hF: seg = 7'b1000111;\n        // Every one of the 16 cases is covered, so this `default` can\n        // never fire. It is here anyway, because a combinational `always`\n        // block that does not assign on every path infers a LATCH \u2014 a\n        // storage element with no clock, which is almost never what you\n        // meant. Make the default a reflex; `make lint` will tell you when\n        // you forget.\n        default: seg = 7'b0000000;\n    endcase\nend\n",
+            "code": "// ---------------------------------------------------------------\n// Added by tools/mkice.py, not present in the lesson's .v:\n// Icestudio declares a code block's outputs as wires, and the\n// board has fewer pins than this module has port bits. See\n// icestudio/README.md. The module's own text below is verbatim.\n// ---------------------------------------------------------------\nreg [6:0] seg;\n\n                           // always @(*) \u2014 it is not a register\nalways @(*) begin\n    case (hex)\n        //                   abcdefg\n        4'h0: seg = 7'b1111110;\n        4'h1: seg = 7'b0110000;\n        4'h2: seg = 7'b1101101;\n        4'h3: seg = 7'b1111001;\n        4'h4: seg = 7'b0110011;\n        4'h5: seg = 7'b1011011;\n        4'h6: seg = 7'b1011111;\n        4'h7: seg = 7'b1110000;\n        4'h8: seg = 7'b1111111;\n        4'h9: seg = 7'b1111011;\n        4'hA: seg = 7'b1110111;\n        4'hB: seg = 7'b0011111;   // lowercase b: 8 and B would be identical\n        4'hC: seg = 7'b1001110;\n        4'hD: seg = 7'b0111101;   // lowercase d, for the same reason\n        4'hE: seg = 7'b1001111;\n        4'hF: seg = 7'b1000111;\n        // Every one of the 16 cases is covered, so this `default` can\n        // never fire. It is here anyway, because a combinational `always`\n        // block that does not assign on every path infers a LATCH \u2014 a\n        // storage element with no clock, which is almost never what you\n        // meant. Make the default a reflex; `make lint` will tell you when\n        // you forget.\n        default: seg = 7'b0000000;\n    endcase\nend\n\n// ---- added by tools/mkice.py: port aliases and probes ----\nassign seg_o = seg;\n",
             "params": [],
             "ports": {
               "in": [
@@ -112,7 +112,7 @@
               ],
               "out": [
                 {
-                  "name": "seg",
+                  "name": "seg_o",
                   "range": "[6:0]",
                   "size": 7
                 }
@@ -152,7 +152,7 @@
         {
           "source": {
             "block": "f2fda925-a440-572f-85e3-9bfc201f6f34",
-            "port": "seg"
+            "port": "seg_o"
           },
           "target": {
             "block": "84176466-6220-51ce-816e-55ff401877c4",

@@ -500,6 +500,29 @@ of garbage is a baud mismatch; a screen full of nothing with `led[5]` lit is an
 illegal instruction, which means `firmware.hex` and the memory disagree about
 size or contents.
 
+## Icestudio
+
+```bash
+open 15-soc/icestudio/busdec.ice
+```
+
+`busdec` — the whole memory map, which is two comparisons. The switches are
+the top nibble of the address, so `0000` lights `sel_mem` and `1000` lights
+`sel_io`. Hold FIRE2 on anything else and `fault` lights.
+
+That asymmetry is the lesson on one canvas: `sel_mem` and `sel_io` are
+functions of the address and safe to compute every cycle, while `fault` needs
+`access` as well, because an address bus idling on a nonsense value is normal
+and reporting it would cry wolf.
+
+Worth breaking on purpose: raise `MEM_BYTES` on the constant block to
+`0x90000000` and rebuild. Now `0x80000000` lights both `sel_mem` and `sel_io`,
+because the regions overlap and nothing in the module says they may not. A
+decoder's correctness is entirely in the arithmetic of its bounds.
+
+The CPU and the SoC around it stay on the editor path; `soc.v` wires five
+modules together.
+
 ## Exercises
 
 1. **Delete the `volatile` from the status-poll in `soc.h`** — change

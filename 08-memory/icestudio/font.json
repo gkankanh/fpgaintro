@@ -1,0 +1,18 @@
+{
+  "name": "font",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 08 - a 32x8 ROM, addressed by hand: four glyphs, eight rows each, read out on the LEDs.",
+  "from": { "file": "../rom.v", "module": "font_small" },
+  "inputs": [
+    { "port": "clk", "pin": "clk", "label": "clk_25mhz" },
+    { "port": "addr", "label": "addr: FIRE2+sw3 = glyph, sw2..sw0 = row",
+      "pins": ["btn_2", "sw_3", "sw_2", "sw_1", "sw_0"] }
+  ],
+  "outputs": [
+    { "port": "dout", "label": "dout (one glyph row)",
+      "pins": ["led_7", "led_6", "led_5", "led_4", "led_3", "led_2", "led_1", "led_0"] }
+  ],
+  "info": "## Lesson 08 - read a ROM with your fingers\n\nThe same 32-entry font ROM lesson 07 reads at 25 MHz, addressed by hand instead. `addr[4:3]` picks the glyph and `addr[2:0]` picks the row, so:\n\n| FIRE2 | sw3 | glyph |\n|---|---|---|\n| released | 0 | **H** |\n| released | 1 | **E** |\n| held | 0 | **L** |\n| held | 1 | **O** |\n\nHold FIRE2 for the second pair, then walk `sw2..sw0` through 0..7 and read the glyph off the LEDs one row at a time. The H really is there in the lights — rows 0 to 3 are `01100110`, `01100110`, `01100110`, `01111110`: two uprights, then the crossbar.\n\n### The point\n\n`always @(posedge clk) dout <= mem[addr];` is the shape that *can* become block RAM: a registered read, one address, no asynchronous path from `addr` to `dout`. The shape gives yosys the choice. The size decides which way it jumps, and the measured numbers are the argument:\n\n| module | contents | synth_ecp5 gives |\n|---|---|---|\n| `font_small` | 32 x 8 = 256 bits | 9 LUT4 + 4 PFUMX + 5 FF, **no** block RAM |\n| `font_full` | 1024 x 8 = 8 Kbit | **1 DP16KD**, and no LUTs at all |\n\nSo this project's ROM is built out of logic, because 256 bits inside an 18 Kbit block RAM would waste 98% of it. Lesson 07's full font gets the block RAM instead, from the same five lines of Verilog.\n\nChange the *shape*, though, and the choice disappears. `assign dout = mem[addr];` asks for an asynchronous read, which a DP16KD cannot do at any size, so even `font_full` would come back as a mountain of LUTs. That one clock of latency is what you are paying for the memory — and it is why lesson 16's pipeline needs a fetch stage of its own."
+}

@@ -235,6 +235,23 @@ lesson's worth of work on its own and is not here yet.
 What *is* here is the technique it rests on, applied to the two components the
 CPU is mostly made of.
 
+## Icestudio
+
+This is the one lesson with no project, and the reason is structural rather
+than a judgement about pictures.
+
+Every file here is a property wrapper. `alu_props.v`, `regfile_props.v` and
+`vacuous.v` each **instantiate** the design under proof and assert things
+about it. An Icestudio `basic.code` block holds a bare module body and cannot
+instantiate anything — Icestudio resolves blocks on its canvas, not through a
+Verilog namespace — so there is no leaf module here to ship, and
+`tools/mkice.py` refuses hierarchy rather than emitting something that cannot
+build.
+
+Which is the right answer anyway: what this lesson produces is a proof, not a
+bitstream. The ALU and register file it proves things about have projects of
+their own, in lessons 10 and 11.
+
 ## Exercises
 
 1. **Break something else.** Change `ltu = ~carry` to `ltu = carry` in lesson

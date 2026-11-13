@@ -1,0 +1,25 @@
+{
+  "name": "busdec",
+  "board": "ulx3s-85f",
+  "version": "1.0",
+  "author": "The Open FPGA Course",
+  "description": "Lesson 15 - the address decoder: three comparisons that turn a 32-bit address into a memory map.",
+  "from": { "file": "../busdec.v", "module": "busdec" },
+  "params": [
+    { "name": "MEM_BYTES", "value": 4096 }
+  ],
+  "drives": [
+    { "name": "sw", "label": "addr[31:28] (sw3..sw0)",
+      "pins": ["sw_3", "sw_2", "sw_1", "sw_0"] }
+  ],
+  "inputs": [
+    { "port": "addr", "tie": "{sw, 28'h0000000}" },
+    { "port": "access", "pin": "btn_2", "label": "access (hold FIRE2)" }
+  ],
+  "outputs": [
+    { "port": "sel_mem", "pin": "led_0", "label": "sel_mem" },
+    { "port": "sel_io",  "pin": "led_1", "label": "sel_io" },
+    { "port": "fault",   "pin": "led_2", "label": "fault" }
+  ],
+  "info": "## Lesson 15 - a memory map is two comparators\n\nThe switches set the top nibble of a 32-bit address; the rest is zero. So:\n\n| sw3..sw0 | address | lights |\n|---|---|---|\n| `0000` | `0x00000000` | **sel_mem** - inside the 4 KB array |\n| `1000` | `0x80000000` | **sel_io** - the peripheral window |\n| anything else | e.g. `0x40000000` | nothing, until you hold FIRE2 |\n\nHold **FIRE2** on an address that is neither, and **fault** lights. That is the whole decoder:\n\n```verilog\nwire in_mem = (addr < MEM_BYTES);\nwire in_io  = (addr[31:8] == 24'h80_0000);\nassign fault = access && !in_mem && !in_io;\n```\n\n### Why `fault` needs `access`\n\n`sel_mem` and `sel_io` are pure functions of the address, so they are safe to compute every cycle whether or not anything is happening. `fault` is not: an address bus idling on a nonsense value is normal, and reporting it would cry wolf on every cycle the CPU is not accessing memory. `access` is what makes the difference between *where the bus is pointing* and *a real access to that place* - which is why the signal exists at all, and why lesson 16 widens it from \"a store\" to \"a store or a load\".\n\n### Try breaking it\n\nRaise `MEM_BYTES` on the constant block to `0x90000000` and rebuild. Now `0x80000000` lights **both** `sel_mem` and `sel_io`, because the regions overlap and nothing in this module says they may not. A real decoder's correctness is entirely in the arithmetic of its bounds - there is no structure to protect you."
+}

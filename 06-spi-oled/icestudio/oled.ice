@@ -184,7 +184,7 @@
           "id": "32d184d0-ff49-520a-81a8-5a1b4f6772ff",
           "type": "basic.code",
           "data": {
-            "code": "assign oled_csn = 1'b0;          // sole device on the bus: keep selected\n\n// ---------------- init ROM: SSD1331 datasheet power-up sequence ----------\nlocalparam ROM_LEN = 31;\nreg [7:0] rom [0:ROM_LEN-1];\ninitial begin\n    rom[ 0]=8'hAE;                            // display off\n    rom[ 1]=8'hA0; rom[ 2]=8'h72;             // remap: RGB order, 65k color\n    rom[ 3]=8'hA1; rom[ 4]=8'h00;             // start line 0\n    rom[ 5]=8'hA2; rom[ 6]=8'h00;             // display offset 0\n    rom[ 7]=8'hA4;                            // normal display\n    rom[ 8]=8'hA8; rom[ 9]=8'h3F;             // multiplex 1/64\n    rom[10]=8'hAD; rom[11]=8'h8E;             // master configuration\n    rom[12]=8'hB0; rom[13]=8'h0B;             // power save off\n    rom[14]=8'hB1; rom[15]=8'h31;             // phase 1/2 period\n    rom[16]=8'hB3; rom[17]=8'hF0;             // display clock divide\n    rom[18]=8'hBB; rom[19]=8'h3A;             // precharge level\n    rom[20]=8'hBE; rom[21]=8'h3E;             // VCOMH\n    rom[22]=8'h87; rom[23]=8'h06;             // master current\n    rom[24]=8'hAF;                            // display ON\n    rom[25]=8'h15; rom[26]=8'h00; rom[27]=8'h5F; // column window 0..95\n    rom[28]=8'h75; rom[29]=8'h00; rom[30]=8'h3F; // row window 0..63\nend\n\n// ---------------- byte-level SPI engine (mode 3-ish, MSB first) ----------\n// Each bit takes 4 system clocks -> SCLK = 6.25 MHz (SSD1331 max ~6.6 MHz).\nreg  [7:0] shift;\nreg  [1:0] phase = 0;\nreg  [2:0] bitn  = 0;\nreg        busy  = 0;\nreg        start = 0;\nreg  [7:0] data;\n\nalways @(posedge clk_25mhz) begin\n    if (!busy) begin\n        if (start) begin\n            shift <= data; busy <= 1; phase <= 0; bitn <= 0;\n        end\n    end else begin\n        phase <= phase + 1'b1;\n        case (phase)\n            2'd0: begin oled_clk <= 0; oled_mosi <= shift[7]; end\n            2'd2: oled_clk <= 1;\n            2'd3: begin\n                shift <= {shift[6:0], 1'b0};\n                bitn  <= bitn + 1'b1;\n                if (bitn == 3'd7) busy <= 0;\n            end\n            // Phase 1 deliberately does nothing: it is the setup time\n            // between driving MOSI and raising SCLK. Stated explicitly\n            // because an unlisted case is how you accidentally forget one.\n            //\n            // Note this is safe in a way the same omission would not be in\n            // a combinational block: this block is clocked, so \"no\n            // assignment\" means the registers hold \u2014 it is not a latch.\n            default: ;\n        endcase\n    end\nend\n\n// ---------------- top-level sequencer ------------------------------------\nlocalparam S_RESET = 0, S_WAIT = 1, S_INIT = 2, S_PIXEL = 3;\nreg [1:0]  state = S_RESET;\nreg [15:0] wait_cnt = 0;\nreg [4:0]  rom_i = 0;\n\nreg [6:0] x = 0;                 // 0..95\nreg [5:0] y = 0;                 // 0..63\nreg [7:0] frame = 0;\nreg       lohi = 0;              // which half of the 16-bit pixel\n\n// RGB565 gradient: red follows x, green follows y, blue breathes per frame\nwire [15:0] pixel = { x[6:2], y[5:0], frame[7:3] };\n\nalways @(posedge clk_25mhz) begin\n    start <= 0;\n    case (state)\n        S_RESET: begin\n            oled_resn <= 0;\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt[11:0]) begin oled_resn <= 1; state <= S_WAIT; wait_cnt <= 0; end\n        end\n        S_WAIT: begin                        // let the chip wake after reset\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt) state <= S_INIT;  // ~2.6 ms\n        end\n        S_INIT: if (!busy && !start) begin\n            oled_dc <= 0;\n            data    <= rom[rom_i];\n            start   <= 1;\n            if (rom_i == ROM_LEN-1) state <= S_PIXEL;\n            rom_i   <= rom_i + 1'b1;\n        end\n        S_PIXEL: if (!busy && !start) begin\n            oled_dc <= 1;\n            data    <= lohi ? pixel[7:0] : pixel[15:8];\n            start   <= 1;\n            lohi    <= ~lohi;\n            if (lohi) begin                  // finished low byte -> next pixel\n                if (x == 7'd95) begin\n                    x <= 0;\n                    if (y == 6'd63) begin y <= 0; frame <= frame + 1'b1; end\n                    else            y <= y + 1'b1;\n                end else x <= x + 1'b1;\n            end\n        end\n    endcase\nend\n\nassign led = {state, frame[7:2]};   // debug: state + frame counter\n",
+            "code": "// ---------------------------------------------------------------\n// Added by tools/mkice.py, not present in the lesson's .v:\n// Icestudio declares a code block's outputs as wires, and the\n// board has fewer pins than this module has port bits. See\n// icestudio/README.md. The module's own text below is verbatim.\n// ---------------------------------------------------------------\nreg oled_resn = 0;\nreg oled_dc = 0;\nreg oled_clk = 0;\nreg oled_mosi = 0;\n\nassign oled_csn = 1'b0;          // sole device on the bus: keep selected\n\n// ---------------- init ROM: SSD1331 datasheet power-up sequence ----------\nlocalparam ROM_LEN = 31;\nreg [7:0] rom [0:ROM_LEN-1];\ninitial begin\n    rom[ 0]=8'hAE;                            // display off\n    rom[ 1]=8'hA0; rom[ 2]=8'h72;             // remap: RGB order, 65k color\n    rom[ 3]=8'hA1; rom[ 4]=8'h00;             // start line 0\n    rom[ 5]=8'hA2; rom[ 6]=8'h00;             // display offset 0\n    rom[ 7]=8'hA4;                            // normal display\n    rom[ 8]=8'hA8; rom[ 9]=8'h3F;             // multiplex 1/64\n    rom[10]=8'hAD; rom[11]=8'h8E;             // master configuration\n    rom[12]=8'hB0; rom[13]=8'h0B;             // power save off\n    rom[14]=8'hB1; rom[15]=8'h31;             // phase 1/2 period\n    rom[16]=8'hB3; rom[17]=8'hF0;             // display clock divide\n    rom[18]=8'hBB; rom[19]=8'h3A;             // precharge level\n    rom[20]=8'hBE; rom[21]=8'h3E;             // VCOMH\n    rom[22]=8'h87; rom[23]=8'h06;             // master current\n    rom[24]=8'hAF;                            // display ON\n    rom[25]=8'h15; rom[26]=8'h00; rom[27]=8'h5F; // column window 0..95\n    rom[28]=8'h75; rom[29]=8'h00; rom[30]=8'h3F; // row window 0..63\nend\n\n// ---------------- byte-level SPI engine (mode 3-ish, MSB first) ----------\n// Each bit takes 4 system clocks -> SCLK = 6.25 MHz (SSD1331 max ~6.6 MHz).\nreg  [7:0] shift;\nreg  [1:0] phase = 0;\nreg  [2:0] bitn  = 0;\nreg        busy  = 0;\nreg        start = 0;\nreg  [7:0] data;\n\nalways @(posedge clk_25mhz) begin\n    if (!busy) begin\n        if (start) begin\n            shift <= data; busy <= 1; phase <= 0; bitn <= 0;\n        end\n    end else begin\n        phase <= phase + 1'b1;\n        case (phase)\n            2'd0: begin oled_clk <= 0; oled_mosi <= shift[7]; end\n            2'd2: oled_clk <= 1;\n            2'd3: begin\n                shift <= {shift[6:0], 1'b0};\n                bitn  <= bitn + 1'b1;\n                if (bitn == 3'd7) busy <= 0;\n            end\n            // Phase 1 deliberately does nothing: it is the setup time\n            // between driving MOSI and raising SCLK. Stated explicitly\n            // because an unlisted case is how you accidentally forget one.\n            //\n            // Note this is safe in a way the same omission would not be in\n            // a combinational block: this block is clocked, so \"no\n            // assignment\" means the registers hold \u2014 it is not a latch.\n            default: ;\n        endcase\n    end\nend\n\n// ---------------- top-level sequencer ------------------------------------\nlocalparam S_RESET = 0, S_WAIT = 1, S_INIT = 2, S_PIXEL = 3;\nreg [1:0]  state = S_RESET;\nreg [15:0] wait_cnt = 0;\nreg [4:0]  rom_i = 0;\n\nreg [6:0] x = 0;                 // 0..95\nreg [5:0] y = 0;                 // 0..63\nreg [7:0] frame = 0;\nreg       lohi = 0;              // which half of the 16-bit pixel\n\n// RGB565 gradient: red follows x, green follows y, blue breathes per frame\nwire [15:0] pixel = { x[6:2], y[5:0], frame[7:3] };\n\nalways @(posedge clk_25mhz) begin\n    start <= 0;\n    case (state)\n        S_RESET: begin\n            oled_resn <= 0;\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt[11:0]) begin oled_resn <= 1; state <= S_WAIT; wait_cnt <= 0; end\n        end\n        S_WAIT: begin                        // let the chip wake after reset\n            wait_cnt <= wait_cnt + 1'b1;\n            if (&wait_cnt) state <= S_INIT;  // ~2.6 ms\n        end\n        S_INIT: if (!busy && !start) begin\n            oled_dc <= 0;\n            data    <= rom[rom_i];\n            start   <= 1;\n            if (rom_i == ROM_LEN-1) state <= S_PIXEL;\n            rom_i   <= rom_i + 1'b1;\n        end\n        S_PIXEL: if (!busy && !start) begin\n            oled_dc <= 1;\n            data    <= lohi ? pixel[7:0] : pixel[15:8];\n            start   <= 1;\n            lohi    <= ~lohi;\n            if (lohi) begin                  // finished low byte -> next pixel\n                if (x == 7'd95) begin\n                    x <= 0;\n                    if (y == 6'd63) begin y <= 0; frame <= frame + 1'b1; end\n                    else            y <= y + 1'b1;\n                end else x <= x + 1'b1;\n            end\n        end\n    endcase\nend\n\nassign led = {state, frame[7:2]};   // debug: state + frame counter\n\n// ---- added by tools/mkice.py: port aliases and probes ----\nassign oled_resn_o = oled_resn;\nassign oled_dc_o = oled_dc;\nassign oled_clk_o = oled_clk;\nassign oled_mosi_o = oled_mosi;\n",
             "params": [],
             "ports": {
               "in": [
@@ -197,16 +197,16 @@
                   "name": "oled_csn"
                 },
                 {
-                  "name": "oled_resn"
+                  "name": "oled_resn_o"
                 },
                 {
-                  "name": "oled_dc"
+                  "name": "oled_dc_o"
                 },
                 {
-                  "name": "oled_clk"
+                  "name": "oled_clk_o"
                 },
                 {
-                  "name": "oled_mosi"
+                  "name": "oled_mosi_o"
                 },
                 {
                   "name": "led",
@@ -258,7 +258,7 @@
         {
           "source": {
             "block": "32d184d0-ff49-520a-81a8-5a1b4f6772ff",
-            "port": "oled_resn"
+            "port": "oled_resn_o"
           },
           "target": {
             "block": "15b273ec-2a10-5fd5-9696-7b57bf266a51",
@@ -268,7 +268,7 @@
         {
           "source": {
             "block": "32d184d0-ff49-520a-81a8-5a1b4f6772ff",
-            "port": "oled_dc"
+            "port": "oled_dc_o"
           },
           "target": {
             "block": "98d02e9c-801e-5cd8-892e-f2bfb66ab44f",
@@ -278,7 +278,7 @@
         {
           "source": {
             "block": "32d184d0-ff49-520a-81a8-5a1b4f6772ff",
-            "port": "oled_clk"
+            "port": "oled_clk_o"
           },
           "target": {
             "block": "4e94dfa9-0159-5273-934f-6c43b5c7ecd8",
@@ -288,7 +288,7 @@
         {
           "source": {
             "block": "32d184d0-ff49-520a-81a8-5a1b4f6772ff",
-            "port": "oled_mosi"
+            "port": "oled_mosi_o"
           },
           "target": {
             "block": "382db84d-b598-552d-8902-5a2c910f587c",
