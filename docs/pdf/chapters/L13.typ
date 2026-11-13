@@ -210,4 +210,4 @@ you configured. Worth a moment.
 
 #strong[What to keep.] One cycle for every instruction means every instruction pays for the slowest one.
 
-#strong[What comes next.] Lesson 14 proves components correct rather than testing them. Lessons 15 to 17, which are planned rather than built, take this core to a system that runs C, a pipeline, and traps.
+#strong[What comes next.] Lesson 14 proves components correct rather than testing them. Lessons 15 to 17 then take this core to a system that runs compiled C, to a five-stage pipeline, and to traps and interrupts.

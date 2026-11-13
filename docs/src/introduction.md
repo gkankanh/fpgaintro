@@ -4,9 +4,8 @@ A hands-on refresher in digital design, worked from a single flip-flop to a
 32-bit RISC-V CPU running real programs, on a Radiona **ULX3S 85F** (Lattice
 ECP5 `LFE5U-85F-6BG381C`) with a fully open toolchain.
 
-> **Status.** Lessons 00–14 are built, tested and measured. Lessons 15–17 are
-> planned: their scope and theory are written down, but their code and measured
-> results do not exist yet.
+> **Status.** All eighteen lessons, 00–17, are built, tested and measured.
+> Every number came from the tools, and every testbench runs.
 
 ## Who this is for
 
@@ -45,10 +44,12 @@ A working RV32I core. Not a toy: lesson 13 runs assembled programs on the
 board, and lesson 14 proves its ALU correct for every possible input rather
 than testing a sample.
 
-The planned lessons go further — a core that runs C compiled by a standard
-RISC-V GCC, prints to your terminal over UART and draws on the OLED, and then
-the same core again, pipelined, to see what pipelining really costs in hazard
-logic. Those three lessons are described, not yet built.
+The last three lessons go further — a core that runs C compiled by a standard
+RISC-V GCC and prints to your terminal over UART; the same core again,
+pipelined, measured against the first to see what pipelining really costs in
+hazard logic and what it buys in clock; and then CSRs, traps and a timer
+interrupt, so that an illegal instruction is reported to a handler you wrote
+rather than stopping the machine.
 
 Everything in between exists because the CPU needs it. The register file in
 lesson 11 is the CPU's register file. The UART in lesson 09 is how the CPU will

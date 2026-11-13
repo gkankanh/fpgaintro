@@ -207,6 +207,48 @@
       "problemMatcher": []
     },
     {
+      "label": "▶ deploy  15 soc",
+      "type": "shell",
+      "command": "make bit && make prog",
+      "options": {
+        "cwd": "${workspaceFolder}/15-soc"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "▶ deploy  16 rv32i pipeline",
+      "type": "shell",
+      "command": "make bit && make prog",
+      "options": {
+        "cwd": "${workspaceFolder}/16-rv32i-pipeline"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "▶ deploy  17 extensions",
+      "type": "shell",
+      "command": "make bit && make prog",
+      "options": {
+        "cwd": "${workspaceFolder}/17-extensions"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "✓ sim     00 blinky",
       "type": "shell",
       "command": "make sim",
@@ -590,6 +632,87 @@
       "command": "make sim",
       "options": {
         "cwd": "${workspaceFolder}/14-formal"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "label": "✓ sim     15 soc",
+      "type": "shell",
+      "command": "make sim",
+      "options": {
+        "cwd": "${workspaceFolder}/15-soc"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "label": "✓ sim     16 rv32i pipeline",
+      "type": "shell",
+      "command": "make sim",
+      "options": {
+        "cwd": "${workspaceFolder}/16-rv32i-pipeline"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "verilog",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(error|warning|sorry):\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "label": "✓ sim     17 extensions",
+      "type": "shell",
+      "command": "make sim",
+      "options": {
+        "cwd": "${workspaceFolder}/17-extensions"
       },
       "presentation": {
         "reveal": "always",

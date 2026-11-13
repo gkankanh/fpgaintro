@@ -62,8 +62,8 @@
   ]
   #v(10mm)
   #text(size: 10.5pt, fill: mute)[
-    Lessons 00–14 are built, tested and measured.\
-    Lessons 15–17 are planned: scope settled, nothing measured.
+    Eighteen lessons, 00–17, all built, tested and measured.\
+    Every number in this book came out of the tools.
   ]
   #v(1fr)
   #text(size: 10pt, fill: mute)[

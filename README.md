@@ -4,10 +4,10 @@ Hands-on digital design on an FPGA, worked all the way from a single logic
 gate to a **32-bit RISC-V CPU running real programs on real silicon**, using a
 fully open toolchain.
 
-**Status.** Lessons 00–14 are built, tested and measured — every number in them
-came from the tools, and every testbench runs. Lessons 15–17, which take the
-core to compiled C, a pipeline and interrupts, are **planned**: their scope is
-settled and written down, their code and measurements are not here yet.
+**Status.** All eighteen lessons, 00–17, are built, tested and measured —
+every number in them came from the tools on the author's machine, and every
+testbench runs. `make sim-all` is the regression suite and it must print
+`ALL LESSONS PASS`.
 
 Built and measured on a Radiona **ULX3S 85F** (Lattice ECP5 `LFE5U-85F`) —
 though roughly half the course is board-independent.
@@ -86,13 +86,13 @@ hands-on instructions. Neither repeats the other.
 | 17 | [extensions](17-extensions/) | CSRs, traps, timer interrupts, the M extension | interrupts and hardware multiply · **board** | editor |
 
 Lessons marked **board** want hardware to be satisfying; everything is still
-verified in simulation first. Lessons 00–14 can be completed with no board at
+verified in simulation first. Every lesson can be completed with no board at
 all. Lesson 17 is optional — the course's goal is met at lesson 16.
 
-Fifteen lessons are written and working today — 00 through 14 — each with a
-self-checking testbench and real, measured synthesis numbers. The rest have
-settled scope and a planned outline in their README, and are being built in
-order.
+Eighteen lessons, each with a self-checking testbench and real, measured
+synthesis numbers. By lesson 13 you have a RISC-V CPU running programs you
+wrote; by 15 it runs C you compiled; by 16 it is pipelined and nearly twice as
+fast; by 17 it takes interrupts.
 
 ## Choosing your path
 
@@ -230,8 +230,8 @@ Everything is open source, and `tools/install.sh` fetches it all:
 
 A **ULX3S 85F** — Lattice ECP5 `LFE5U-85F-6BG381C`, 25 MHz clock, 8 LEDs,
 7 buttons, 4 slide switches, an SSD1331 colour OLED, FTDI USB-serial, SDRAM and
-an SD slot. Lessons 00–14 need no board at all; lessons 03, 06, 07, 09, 13 and 15
-are much more satisfying with one. Pin names come from `common/ulx3s_v20.lpf`.
+an SD slot. No lesson needs the board; lessons 03, 06, 07, 09 and 13 to 17 are
+much more satisfying with one. Pin names come from `common/ulx3s_v20.lpf`.
 
 ## Contributing a lesson
 

@@ -180,4 +180,4 @@ testing cannot is #strong[search] rather than sample.
 
 #strong[What to keep.] A proof is only as strong as its assumptions, and a passing proof that covers nothing is worse than no proof.
 
-#strong[What comes next.] The remaining lessons are planned rather than built; their scope is described, and nothing in them is measured.
+#strong[What comes next.] Lesson 15 puts a memory map and peripherals around this core so that it can run C, and discovers that its memory does not fit in the board's clock.

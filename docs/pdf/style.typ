@@ -124,28 +124,6 @@
 }
 
 
-// ----------------------------------------------------------------- planned
-// Lessons 15-17 have settled scope but are not yet built. Saying so
-// prominently is better than letting a reader discover it at the repository.
-
-#let planned = block(
-  width: 100%,
-  inset: (x: 11pt, y: 8pt),
-  radius: 3pt,
-  fill: rgb("#fff8e6"),
-  stroke: (left: 2.5pt + warm),
-  [
-    #text(fill: warm, weight: "bold", size: 9.5pt)[NOT YET BUILT]
-    #v(-4pt)
-    #set text(size: 9.8pt)
-    The scope, ordering and theory of this lesson are settled, and the chapter
-    below is the plan. The code and the measured results are not here yet --
-    lessons are built in order, and this book reports only numbers that were
-    actually measured. Nothing in this chapter is a measurement.
-  ],
-)
-
-
 // ---------------------------------------------------------------- cost
 // Every lesson reports what it cost in the SAME shape, because a reader
 // comparing lesson 06 against lesson 13 should not have to compare two table
