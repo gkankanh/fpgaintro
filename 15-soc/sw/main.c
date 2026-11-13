@@ -41,7 +41,7 @@ uint32_t zeroed[4];
 
 int main(void)
 {
-    puts("RV32I SoC\n");
+    puts("Hello world from RV32I SoC on ULX3S \n");
 
     /* .data arrived intact. */
     puthex(marker);
@@ -59,6 +59,7 @@ int main(void)
     /* Wait for a character from the host and send it back. This is the full
      * round trip: the host's bit stream -> lesson 09's receiver -> a status
      * bit -> a load -> a store -> lesson 09's transmitter -> the host. */
+    puts("Waiting for a character from host\n");
     int c = getchar();
     putchar(c);
     putchar('\n');

@@ -190,13 +190,14 @@ make sim
 ```
   program finished in 148 cycles, 109 instructions retired, pc = 0000015c
   machine A: 24 checks, 0 errors
-RV32I SoC
+Hello world from RV32I SoC on ULX3S
 deadbeef
 bss ok
+Waiting for a character from host
 K
 CYC 000004b7
 DONE
-  machine B: 46 characters, 6089 cycles, 3243 instructions retired
+  machine B: 107 characters, 12673 cycles, 6662 instructions retired
 
 PASS: lesson 13's program gives identical results (24 checks) and lesson 15's C runs unchanged
 ```

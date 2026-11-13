@@ -218,14 +218,15 @@ make sim
 ```
 
 ```
-RV32I SoC
+Hello world from RV32I SoC on ULX3S
 deadbeef
 bss ok
+Waiting for a character from host
 K
 CYC 0000025e
 DONE
 
-PASS: 46 characters over the wire, both LED writes seen, one wild store caught, halt code 0
+PASS: 107 characters over the wire, both LED writes seen, one wild store caught, halt code 0
 ```
 
 That output is not printed by the testbench. It is printed by the *program*,

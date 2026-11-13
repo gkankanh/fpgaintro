@@ -106,11 +106,14 @@ module tb_pipe;
     uart_tx #(.CLK_HZ(CLK_HZ), .BAUD(BAUD)) u_host_tx (
         .clk(clk), .data("K"), .start(send), .tx(soc_rx), .busy(send_busy));
 
-    // The same forty-six characters lesson 15 produced. Byte for byte: the
-    // program did not change, so its output may not either.
-    localparam EXPLEN = 46;
+    // The same 107 characters lesson 15 produced. Byte for byte: the program
+    // did not change, so its output may not either. (It is literally the same
+    // image -- this testbench reads ../15-soc/firmware.hex -- so editing
+    // lesson 15's sw/main.c changes this expectation too.)
+    localparam EXPLEN = 107;
     localparam [8*EXPLEN-1:0] EXPECT =
-        "RV32I SoC\ndeadbeef\nbss ok\nK\nCYC ????????\nDONE\n";
+        {"Hello world from RV32I SoC on ULX3S \ndeadbeef\nbss ok\n",
+         "Waiting for a character from host\nK\nCYC ????????\nDONE\n"};
 
     function [7:0] expect_ch(input integer i);
         expect_ch = EXPECT[8*(EXPLEN-i)-1 -: 8];
