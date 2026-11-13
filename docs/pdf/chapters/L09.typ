@@ -34,6 +34,26 @@ So the divisor is 217, giving 115,207 baud — #strong[0.0064% fast]. Over the
 9.5 bit periods to the middle of the stop bit that accumulates to 0.06% of a
 bit, which is nothing. Even 216 or 218 would be fine, at 4.5% of a bit.
 
+=== The same transmitter, taken down to the gate
+
+#fig("/figures/uart-tx-nand.svg",
+     [`uart_tx.v` at 25 MHz and 115,200 baud, taken down to the gate. The frame
+      is the shift register, the baud tick is one comparison against 216, and
+      the cell counts are measured rather than idealised.])
+
+Lesson 01 claimed that NAND alone can build any function. This is that claim
+cashed in on something that does a job: tie a NAND's inputs together and it
+inverts, cross two of them and they hold a bit, and six make an edge-triggered
+flip-flop — so the 22 flip-flops below are 132 gates before a single bit of
+logic.
+
+Two details in the figure are worth more than the gates. `shift[9]` is loaded
+with 1 and has 1 shifted into it, so it can never hold anything else and yosys
+deletes it: a design that declares 23 flip-flops synthesises to 22. And the
+part is innocent of NAND gates entirely — an ECP5 has none to give, only LUT4s
+holding truth tables and a carry chain in dedicated silicon. The gate-level
+picture is how you reason; it is not what gets built.
+
 == Where the textbook had to be overruled
 
 Every UART reference says: build a clock at 16 times the baud rate and sample

@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 56 960 764" role="img"
+     aria-label="The lesson 09 UART transmitter reduced to NAND gates. A NAND with its inputs tied together is an inverter, and every other gate follows from that. Two cross-coupled NANDs remember one bit, and an edge-triggered D flip-flop is six of them. The transmitter's frame is a ten-bit shift register holding a constant one, the eight data bits and the start bit, with the transmit pin wired to bit zero and ones trailing in from the top. The baud tick is an eight-bit counter compared against 216, binary 11011000, which is an AND of the bits with the zero positions inverted. Synthesis reports 22 flip-flops, 23 LUT4, 4 CCU2C and 1 PFUMX. There is no state machine and no output multiplexer.">
+  <style>
+    :root { --ink:#1f2328; --mute:#656d76; --accent:#0969da; --warm:#8a5a00; --panel:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warm:#d29922; --panel:#161b22; }
+    }
+    .g   { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; stroke-linejoin:round; }
+    .box { fill:var(--panel); stroke:var(--ink); stroke-width:1.4; }
+    .dim { fill:none; stroke:var(--mute); stroke-width:1.4; stroke-dasharray:4 3; }
+    .p   { fill:none; stroke:var(--mute); stroke-width:1; }
+    .w   { stroke:var(--ink); stroke-width:1.4; fill:none; }
+    .bub { fill:var(--panel); stroke:var(--ink); stroke-width:1.6; }
+    .dot { fill:var(--ink); }
+    .ar  { fill:var(--ink); }
+    .h   { fill:var(--ink);  font:600 19px ui-sans-serif,system-ui,sans-serif; }
+    .pt  { fill:var(--mute); font:600 14px ui-sans-serif,system-ui,sans-serif; }
+    .n   { fill:var(--ink);  font:600 15px ui-sans-serif,system-ui,sans-serif; }
+    .l   { fill:var(--ink);  font:14px ui-monospace,monospace; }
+    .lm  { fill:var(--mute); font:14px ui-monospace,monospace; }
+    .s   { fill:var(--mute); font:13px ui-monospace,monospace; }
+    .t   { fill:var(--mute); font:14px ui-sans-serif,system-ui,sans-serif; }
+    .ta  { fill:var(--accent); font:14px ui-sans-serif,system-ui,sans-serif; }
+    .tw  { fill:var(--warm);   font:14px ui-sans-serif,system-ui,sans-serif; }
+  </style>
+
+  <!-- ============================ panel 1 ============================ -->
+  <rect class="p" x="24" y="72" width="444" height="242" rx="8"/>
+  <text class="pt" x="40" y="98">1. ONE GATE IS ENOUGH</text>
+
+  <path class="g" d="M150,122 H177 A22,22 0 0 1 177,166 H150 Z"/>
+  <circle class="bub" cx="199" cy="144" r="5"/>
+  <path class="w" d="M84,144 H124"/>
+  <path class="w" d="M124,135 V153"/>
+  <path class="w" d="M124,135 H150"/>
+  <path class="w" d="M124,153 H150"/>
+  <circle class="dot" cx="124" cy="144" r="3"/>
+  <path class="w" d="M204,144 H262"/>
+  <path class="ar" d="M270,144 L258,138 L258,150 Z"/>
+  <text class="s" x="66" y="149">a</text>
+  <text class="l" x="280" y="149">NOT a</text>
+
+  <text class="t" x="40" y="206">Tie a NAND's inputs together and it inverts.</text>
+  <text class="t" x="40" y="228">AND is a NAND followed by that inverter; OR is</text>
+  <text class="t" x="40" y="250">a NAND with both inputs inverted first.</text>
+  <text class="ta" x="40" y="280">Lesson 01's claim, cashed in: if NAND can build</text>
+  <text class="ta" x="40" y="302">anything, it can build a serial transmitter.</text>
+
+  <!-- ============================ panel 2 ============================ -->
+  <rect class="p" x="492" y="72" width="444" height="242" rx="8"/>
+  <text class="pt" x="508" y="98">2. ONE BIT OF MEMORY IS TWO OF THEM</text>
+
+  <path class="g" d="M624,120 H651 A22,22 0 0 1 651,164 H624 Z"/>
+  <circle class="bub" cx="673" cy="142" r="5"/>
+  <path class="g" d="M624,196 H651 A22,22 0 0 1 651,240 H624 Z"/>
+  <circle class="bub" cx="673" cy="218" r="5"/>
+
+  <path class="w" d="M566,133 H624"/>
+  <path class="w" d="M566,231 H624"/>
+  <path class="w" d="M678,142 H760"/>
+  <path class="w" d="M678,218 H760"/>
+  <path class="w" d="M704,142 V209 H624"/>
+  <circle class="dot" cx="704" cy="142" r="3"/>
+  <path class="w" d="M728,218 V151 H624"/>
+  <circle class="dot" cx="728" cy="218" r="3"/>
+
+  <text class="s" x="524" y="138">set</text>
+  <text class="s" x="512" y="236">reset</text>
+  <text class="l" x="768" y="147">Q</text>
+  <text class="l" x="768" y="223">Q'</text>
+
+  <text class="t" x="508" y="272">Cross two NANDs and they hold. An edge-triggered</text>
+  <text class="t" x="508" y="294">D flip-flop is six — so this design's 22 are 132 gates.</text>
+
+  <!-- ============================ panel 3 ============================ -->
+  <rect class="p" x="24" y="330" width="912" height="186" rx="8"/>
+  <text class="pt" x="40" y="356">3. THE FRAME IS THE SHIFT REGISTER — NOT A STATE MACHINE</text>
+
+  <path class="w" d="M60,402 H112"/>
+  <path class="ar" d="M120,402 L108,396 L108,408 Z"/>
+  <text class="s" x="36" y="393">1s</text>
+
+  <rect class="dim" x="120" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="139" y="408">1</text>
+  <text class="s" x="134" y="442">[9]</text>
+
+  <rect class="box" x="176" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="188" y="408">d7</text>
+  <text class="s" x="190" y="442">[8]</text>
+  <rect class="box" x="232" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="244" y="408">d6</text>
+  <text class="s" x="246" y="442">[7]</text>
+  <rect class="box" x="288" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="300" y="408">d5</text>
+  <text class="s" x="302" y="442">[6]</text>
+  <rect class="box" x="344" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="356" y="408">d4</text>
+  <text class="s" x="358" y="442">[5]</text>
+  <rect class="box" x="400" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="412" y="408">d3</text>
+  <text class="s" x="414" y="442">[4]</text>
+  <rect class="box" x="456" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="468" y="408">d2</text>
+  <text class="s" x="470" y="442">[3]</text>
+  <rect class="box" x="512" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="524" y="408">d1</text>
+  <text class="s" x="526" y="442">[2]</text>
+  <rect class="box" x="568" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="580" y="408">d0</text>
+  <text class="s" x="582" y="442">[1]</text>
+  <rect class="box" x="624" y="382" width="48" height="40" rx="3"/>
+  <text class="n" x="643" y="408">0</text>
+  <text class="s" x="638" y="442">[0]</text>
+
+  <path class="w" d="M168,402 H176"/>
+  <path class="w" d="M224,402 H232"/>
+  <path class="w" d="M280,402 H288"/>
+  <path class="w" d="M336,402 H344"/>
+  <path class="w" d="M392,402 H400"/>
+  <path class="w" d="M448,402 H456"/>
+  <path class="w" d="M504,402 H512"/>
+  <path class="w" d="M560,402 H568"/>
+  <path class="w" d="M616,402 H624"/>
+  <path class="w" d="M672,402 H722"/>
+  <path class="ar" d="M730,402 L718,396 L718,408 Z"/>
+  <text class="n" x="740" y="408">TX</text>
+
+  <text class="tw" x="120" y="474">[9] is loaded with 1 and shifted in as 1, so it can never hold anything else — yosys deletes it.</text>
+  <text class="tw" x="120" y="496">22 flip-flops, for a design that declares 23.</text>
+  <text class="l" x="520" y="496">shift &lt;= {1'b1, shift[9:1]};   tx = shift[0];</text>
+
+  <!-- ============================ panel 4 ============================ -->
+  <rect class="p" x="24" y="532" width="496" height="212" rx="8"/>
+  <text class="pt" x="40" y="558">4. THE BAUD TICK IS ONE COMPARISON</text>
+
+  <text class="s" x="58" y="582">[7]</text>
+  <text class="s" x="110" y="582">[6]</text>
+  <text class="s" x="162" y="582">[5]</text>
+  <text class="s" x="214" y="582">[4]</text>
+  <text class="s" x="266" y="582">[3]</text>
+  <text class="s" x="318" y="582">[2]</text>
+  <text class="s" x="370" y="582">[1]</text>
+  <text class="s" x="422" y="582">[0]</text>
+
+  <rect class="box" x="48" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="65" y="613">1</text>
+  <rect class="box" x="100" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="117" y="613">1</text>
+  <rect class="box" x="152" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="169" y="613">0</text>
+  <rect class="box" x="204" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="221" y="613">1</text>
+  <rect class="box" x="256" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="273" y="613">1</text>
+  <rect class="box" x="308" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="325" y="613">0</text>
+  <rect class="box" x="360" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="377" y="613">0</text>
+  <rect class="box" x="412" y="590" width="44" height="32" rx="3"/>
+  <text class="n" x="429" y="613">0</text>
+
+  <path class="w" d="M70,622 V654"/>
+  <path class="w" d="M122,622 V654"/>
+  <path class="w" d="M174,622 V646"/>
+  <circle class="bub" cx="174" cy="650" r="4"/>
+  <path class="w" d="M226,622 V654"/>
+  <path class="w" d="M278,622 V654"/>
+  <path class="w" d="M330,622 V646"/>
+  <circle class="bub" cx="330" cy="650" r="4"/>
+  <path class="w" d="M382,622 V646"/>
+  <circle class="bub" cx="382" cy="650" r="4"/>
+  <path class="w" d="M434,622 V646"/>
+  <circle class="bub" cx="434" cy="650" r="4"/>
+  <path class="w" d="M70,654 H478"/>
+  <path class="ar" d="M486,654 L474,648 L474,660 Z"/>
+  <text class="l" x="404" y="678">baud_tick</text>
+
+  <text class="t" x="40" y="708">25,000,000 / 115,200 = 217.0139, so DIV is 217 and the</text>
+  <text class="t" x="40" y="730">tick is cnt == 216 = 11011000, inverted where it wants a 0.</text>
+
+  <!-- ============================ panel 5 ============================ -->
+  <rect class="p" x="544" y="532" width="392" height="212" rx="8"/>
+  <text class="pt" x="560" y="558">5. WHAT THE SYNTHESISER BUILT</text>
+
+  <text class="lm" x="560" y="584">yosys synth_ecp5, uart_tx</text>
+  <text class="l" x="596" y="612" text-anchor="end">22</text>
+  <text class="l" x="608" y="612">TRELLIS_FF</text>
+  <text class="l" x="596" y="634" text-anchor="end">23</text>
+  <text class="l" x="608" y="634">LUT4</text>
+  <text class="l" x="596" y="656" text-anchor="end">4</text>
+  <text class="l" x="608" y="656">CCU2C</text>
+  <text class="l" x="596" y="678" text-anchor="end">1</text>
+  <text class="l" x="608" y="678">PFUMX</text>
+
+  <text class="t" x="560" y="708">No NAND gates at all: an ECP5 has none to give,</text>
+  <text class="t" x="560" y="730">only LUT4s holding truth tables and a carry chain.</text>
+
+  <text class="ta" x="24" y="776">There is no state machine here and no output multiplexer: ones trail in behind the frame, so a register that has finished</text>
+  <text class="ta" x="24" y="798">sending is already holding the idle line. A counter, a shift register, and the number 217.</text>
+</svg>

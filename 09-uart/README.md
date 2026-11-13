@@ -66,6 +66,22 @@ again when the frame finishes — so the line returns to idle with **no special
 case for idle at all**. That is the kind of small structural choice worth
 noticing; the alternative is a fifth state and an output mux.
 
+![The transmitter reduced to NAND gates: a NAND with its inputs tied together inverts, two cross-coupled NANDs hold a bit, the frame is a ten-bit shift register with the transmit pin on bit zero, and the baud tick is an eight-bit counter compared against 216](../docs/diagrams/uart-tx-nand.svg)
+
+The diagram takes that argument down to the gate, which is where
+[lesson 01](../01-gates/)'s claim gets cashed in: if NAND can build any
+function, it can build this. A NAND with its inputs tied together inverts; two
+of them crossed over hold one bit; six make an edge-triggered flip-flop, so the
+22 in this design are 132 gates before a single bit of logic. The shift
+register is the frame, the baud tick is one comparison against `11011000`, and
+nowhere in it is there a state to be in.
+
+Note the bit the synthesiser throws away. `shift[9]` is loaded with 1 and has 1
+shifted into it, so it can never hold anything else — yosys deletes it, which
+is why `make synth M=uart_tx` reports **22 flip-flops for a design that
+declares 23**. And of course it builds no NAND gates at all: an ECP5 has none
+to give, only LUT4s holding truth tables and a dedicated carry chain.
+
 `busy` is the interface, exactly as in lesson 06's SPI engine: the rest of the
 design only has to not touch `data` or raise `start` while `busy` is high.
 
