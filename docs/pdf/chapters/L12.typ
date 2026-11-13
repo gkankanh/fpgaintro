@@ -156,4 +156,4 @@ flagged.
 
 #strong[What to keep.] Fixed field positions are what let every field be decoded in parallel.
 
-#strong[What comes next.] Lesson 13 wires the ALU, the register file and this decoder into a processor.
+#strong[What comes next.] Lesson 13 wires the ALU, the register file and this decoder into a processor — and the chapter after it follows one instruction through the result, field by field, including why `funct7` is seven bits wide when the hardware reads one of them.
