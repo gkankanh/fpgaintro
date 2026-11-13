@@ -6,7 +6,7 @@ This is a hands-on refresher in digital design, worked from a single logic gate
 to a 32-bit RISC-V processor running real programs on real silicon, with a
 toolchain that is open source from the Verilog parser to the bitstream.
 
-#watch[
+#status[
   #strong[Where the course stands.] Lessons 00 to 14 are built, tested and
   measured: every number in those chapters came out of the tools on the
   author's machine, and every testbench runs. Lessons 15 to 17 — the system on

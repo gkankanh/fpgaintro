@@ -18,8 +18,11 @@
 #let rule-col = rgb("#d0d7de")
 
 // ------------------------------------------------------------------ callouts
-// Three kinds, matching the lesson READMEs so the book and the repository
-// read as one thing.
+// Four kinds, matching the lesson READMEs so the book and the repository read
+// as one thing. WATCH OUT is for a pitfall that will bite the reader at the
+// keyboard; STATUS is for what is built and what is not, which is a fact
+// about the course rather than a hazard, and must not borrow a warning's
+// voice.
 
 #let callout(title, body, col: accent, sym: none) = block(
   width: 100%,
@@ -37,9 +40,10 @@
   ],
 )
 
-#let why(body)   = callout("WHY THIS MATTERS", body, col: accent)
-#let watch(body) = callout("WATCH OUT", body, col: warm)
-#let found(body) = callout("A BUG THIS COURSE ACTUALLY HIT", body, col: bad)
+#let why(body)    = callout("WHY THIS MATTERS", body, col: accent)
+#let watch(body)  = callout("WATCH OUT", body, col: warm)
+#let found(body)  = callout("A BUG THIS COURSE ACTUALLY HIT", body, col: bad)
+#let status(body) = callout("STATUS", body, col: mute)
 
 // -------------------------------------------------------------------- goals
 // Every lesson chapter opens with these, so a reader can see at a glance
@@ -121,7 +125,7 @@
 
 
 // ----------------------------------------------------------------- planned
-// Lessons 14-17 have settled scope but are not yet written. Saying so
+// Lessons 15-17 have settled scope but are not yet built. Saying so
 // prominently is better than letting a reader discover it at the repository.
 
 #let planned = block(
