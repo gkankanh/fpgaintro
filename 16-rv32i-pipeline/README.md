@@ -233,13 +233,14 @@ And the whole computer, against lesson 15's:
 
 | | lesson 15 | **lesson 16** |
 |---|---:|---:|
-| `LUT4` | 4,821 | **2,588** |
-| `TRELLIS_FF` | 146 | **678** |
+| `LUT4` | 4,821 | **2,538** |
+| `TRELLIS_FF` | 146 | **680** |
 | `DP16KD` | 0 | **2** |
 | `TRELLIS_DPR16X4` | 544 | 32 |
+| `EHXPLLL` | 0 | 1 |
 
 **The pipelined computer is smaller.** A more complex core, four sets of
-pipeline registers, a forwarding network and hazard logic — and it costs 2,233
+pipeline registers, a forwarding network and hazard logic — and it costs 2,283
 *fewer* LUT4, because the memory moved into two block RAMs out of 208. The
 pipeline cost 345 LUT4 and 382 flip-flops; the memory it enabled paid that back
 seven times over.
@@ -255,13 +256,14 @@ And now the memory scales, which it could not before:
 make synth M=soc5_top P="MEM_WORDS 4096"
 ```
 
-| memory | `LUT4` | `DP16KD` | max clock |
-|---|---:|---:|---|
-| 2 KB | 2,588 | 2 | 49.5 / 47.5 / 45.7 MHz |
-| **16 KB** | **2,285** | 16 | 47.1 / 46.0 / 46.1 MHz |
+| memory | `LUT4` | `DP16KD` |
+|---|---:|---:|
+| 2 KB | 2,538 | 2 |
+| **16 KB** | **2,521** | 16 |
 
-Eight times the memory, *fewer* LUT4, and the same clock. In lesson 15, doubling
-2 KB to 4 KB cost 2,442 LUT4 and broke timing.
+Eight times the memory for seventeen LUT4 — the block RAMs are simply there,
+and using eight more of the 208 costs nothing but the decode. In lesson 15,
+merely doubling 2 KB to 4 KB cost 2,442 LUT4 and broke timing.
 
 ## What it cost in time — and what it bought
 

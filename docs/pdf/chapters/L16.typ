@@ -164,23 +164,23 @@ illegal-instruction latch was looking at it anyway.
   #ttable(
     columns: (auto, auto, auto),
     [], [*lesson 15*], [*lesson 16*],
-    [`LUT4`],            [4,821], [*2,588*],
-    [`TRELLIS_FF`],      [146],   [*678*],
+    [`LUT4`],            [4,821], [*2,538*],
+    [`TRELLIS_FF`],      [146],   [*680*],
     [`DP16KD`],          [0],     [*2*],
     [`TRELLIS_DPR16X4`], [544],   [32],
   )
 ]
 
 #strong[The pipelined computer is smaller.] A more complex core, four sets of
-pipeline registers, a forwarding network and hazard logic — and 2,233
+pipeline registers, a forwarding network and hazard logic — and 2,283
 #emph[fewer] LUT4, because the memory moved into two block RAMs out of 208. The
 pipeline cost 345 LUT4; the memory it made possible paid that back seven times
 over.
 
 And the memory now scales, which it could not before: at 16 KB the design uses
-2,285 LUT4 and 16 block RAMs, and still closes at 46 MHz. Eight times the
-memory, fewer LUT4, same clock. In lesson 15, doubling 2 KB to 4 KB cost 2,442
-LUT4 and broke timing.
+2,521 LUT4 and 16 of the 208 block RAMs — seventeen more LUT4 for eight times
+the memory. In lesson 15, merely doubling 2 KB to 4 KB cost 2,442 LUT4 and
+broke timing.
 
 == What it cost in time, and what it bought
 
